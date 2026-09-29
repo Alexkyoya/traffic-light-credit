@@ -27,9 +27,10 @@
   --on-signal: #ffffff;
   --shadow: 0 1px 2px rgb(20 30 30 / 0.06), 0 6px 24px rgb(20 30 30 / 0.06);
 
-  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --cjk: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB";
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, var(--cjk), sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, var(--cjk), sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, var(--cjk), monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -86,7 +87,7 @@ p { margin: 0; }
 .section-head p { color: var(--muted); max-width: 62ch; }
 
 /* ---------- En-tête ---------- */
-.hero { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; }
+.hero { display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: center; }
 .signal {
   width: 58px; padding: 9px 0; border-radius: 16px; background: var(--housing);
   display: grid; justify-items: center; gap: 7px;
@@ -99,6 +100,13 @@ p { margin: 0; }
 .hero h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
 .hero .lede { margin-top: 10px; font-size: 18px; color: var(--muted); max-width: 60ch; }
 .hero .eyebrow { margin-bottom: 8px; }
+.lang { align-self: start; display: flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.lang button {
+  font: 500 13px var(--font-body); color: var(--muted); background: transparent; border: 0;
+  border-radius: 999px; padding: 5px 12px; cursor: pointer;
+}
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 
 /* ---------- Graphique principal ---------- */
 .chart-panel { display: grid; gap: 18px; }
@@ -251,6 +259,7 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
   .page { padding-block: 24px 16px; gap: 20px; }
   .panel { padding: 18px 16px; }
   .hero { grid-template-columns: 1fr; gap: 14px; }
+  .lang { justify-self: start; grid-row: 1; }
   .signal { grid-auto-flow: column; width: auto; justify-self: start; padding: 7px 9px; gap: 7px; }
   .lamp { width: 22px; height: 22px; }
   .controls { grid-template-columns: 1fr; }
@@ -272,109 +281,112 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
       <span class="lamp stop"></span><span class="lamp wait"></span><span class="lamp go"></span>
     </div>
     <div>
-      <p class="eyebrow">Simulateur · Prêts personnels de 36 mois</p>
-      <h1>Feu vert, feu jaune, feu rouge</h1>
-      <p class="lede">Peut-on décider plus de demandes de prêt personnel automatiquement, sans prendre plus de risque&nbsp;?</p>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="title"></h1>
+      <p class="lede" data-i18n="lede"></p>
     </div>
+    <nav class="lang" id="lang" data-i18n-aria="langAria">
+      <button type="button" data-lang="fr" lang="fr-CA">FR</button>
+      <button type="button" data-lang="en" lang="en-CA">EN</button>
+      <button type="button" data-lang="zh" lang="zh-CN">中文</button>
+    </nav>
   </header>
 
   <!-- 1. Graphique des centiles -->
   <section class="panel chart-panel" aria-labelledby="t-chart">
     <div class="section-head">
-      <h2 id="t-chart">Taux de défaut réel par centile de risque</h2>
-      <p>Glissez la ligne verte et la ligne rouge sur le graphique, ou utilisez les curseurs.</p>
+      <h2 id="t-chart" data-i18n="chartTitle"></h2>
+      <p data-i18n="chartHint"></p>
     </div>
     <p class="summary" id="summary" aria-live="polite"></p>
     <div class="scroll">
       <div class="chart-wrap" id="main-wrap">
-        <svg id="main-chart" viewBox="0 0 1000 400" role="img" aria-labelledby="main-desc">
-          <desc id="main-desc">Cent barres, une par centile de risque, qui montrent le taux de défaut réel en 2013. Les barres sont vertes, jaunes ou rouges selon la zone. Une ligne pointillée montre le taux de défaut moyen.</desc>
-        </svg>
+        <svg id="main-chart" viewBox="0 0 1000 400" role="img" aria-labelledby="main-desc"></svg>
         <div class="tooltip" id="tooltip" hidden></div>
       </div>
-      <div class="axis-ends"><span>← Moins risqué</span><span>Centile de risque prédit</span><span>Plus risqué →</span></div>
+      <div class="axis-ends"><span data-i18n="axisLess"></span><span data-i18n="axisMid"></span><span data-i18n="axisMore"></span></div>
     </div>
     <div class="controls">
       <div class="control green">
-        <label for="g-range"><span>Fin du feu vert</span><span class="num" id="g-out"></span></label>
+        <label for="g-range"><span data-i18n="gLabel"></span><span class="num" id="g-out"></span></label>
         <input type="range" id="g-range" min="0" max="100" step="1" value="40">
-        <span class="hint">Les demandes sous ce centile sont approuvées automatiquement.</span>
+        <span class="hint" data-i18n="gHint"></span>
       </div>
       <div class="control red">
-        <label for="r-range"><span>Début du feu rouge</span><span class="num" id="r-out"></span></label>
+        <label for="r-range"><span data-i18n="rLabel"></span><span class="num" id="r-out"></span></label>
         <input type="range" id="r-range" min="0" max="100" step="1" value="90">
-        <span class="hint">Les demandes à partir de ce centile sont refusées automatiquement.</span>
+        <span class="hint" data-i18n="rHint"></span>
       </div>
-      <button type="button" class="reset" id="reset">Revenir à 40 / 90</button>
+      <button type="button" class="reset" id="reset" data-i18n="reset"></button>
     </div>
   </section>
 
   <!-- 2. Les trois zones -->
   <section class="panel" aria-labelledby="t-zones" style="display:grid;gap:18px">
     <div class="section-head">
-      <h2 id="t-zones">Les trois zones</h2>
-      <p>Part des demandes de 2013 dans chaque zone.</p>
+      <h2 id="t-zones" data-i18n="zonesTitle"></h2>
+      <p data-i18n="zonesHint"></p>
     </div>
     <div class="strip" id="strip" aria-hidden="true">
       <div class="s-green"></div><div class="s-yellow"></div><div class="s-red"></div>
     </div>
     <div class="zones">
       <article class="zone green">
-        <header><span class="dot"></span><div><h3>Feu vert</h3><p>Approuvé automatiquement</p></div></header>
+        <header><span class="dot"></span><div><h3 data-i18n="zGreen"></h3><p data-i18n="zGreenSub"></p></div></header>
         <div class="big" id="z-green-share"></div>
         <dl class="facts">
-          <div><dt>Demandes</dt><dd class="num" id="z-green-n"></dd></div>
-          <div><dt>Taux de défaut</dt><dd class="num" id="z-green-dr"></dd></div>
-          <div><dt>Règle</dt><dd id="z-green-rule"></dd></div>
+          <div><dt data-i18n="factN"></dt><dd class="num" id="z-green-n"></dd></div>
+          <div><dt data-i18n="factRate"></dt><dd class="num" id="z-green-dr"></dd></div>
+          <div><dt data-i18n="factRule"></dt><dd id="z-green-rule"></dd></div>
         </dl>
       </article>
       <article class="zone yellow">
-        <header><span class="dot"></span><div><h3>Feu jaune</h3><p>Revu par un analyste</p></div></header>
+        <header><span class="dot"></span><div><h3 data-i18n="zYellow"></h3><p data-i18n="zYellowSub"></p></div></header>
         <div class="big" id="z-yellow-share"></div>
         <dl class="facts">
-          <div><dt>Demandes</dt><dd class="num" id="z-yellow-n"></dd></div>
-          <div><dt>Taux de défaut</dt><dd class="num" id="z-yellow-dr"></dd></div>
-          <div><dt>Règle</dt><dd id="z-yellow-rule"></dd></div>
+          <div><dt data-i18n="factN"></dt><dd class="num" id="z-yellow-n"></dd></div>
+          <div><dt data-i18n="factRate"></dt><dd class="num" id="z-yellow-dr"></dd></div>
+          <div><dt data-i18n="factRule"></dt><dd id="z-yellow-rule"></dd></div>
         </dl>
         <p class="workload" id="workload"></p>
       </article>
       <article class="zone red">
-        <header><span class="dot"></span><div><h3>Feu rouge</h3><p>Refusé automatiquement</p></div></header>
+        <header><span class="dot"></span><div><h3 data-i18n="zRed"></h3><p data-i18n="zRedSub"></p></div></header>
         <div class="big" id="z-red-share"></div>
         <dl class="facts">
-          <div><dt>Demandes</dt><dd class="num" id="z-red-n"></dd></div>
-          <div><dt>Taux de défaut</dt><dd class="num" id="z-red-dr"></dd></div>
-          <div><dt>Règle</dt><dd id="z-red-rule"></dd></div>
+          <div><dt data-i18n="factN"></dt><dd class="num" id="z-red-n"></dd></div>
+          <div><dt data-i18n="factRate"></dt><dd class="num" id="z-red-dr"></dd></div>
+          <div><dt data-i18n="factRule"></dt><dd id="z-red-rule"></dd></div>
         </dl>
       </article>
     </div>
   </section>
 
   <!-- 3. Indicateurs -->
-  <section class="kpis" aria-label="Indicateurs clés">
+  <section class="kpis" data-i18n-aria="kpisAria">
     <article class="panel kpi">
-      <span class="label">Décisions automatiques</span>
+      <span class="label" data-i18n="kAuto"></span>
       <span class="value" id="k-auto"></span>
       <div class="meter"><i id="k-auto-m"></i></div>
-      <span class="sub">Part des demandes décidées sans analyste (vert + rouge).</span>
+      <span class="sub" data-i18n="kAutoSub"></span>
     </article>
     <article class="panel kpi">
-      <span class="label">Taux de défaut en zone verte</span>
+      <span class="label" data-i18n="kGreen"></span>
       <span class="value" id="k-green" style="color:var(--go-ink)"></span>
       <div class="compare">
-        <div class="row"><span>Zone verte</span><div class="meter go"><i id="k-green-m"></i></div></div>
-        <div class="row"><span>Moyenne</span><div class="meter avg-bar"><i id="k-avg-m"></i></div></div>
+        <div class="row"><span data-i18n="compareGreen"></span><div class="meter go"><i id="k-green-m"></i></div></div>
+        <div class="row"><span data-i18n="compareAvg"></span><div class="meter avg-bar"><i id="k-avg-m"></i></div></div>
       </div>
       <span class="sub" id="k-green-sub"></span>
     </article>
     <article class="panel kpi">
-      <span class="label">Défauts arrêtés par le feu rouge</span>
+      <span class="label" data-i18n="kCaught"></span>
       <span class="value" id="k-caught" style="color:var(--stop-ink)"></span>
       <div class="meter stop"><i id="k-caught-m"></i></div>
       <span class="sub" id="k-caught-sub"></span>
     </article>
     <article class="panel kpi">
-      <span class="label">Bons clients refusés</span>
+      <span class="label" data-i18n="kGood"></span>
       <span class="value" id="k-good"></span>
       <div class="meter"><i id="k-good-m"></i></div>
       <span class="sub" id="k-good-sub"></span>
@@ -384,29 +396,29 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
   <!-- 4. Argent -->
   <section class="panel" aria-labelledby="t-money" style="display:grid;gap:18px">
     <div class="section-head">
-      <h2 id="t-money">Combien d'argent est en jeu&nbsp;?</h2>
-      <p>Montants des prêts de 2013. La perte estimée est le montant des prêts en défaut multiplié par la LGD.</p>
+      <h2 id="t-money" data-i18n="moneyTitle"></h2>
+      <p data-i18n="moneyHint"></p>
     </div>
     <div class="money">
       <div class="lgd">
-        <label for="lgd">Perte en cas de défaut (LGD)</label>
+        <label for="lgd" data-i18n="lgdLabel"></label>
         <div class="field"><input type="number" id="lgd" min="0" max="100" step="1" value="60" inputmode="decimal" aria-describedby="lgd-help"><span>%</span></div>
-        <p id="lgd-help">Part du montant du prêt qu'on perd quand le client ne rembourse pas. Entre 0 et 100.</p>
+        <p id="lgd-help"></p>
       </div>
       <article class="amount">
-        <span class="label"><span class="dot" style="background:var(--go)"></span>Perte estimée en zone verte</span>
+        <span class="label"><span class="dot" style="background:var(--go)"></span><span data-i18n="mLoss"></span></span>
         <span class="value" id="m-loss"></span>
         <span class="sub" id="m-loss-sub"></span>
       </article>
       <article class="amount">
-        <span class="label"><span class="dot" style="background:var(--stop)"></span>Pertes évitées par le feu rouge</span>
+        <span class="label"><span class="dot" style="background:var(--stop)"></span><span data-i18n="mAvoided"></span></span>
         <span class="value" id="m-avoided"></span>
         <span class="sub" id="m-avoided-sub"></span>
       </article>
       <article class="amount">
-        <span class="label"><span class="dot" style="background:var(--muted)"></span>Prêts refusés à des clients qui ont remboursé</span>
+        <span class="label"><span class="dot" style="background:var(--muted)"></span><span data-i18n="mRefused"></span></span>
         <span class="value" id="m-refused"></span>
-        <span class="sub">Ce n'est pas une perte : ce sont des affaires qu'on laisse passer.</span>
+        <span class="sub" data-i18n="mRefusedSub"></span>
       </article>
     </div>
   </section>
@@ -414,42 +426,40 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
   <!-- 5. Courbe d'arbitrage -->
   <section class="panel" aria-labelledby="t-trade" style="display:grid;gap:18px">
     <div class="section-head">
-      <h2 id="t-trade">Automatiser plus, mais à quel prix&nbsp;?</h2>
+      <h2 id="t-trade" data-i18n="tradeTitle"></h2>
     </div>
     <div class="tradeoff">
       <div class="scroll">
         <div class="chart-wrap">
-          <svg id="trade-chart" viewBox="0 0 760 400" role="img" aria-labelledby="trade-desc">
-            <desc id="trade-desc">Courbe d'arbitrage : pour chaque fin possible du feu vert, la part de décisions automatiques et le taux de défaut en zone verte. Le point vert montre le choix actuel.</desc>
-          </svg>
+          <svg id="trade-chart" viewBox="0 0 760 400" role="img" aria-labelledby="trade-desc"></svg>
         </div>
       </div>
       <aside>
         <p id="trade-text"></p>
-        <p>Plus le point va vers la droite, plus on automatise. Plus il monte, plus la zone verte contient de défauts. <strong>Cliquez sur la courbe</strong> pour déplacer la fin du feu vert.</p>
+        <p data-i18n="tradeHow"></p>
       </aside>
     </div>
   </section>
 
   <!-- 6. Notes -->
   <section class="panel" aria-labelledby="t-notes" style="display:grid;gap:18px">
-    <div class="section-head"><h2 id="t-notes">À savoir</h2></div>
+    <div class="section-head"><h2 id="t-notes" data-i18n="notesTitle"></h2></div>
     <div class="notes">
       <div>
-        <h3>Données</h3>
+        <h3 data-i18n="nData"></h3>
         <p id="note-data"></p>
       </div>
       <div>
-        <h3>Modèle</h3>
-        <p>Une régression logistique prédit la probabilité de défaut (PD) de chaque prêt. Elle n'utilise ni la cote (grade) de Lending Club ni le taux d'intérêt, qui contiennent déjà l'avis de Lending Club sur le risque.</p>
+        <h3 data-i18n="nModel"></h3>
+        <p data-i18n="nModelText"></p>
       </div>
       <div>
-        <h3>Limites</h3>
+        <h3 data-i18n="nLimits"></h3>
         <ul>
-          <li>On voit seulement les prêts accordés. On ne sait rien des demandes refusées par Lending Club.</li>
-          <li>On suppose que les analystes traitent la zone jaune comme aujourd'hui.</li>
-          <li>Ce sont des données américaines, utilisées ici comme exemple.</li>
-          <li>La LGD s'applique au montant initial du prêt. C'est une simplification : une partie du prêt est souvent déjà remboursée au moment du défaut.</li>
+          <li data-i18n="lim1"></li>
+          <li data-i18n="lim2"></li>
+          <li data-i18n="lim3"></li>
+          <li data-i18n="lim4"></li>
         </ul>
       </div>
     </div>
@@ -463,10 +473,259 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
 // Données agrégées par centile (insérées par build_simulator.py).
 const DATA = /*__DATA__*/null;
 
+// ---------- Textes : français (défaut), anglais, chinois ----------
+const I18N = {
+  fr: {
+    locale: "fr-CA",
+    usd: (x) => x + " $ US",
+    title: "Feu vert, feu jaune, feu rouge",
+    eyebrow: "Simulateur · Prêts personnels de 36 mois",
+    lede: "Peut-on décider plus de demandes de prêt personnel automatiquement, sans prendre plus de risque&nbsp;?",
+    langAria: "Langue",
+    chartTitle: "Taux de défaut réel par centile de risque",
+    chartHint: "Glissez la ligne verte et la ligne rouge sur le graphique, ou utilisez les curseurs.",
+    mainDesc: "Cent barres, une par centile de risque, qui montrent le taux de défaut réel en 2013. Les barres sont vertes, jaunes ou rouges selon la zone. Une ligne pointillée montre le taux de défaut moyen.",
+    axisLess: "← Moins risqué", axisMid: "Centile de risque prédit", axisMore: "Plus risqué →",
+    gLabel: "Fin du feu vert", gHint: "Les demandes sous ce centile sont approuvées automatiquement.",
+    rLabel: "Début du feu rouge", rHint: "Les demandes à partir de ce centile sont refusées automatiquement.",
+    reset: "Revenir à 40 / 90",
+    zonesTitle: "Les trois zones", zonesHint: "Part des demandes de 2013 dans chaque zone.",
+    zGreen: "Feu vert", zGreenSub: "Approuvé automatiquement",
+    zYellow: "Feu jaune", zYellowSub: "Revu par un analyste",
+    zRed: "Feu rouge", zRedSub: "Refusé automatiquement",
+    factN: "Demandes", factRate: "Taux de défaut", factRule: "Règle",
+    ofApps: "des demandes",
+    kpisAria: "Indicateurs clés",
+    kAuto: "Décisions automatiques", kAutoSub: "Part des demandes décidées sans analyste (vert + rouge).",
+    kGreen: "Taux de défaut en zone verte", compareGreen: "Zone verte", compareAvg: "Moyenne",
+    kCaught: "Défauts arrêtés par le feu rouge", kGood: "Bons clients refusés",
+    moneyTitle: "Combien d'argent est en jeu&nbsp;?",
+    moneyHint: "Montants des prêts de 2013. La perte estimée est le montant des prêts en défaut multiplié par la LGD.",
+    lgdLabel: "Perte en cas de défaut (LGD)",
+    lgdHelp: "Part du montant du prêt qu'on perd quand le client ne rembourse pas. Entre 0 et 100.",
+    lgdError: (v) => "Entrez un nombre entre 0 et 100. Le calcul garde la dernière valeur valide (" + v + ").",
+    mLoss: "Perte estimée en zone verte", mAvoided: "Pertes évitées par le feu rouge",
+    mRefused: "Prêts refusés à des clients qui ont remboursé",
+    mRefusedSub: "Ce n'est pas une perte : ce sont des affaires qu'on laisse passer.",
+    lossSub: (md, l) => md + " de prêts en défaut × " + l + " de LGD",
+    avoidedSub: (md, l) => md + " de prêts en défaut refusés × " + l + " de LGD",
+    tradeTitle: "Automatiser plus, mais à quel prix&nbsp;?",
+    tradeDesc: "Courbe d'arbitrage : pour chaque fin possible du feu vert, la part de décisions automatiques et le taux de défaut en zone verte. Le point vert montre le choix actuel.",
+    tradeHow: "Plus le point va vers la droite, plus on automatise. Plus il monte, plus la zone verte contient de défauts. <strong>Cliquez sur la courbe</strong> pour déplacer la fin du feu vert.",
+    tradeText: (r, g, x, y) => "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert, du centile 1 au centile " + r + ". Votre choix actuel (<strong>" + g + "</strong>) automatise <strong>" + x + "</strong> des demandes, avec <strong>" + y + "</strong> de défaut en zone verte.",
+    tradeNoGreen: (r) => "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert. La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
+    tradeAllRed: "Le feu rouge couvre toutes les demandes. Déplacez-le vers la droite pour voir la courbe.",
+    emptyCurve: "Aucune courbe : le feu rouge commence au centile 0.",
+    curveLabel: (g, x, y) => "Vert jusqu'à " + g + " : " + x + " · " + y,
+    axisX: "Décisions automatiques (vert + rouge)", axisY: "Taux de défaut en zone verte",
+    avg: (x) => "Moyenne " + x,
+    notesTitle: "À savoir", nData: "Données", nModel: "Modèle", nLimits: "Limites",
+    nModelText: "Une régression logistique prédit la probabilité de défaut (PD) de chaque prêt. Elle n'utilise ni la cote (grade) de Lending Club ni le taux d'intérêt, qui contiennent déjà l'avis de Lending Club sur le risque.",
+    lim1: "On voit seulement les prêts accordés. On ne sait rien des demandes refusées par Lending Club.",
+    lim2: "On suppose que les analystes traitent la zone jaune comme aujourd'hui.",
+    lim3: "Ce sont des données américaines, utilisées ici comme exemple.",
+    lim4: "La LGD s'applique au montant initial du prêt. C'est une simplification : une partie du prêt est souvent déjà remboursée au moment du défaut.",
+    noteData: (N, avg) => "Prêts personnels de 36 mois de Lending Club, aux États-Unis. Le modèle est entraîné sur les prêts de 2010 à 2012 et testé sur ceux de 2013 (" + N + " prêts, " + avg + " de défauts). Les centiles et les seuils de PD viennent des données d'entraînement : ils ne sont pas ajustés sur l'année testée.",
+    percentile: (i) => "centile " + i,
+    summary: (g, r, auto, gr, avg) => "Vert jusqu'au centile <strong class=\"g\">" + g + "</strong>, rouge dès le centile <strong class=\"r\">" + r + "</strong> : <strong>" + auto + "</strong> des demandes sont décidées automatiquement, et la zone verte a un taux de défaut de <strong>" + gr + "</strong> (moyenne " + avg + ").",
+    ruleNone: "Aucune demande", ruleAll: "Toutes les demandes",
+    ruleBelow: (x) => "PD prédite sous " + x,
+    ruleAtLeast: (x) => "PD prédite de " + x + " ou plus",
+    ruleBetween: (lo, hi) => "PD prédite de " + lo + " à moins de " + hi,
+    workload: (n, pm) => "Charge des analystes : <strong>" + n + "</strong> dossiers en 2013, soit environ <strong>" + pm + "</strong> par mois.",
+    workloadNone: "Charge des analystes : aucun dossier. Tout est décidé automatiquement.",
+    greenLess: (rel, avg) => rel + " de moins que la moyenne de " + avg + ".",
+    greenMore: (rel, avg) => rel + " de plus que la moyenne de " + avg + ".",
+    greenEqual: (avg) => "Égal à la moyenne de " + avg + ".",
+    greenEmpty: "Aucune demande en zone verte.",
+    caughtSub: (a, b) => a + " défauts arrêtés sur " + b + ".",
+    goodSub: (a, b) => a + " clients qui ont remboursé, sur " + b + ".",
+    zoneLabels: ["VERT", "JAUNE", "ROUGE"],
+    zoneNames: ["zone verte", "zone jaune", "zone rouge"],
+    stripNames: ["Vert", "Jaune", "Rouge"],
+    tooltip: (i, zone, n, d, rate, pd) => "<b>Centile " + i + "</b> · " + zone + "<br><span class=\"num\">" + n + " prêts · " + d + " défauts</span><br>Taux de défaut <span class=\"num\">" + rate + "</span><br>PD prédite dès <span class=\"num\">" + pd + "</span>",
+    missing: "Données manquantes. Lancez « python app/build_simulator.py » puis ouvrez app/index.html.",
+  },
+
+  en: {
+    locale: "en-CA",
+    usd: (x) => "US$" + x,
+    title: "Green light, yellow light, red light",
+    eyebrow: "Simulator · 36-month personal loans",
+    lede: "Can we decide more personal loan applications automatically, without taking on more risk?",
+    langAria: "Language",
+    chartTitle: "Actual default rate by risk percentile",
+    chartHint: "Drag the green and red lines on the chart, or use the sliders.",
+    mainDesc: "One hundred bars, one per risk percentile, showing the actual default rate in 2013. Bars are green, yellow or red by zone. A dashed line shows the average default rate.",
+    axisLess: "← Less risky", axisMid: "Predicted risk percentile", axisMore: "Riskier →",
+    gLabel: "End of green", gHint: "Applications below this percentile are approved automatically.",
+    rLabel: "Start of red", rHint: "Applications from this percentile up are declined automatically.",
+    reset: "Back to 40 / 90",
+    zonesTitle: "The three zones", zonesHint: "Share of 2013 applications in each zone.",
+    zGreen: "Green light", zGreenSub: "Approved automatically",
+    zYellow: "Yellow light", zYellowSub: "Reviewed by an analyst",
+    zRed: "Red light", zRedSub: "Declined automatically",
+    factN: "Applications", factRate: "Default rate", factRule: "Rule",
+    ofApps: "of applications",
+    kpisAria: "Key indicators",
+    kAuto: "Automated decisions", kAutoSub: "Share of applications decided without an analyst (green + red).",
+    kGreen: "Default rate in green", compareGreen: "Green", compareAvg: "Average",
+    kCaught: "Defaults stopped by red", kGood: "Good clients declined",
+    moneyTitle: "How much money is at stake?",
+    moneyHint: "Loan amounts for 2013. The estimated loss is the amount of defaulted loans times the LGD.",
+    lgdLabel: "Loss given default (LGD)",
+    lgdHelp: "Share of the loan amount lost when the client does not repay. Between 0 and 100.",
+    lgdError: (v) => "Enter a number between 0 and 100. The calculation keeps the last valid value (" + v + ").",
+    mLoss: "Estimated loss in green", mAvoided: "Losses avoided by red",
+    mRefused: "Loans declined to clients who repaid",
+    mRefusedSub: "This is not a loss: it is business we turn away.",
+    lossSub: (md, l) => md + " of defaulted loans × " + l + " LGD",
+    avoidedSub: (md, l) => md + " of defaulted loans declined × " + l + " LGD",
+    tradeTitle: "Automate more, but at what cost?",
+    tradeDesc: "Trade-off curve: for each possible end of green, the share of automated decisions and the default rate in green. The green dot shows the current choice.",
+    tradeHow: "The further right the dot, the more we automate. The higher it goes, the more defaults the green zone contains. <strong>Click the curve</strong> to move the end of green.",
+    tradeText: (r, g, x, y) => "With red fixed at percentile <strong>" + r + "</strong>, each point on the curve is a possible end of green, from percentile 1 to percentile " + r + ". Your current choice (<strong>" + g + "</strong>) automates <strong>" + x + "</strong> of applications, with a <strong>" + y + "</strong> default rate in green.",
+    tradeNoGreen: (r) => "With red fixed at percentile <strong>" + r + "</strong>, each point on the curve is a possible end of green. The green zone is empty for now: click the curve to pick a point.",
+    tradeAllRed: "Red covers every application. Move it to the right to see the curve.",
+    emptyCurve: "No curve: red starts at percentile 0.",
+    curveLabel: (g, x, y) => "Green up to " + g + ": " + x + " · " + y,
+    axisX: "Automated decisions (green + red)", axisY: "Default rate in green",
+    avg: (x) => "Average " + x,
+    notesTitle: "Good to know", nData: "Data", nModel: "Model", nLimits: "Limitations",
+    nModelText: "A logistic regression predicts each loan's probability of default (PD). It uses neither Lending Club's grade nor the interest rate, which already contain Lending Club's view of the risk.",
+    lim1: "We only see approved loans. We know nothing about applications Lending Club declined.",
+    lim2: "We assume analysts handle the yellow zone as they do today.",
+    lim3: "This is U.S. data, used here as an example.",
+    lim4: "LGD is applied to the initial loan amount. This is a simplification: part of the loan is often already repaid when the default happens.",
+    noteData: (N, avg) => "36-month personal loans from Lending Club, in the United States. The model is trained on 2010–2012 loans and tested on 2013 loans (" + N + " loans, " + avg + " defaults). Percentiles and PD thresholds come from the training data: they are not tuned on the test year.",
+    percentile: (i) => "percentile " + i,
+    summary: (g, r, auto, gr, avg) => "Green up to percentile <strong class=\"g\">" + g + "</strong>, red from percentile <strong class=\"r\">" + r + "</strong>: <strong>" + auto + "</strong> of applications are decided automatically, and the green zone has a default rate of <strong>" + gr + "</strong> (average " + avg + ").",
+    ruleNone: "No applications", ruleAll: "All applications",
+    ruleBelow: (x) => "Predicted PD below " + x,
+    ruleAtLeast: (x) => "Predicted PD of " + x + " or more",
+    ruleBetween: (lo, hi) => "Predicted PD from " + lo + " to below " + hi,
+    workload: (n, pm) => "Analyst workload: <strong>" + n + "</strong> files in 2013, about <strong>" + pm + "</strong> per month.",
+    workloadNone: "Analyst workload: no files. Everything is decided automatically.",
+    greenLess: (rel, avg) => rel + " lower than the average of " + avg + ".",
+    greenMore: (rel, avg) => rel + " higher than the average of " + avg + ".",
+    greenEqual: (avg) => "Equal to the average of " + avg + ".",
+    greenEmpty: "No applications in green.",
+    caughtSub: (a, b) => a + " defaults stopped out of " + b + ".",
+    goodSub: (a, b) => a + " clients who repaid, out of " + b + ".",
+    zoneLabels: ["GREEN", "YELLOW", "RED"],
+    zoneNames: ["green zone", "yellow zone", "red zone"],
+    stripNames: ["Green", "Yellow", "Red"],
+    tooltip: (i, zone, n, d, rate, pd) => "<b>Percentile " + i + "</b> · " + zone + "<br><span class=\"num\">" + n + " loans · " + d + " defaults</span><br>Default rate <span class=\"num\">" + rate + "</span><br>Predicted PD from <span class=\"num\">" + pd + "</span>",
+    missing: "Data missing. Run \"python app/build_simulator.py\", then open app/index.html.",
+  },
+
+  zh: {
+    locale: "zh-CN",
+    usd: (x) => x + " 美元",
+    title: "绿灯、黄灯、红灯",
+    eyebrow: "模拟器 · 36 个月个人贷款",
+    lede: "能不能让更多个人贷款申请自动决策，同时不增加风险？",
+    langAria: "语言",
+    chartTitle: "各风险百分位的实际违约率",
+    chartHint: "在图上拖动绿线和红线，或者使用下方的滑块。",
+    mainDesc: "100 根柱子，每根代表一个风险百分位，显示 2013 年的实际违约率。柱子按区域分为绿、黄、红三色。虚线表示平均违约率。",
+    axisLess: "← 风险较低", axisMid: "预测风险百分位", axisMore: "风险较高 →",
+    gLabel: "绿灯终点", gHint: "低于这个百分位的申请自动批准。",
+    rLabel: "红灯起点", rHint: "从这个百分位开始的申请自动拒绝。",
+    reset: "恢复 40 / 90",
+    zonesTitle: "三个区域", zonesHint: "2013 年各区域的申请占比。",
+    zGreen: "绿灯", zGreenSub: "自动批准",
+    zYellow: "黄灯", zYellowSub: "分析师人工审核",
+    zRed: "红灯", zRedSub: "自动拒绝",
+    factN: "申请数", factRate: "违约率", factRule: "规则",
+    ofApps: "的申请",
+    kpisAria: "关键指标",
+    kAuto: "自动决策比例", kAutoSub: "无需分析师即可决策的申请占比（绿灯 + 红灯）。",
+    kGreen: "绿灯区违约率", compareGreen: "绿灯区", compareAvg: "平均",
+    kCaught: "红灯拦下的违约", kGood: "被误拒的好客户",
+    moneyTitle: "涉及多少金额？",
+    moneyHint: "2013 年的贷款金额。预计损失 = 违约贷款金额 × 违约损失率（LGD）。",
+    lgdLabel: "违约损失率（LGD）",
+    lgdHelp: "客户不还款时，贷款金额中损失的比例。介于 0 和 100 之间。",
+    lgdError: (v) => "请输入 0 到 100 之间的数字。计算暂时使用上一个有效值（" + v + "）。",
+    mLoss: "绿灯区预计损失", mAvoided: "红灯避免的损失",
+    mRefused: "拒给按时还款客户的贷款金额",
+    mRefusedSub: "这不是损失，而是放弃掉的业务。",
+    lossSub: (md, l) => md + " 违约贷款 × " + l + " LGD",
+    avoidedSub: (md, l) => md + " 被拒的违约贷款 × " + l + " LGD",
+    tradeTitle: "自动化更多，代价是什么？",
+    tradeDesc: "权衡曲线：对每个可能的绿灯终点，显示自动决策比例和绿灯区违约率。绿点表示当前选择。",
+    tradeHow: "点越往右，自动化程度越高；点越往上，绿灯区包含的违约越多。<strong>点击曲线</strong>可以移动绿灯终点。",
+    tradeText: (r, g, x, y) => "红灯固定在第 <strong>" + r + "</strong> 百分位时，曲线上每个点对应一个可能的绿灯终点（第 1 到第 " + r + " 百分位）。当前选择（<strong>" + g + "</strong>）可自动决策 <strong>" + x + "</strong> 的申请，绿灯区违约率为 <strong>" + y + "</strong>。",
+    tradeNoGreen: (r) => "红灯固定在第 <strong>" + r + "</strong> 百分位时，曲线上每个点对应一个可能的绿灯终点。目前绿灯区为空：点击曲线选择一个点。",
+    tradeAllRed: "红灯覆盖了全部申请。把红线往右移就能看到曲线。",
+    emptyCurve: "没有曲线：红灯从第 0 百分位开始。",
+    curveLabel: (g, x, y) => "绿灯到 " + g + "：" + x + " · " + y,
+    axisX: "自动决策比例（绿灯 + 红灯）", axisY: "绿灯区违约率",
+    avg: (x) => "平均 " + x,
+    notesTitle: "说明", nData: "数据", nModel: "模型", nLimits: "局限性",
+    nModelText: "用逻辑回归预测每笔贷款的违约概率（PD）。模型没有使用 Lending Club 的等级（grade）和利率，因为这两项已经包含了 Lending Club 自己对风险的判断。",
+    lim1: "我们只能看到获批的贷款，对 Lending Club 拒绝的申请一无所知。",
+    lim2: "假设分析师对黄灯区的处理方式与现在相同。",
+    lim3: "这是美国的数据，这里仅作为示例。",
+    lim4: "LGD 作用于贷款的初始金额。这是一种简化：实际违约时，贷款往往已经还了一部分。",
+    noteData: (N, avg) => "Lending Club（美国）的 36 个月个人贷款。模型用 2010–2012 年的贷款训练，用 2013 年的贷款测试（" + N + " 笔贷款，违约率 " + avg + "）。百分位和 PD 阈值来自训练数据，没有根据测试年份调整。",
+    percentile: (i) => "第 " + i + " 百分位",
+    summary: (g, r, auto, gr, avg) => "绿灯到第 <strong class=\"g\">" + g + "</strong> 百分位，红灯从第 <strong class=\"r\">" + r + "</strong> 百分位开始：<strong>" + auto + "</strong> 的申请自动决策，绿灯区违约率为 <strong>" + gr + "</strong>（平均 " + avg + "）。",
+    ruleNone: "无申请", ruleAll: "全部申请",
+    ruleBelow: (x) => "预测 PD 低于 " + x,
+    ruleAtLeast: (x) => "预测 PD 不低于 " + x,
+    ruleBetween: (lo, hi) => "预测 PD 不低于 " + lo + "，且低于 " + hi,
+    workload: (n, pm) => "分析师工作量：2013 年共 <strong>" + n + "</strong> 份，约每月 <strong>" + pm + "</strong> 份。",
+    workloadNone: "分析师工作量：无。全部自动决策。",
+    greenLess: (rel, avg) => "比平均值 " + avg + " 低 " + rel + "。",
+    greenMore: (rel, avg) => "比平均值 " + avg + " 高 " + rel + "。",
+    greenEqual: (avg) => "与平均值 " + avg + " 持平。",
+    greenEmpty: "绿灯区没有申请。",
+    caughtSub: (a, b) => "共 " + b + " 笔违约，拦下 " + a + " 笔。",
+    goodSub: (a, b) => "共 " + b + " 位按时还款的客户，其中 " + a + " 位被拒。",
+    zoneLabels: ["绿灯", "黄灯", "红灯"],
+    zoneNames: ["绿灯区", "黄灯区", "红灯区"],
+    stripNames: ["绿灯", "黄灯", "红灯"],
+    tooltip: (i, zone, n, d, rate, pd) => "<b>第 " + i + " 百分位</b> · " + zone + "<br><span class=\"num\">" + n + " 笔贷款 · " + d + " 笔违约</span><br>违约率 <span class=\"num\">" + rate + "</span><br>预测 PD 起点 <span class=\"num\">" + pd + "</span>",
+    missing: "缺少数据。请先运行 python app/build_simulator.py，再打开 app/index.html。",
+  },
+};
+
 (function () {
+  // ---------- Langue ----------
+  const LANGS = Object.keys(I18N);
+  let T = I18N.fr, fmt;
+
+  function makeFormats(locale) {
+    const p1 = new Intl.NumberFormat(locale, { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const p0 = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 });
+    const i0 = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+    return {
+      pct: (v) => (Number.isFinite(v) ? p1.format(v) : "—"),
+      pct0: (v) => (Number.isFinite(v) ? p0.format(v) : "—"),
+      int: (v) => i0.format(v),
+      usd: (v) => T.usd(i0.format(Math.round(v))),
+    };
+  }
+
+  function applyStaticText() {
+    document.documentElement.lang = T.locale;
+    document.title = T.title.replace(/&nbsp;/g, " ");
+    document.querySelectorAll("[data-i18n]").forEach((node) => { node.innerHTML = T[node.dataset.i18n]; });
+    document.querySelectorAll("[data-i18n-aria]").forEach((node) => node.setAttribute("aria-label", T[node.dataset.i18nAria]));
+    document.querySelectorAll("#lang button").forEach((b) => b.setAttribute("aria-pressed", String(I18N[b.dataset.lang] === T)));
+  }
+
+  function langFromHash() {
+    const h = location.hash.replace("#", "");
+    return LANGS.includes(h) ? h : "fr";
+  }
+
   if (!Array.isArray(DATA) || DATA.length !== 100) {
-    document.getElementById("summary").textContent =
-      "Données manquantes. Lancez « python app/build_simulator.py » puis ouvrez app/index.html.";
+    T = I18N[langFromHash()];
+    applyStaticText();
+    document.getElementById("summary").textContent = T.missing;
     return;
   }
 
@@ -494,34 +753,25 @@ const DATA = /*__DATA__*/null;
     };
   }
 
-  // ---------- Formats fr-CA ----------
-  const fPct1 = new Intl.NumberFormat("fr-CA", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  const fPct0 = new Intl.NumberFormat("fr-CA", { style: "percent", maximumFractionDigits: 0 });
-  const fInt = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 0 });
-  const pct = (v) => (Number.isFinite(v) ? fPct1.format(v) : "—");
-  const pct0 = (v) => (Number.isFinite(v) ? fPct0.format(v) : "—");
-  const int = (v) => fInt.format(v);
-  const usd = (v) => fInt.format(Math.round(v)) + " $ US";
-
   // ---------- Règles de PD ----------
   function ruleGreen(g) {
-    if (g === 0) return "Aucune demande";
-    if (g === K) return "Toutes les demandes";
-    return "PD prédite sous " + pct(pd[g]);
+    if (g === 0) return T.ruleNone;
+    if (g === K) return T.ruleAll;
+    return T.ruleBelow(fmt.pct(pd[g]));
   }
   function ruleRed(r) {
-    if (r === K) return "Aucune demande";
-    if (r === 0) return "Toutes les demandes";
-    return "PD prédite de " + pct(pd[r]) + " ou plus";
+    if (r === K) return T.ruleNone;
+    if (r === 0) return T.ruleAll;
+    return T.ruleAtLeast(fmt.pct(pd[r]));
   }
   function ruleYellow(g, r) {
-    if (g === r) return "Aucune demande";
+    if (g === r) return T.ruleNone;
     const lo = g === 0 ? null : pd[g];
     const hi = r === K ? null : pd[r];
-    if (lo === null && hi === null) return "Toutes les demandes";
-    if (lo === null) return "PD prédite sous " + pct(hi);
-    if (hi === null) return "PD prédite de " + pct(lo) + " ou plus";
-    return "PD prédite de " + pct(lo) + " à moins de " + pct(hi);
+    if (lo === null && hi === null) return T.ruleAll;
+    if (lo === null) return T.ruleBelow(fmt.pct(hi));
+    if (hi === null) return T.ruleAtLeast(fmt.pct(lo));
+    return T.ruleBetween(fmt.pct(lo), fmt.pct(hi));
   }
 
   // ---------- État ----------
@@ -562,15 +812,19 @@ const DATA = /*__DATA__*/null;
   const x = (i) => M.l + i * BAND;
   const y = (v) => M.t + PH * (1 - v / Y_MAX);
 
-  const tints = {}, zoneLabels = {}, bars = [], handles = {};
-  (function buildMain() {
+  let tints, zoneLabels, bars, handles;
+  // Construit (ou reconstruit, au changement de langue) tout le graphique.
+  function buildMain() {
+    main.replaceChildren();
+    tints = {}; zoneLabels = {}; bars = []; handles = {};
+    el("desc", { id: "main-desc" }, main).textContent = T.mainDesc;
     for (const z of ["green", "yellow", "red"]) {
       const soft = { green: "var(--go-soft)", yellow: "var(--wait-soft)", red: "var(--stop-soft)" }[z];
       tints[z] = el("rect", { class: "tint", y: M.t, height: PH, fill: soft }, main);
     }
     for (let v = 0; v <= Y_MAX + 1e-9; v += 0.05) {
       el("line", { class: v === 0 ? "baseline" : "gridline", x1: M.l, x2: W - M.r, y1: y(v), y2: y(v) }, main);
-      el("text", { x: M.l - 8, y: y(v) + 4, "text-anchor": "end" }, main).textContent = pct0(v);
+      el("text", { x: M.l - 8, y: y(v) + 4, "text-anchor": "end" }, main).textContent = fmt.pct0(v);
     }
     for (let i = 0; i <= K; i += 10) {
       el("text", { x: x(i), y: H - M.b + 20, "text-anchor": "middle" }, main).textContent = i;
@@ -581,14 +835,13 @@ const DATA = /*__DATA__*/null;
       bars.push(el("rect", { class: "bar", x: x(i) + gap / 2, width: BAND - gap, y: y(v), height: y(0) - y(v), rx: 1.5 }, main));
     }
     el("line", { class: "avg", x1: M.l, x2: W - M.r, y1: y(AVG), y2: y(AVG) }, main);
-    el("text", { class: "avg-label", x: M.l + 8, y: y(AVG) - 8 }, main).textContent = "Moyenne " + pct(AVG);
+    el("text", { class: "avg-label", x: M.l + 8, y: y(AVG) - 8 }, main).textContent = T.avg(fmt.pct(AVG));
 
-    const colors = { green: "var(--go-ink)", yellow: "var(--wait-ink)", red: "var(--stop-ink)" };
-    const names = { green: "VERT", yellow: "JAUNE", red: "ROUGE" };
-    for (const z of ["green", "yellow", "red"]) {
-      zoneLabels[z] = el("text", { class: "zone-label", y: M.t + 18, "text-anchor": "middle", fill: colors[z] }, main);
-      zoneLabels[z].textContent = names[z];
-    }
+    const colors = ["var(--go-ink)", "var(--wait-ink)", "var(--stop-ink)"];
+    ["green", "yellow", "red"].forEach((z, k) => {
+      zoneLabels[z] = el("text", { class: "zone-label", y: M.t + 18, "text-anchor": "middle", fill: colors[k] }, main);
+      zoneLabels[z].textContent = T.zoneLabels[k];
+    });
 
     // Zone cliquable : un clic déplace la ligne la plus proche.
     el("rect", { class: "plot-hit", x: M.l, y: M.t, width: PW, height: PH }, main);
@@ -603,16 +856,16 @@ const DATA = /*__DATA__*/null;
       const text = el("text", { class: "flag-text", y: M.t - 19.5, "text-anchor": "middle" }, grp);
       handles[key] = { grp, hit, rule, flag, text };
     }
-  })();
+  }
 
   function renderMain() {
     const { g, r } = state;
     const spans = { green: [0, g], yellow: [g, r], red: [r, K] };
     for (const z in spans) {
       const [a, b] = spans[z];
-      tints[z].setAttribute("x", x(a));
-      tints[z].setAttribute("width", Math.max(0, x(b) - x(a)));
       const w = x(b) - x(a);
+      tints[z].setAttribute("x", x(a));
+      tints[z].setAttribute("width", Math.max(0, w));
       zoneLabels[z].setAttribute("x", (x(a) + x(b)) / 2);
       zoneLabels[z].style.display = w >= 60 ? "" : "none";
     }
@@ -680,12 +933,8 @@ const DATA = /*__DATA__*/null;
       if (hoverIndex >= 0) bars[hoverIndex].classList.remove("hover");
       hoverIndex = i;
       bars[i].classList.add("hover");
-      const zoneName = i < state.g ? "zone verte" : i < state.r ? "zone jaune" : "zone rouge";
-      tooltip.innerHTML =
-        "<b>Centile " + i + "</b> · " + zoneName + "<br>" +
-        '<span class="num">' + int(n[i]) + " prêts · " + int(d[i]) + " défauts</span><br>" +
-        'Taux de défaut <span class="num">' + pct(rate(d[i], n[i])) + "</span><br>" +
-        'PD prédite dès <span class="num">' + pct(pd[i]) + "</span>";
+      const zoneName = T.zoneNames[i < state.g ? 0 : i < state.r ? 1 : 2];
+      tooltip.innerHTML = T.tooltip(i, zoneName, fmt.int(n[i]), fmt.int(d[i]), fmt.pct(rate(d[i], n[i])), fmt.pct(pd[i]));
     }
     tooltip.hidden = false;
     const box = wrap.getBoundingClientRect();
@@ -697,7 +946,7 @@ const DATA = /*__DATA__*/null;
   }
   function hideTooltip() {
     tooltip.hidden = true;
-    if (hoverIndex >= 0) bars[hoverIndex].classList.remove("hover");
+    if (hoverIndex >= 0 && bars[hoverIndex]) bars[hoverIndex].classList.remove("hover");
     hoverIndex = -1;
   }
 
@@ -709,14 +958,17 @@ const DATA = /*__DATA__*/null;
 
   // ---------- LGD ----------
   const lgdInput = document.getElementById("lgd"), lgdHelp = document.getElementById("lgd-help");
-  const LGD_HELP = lgdHelp.textContent;
-  lgdInput.addEventListener("input", () => {
+  function checkLgd() {
     const v = parseFloat(lgdInput.value.replace(",", "."));
     const ok = Number.isFinite(v) && v >= 0 && v <= 100;
     lgdInput.setAttribute("aria-invalid", ok ? "false" : "true");
-    lgdHelp.textContent = ok ? LGD_HELP : "Entrez un nombre entre 0 et 100. Le calcul garde la dernière valeur valide (" + fInt.format(state.lgd * 100) + " %).";
+    lgdHelp.textContent = ok ? T.lgdHelp : T.lgdError(fmt.pct0(state.lgd));
     lgdHelp.classList.toggle("error", !ok);
-    if (ok) { state.lgd = v / 100; renderMoney(metrics(state.g, state.r)); }
+    return ok ? v / 100 : null;
+  }
+  lgdInput.addEventListener("input", () => {
+    const v = checkLgd();
+    if (v !== null) { state.lgd = v; renderMoney(metrics(state.g, state.r)); }
   });
 
   // ---------- Courbe d'arbitrage ----------
@@ -728,22 +980,24 @@ const DATA = /*__DATA__*/null;
   const ty = (v) => TM.t + TPH * (1 - v / TY_MAX);
   let tradeLayer, tradePoints = [];
 
-  (function buildTrade() {
+  function buildTrade() {
+    trade.replaceChildren();
+    el("desc", { id: "trade-desc" }, trade).textContent = T.tradeDesc;
     for (let v = 0; v <= TY_MAX + 1e-9; v += 0.02) {
       el("line", { class: v === 0 ? "baseline" : "gridline", x1: TM.l, x2: TW - TM.r, y1: ty(v), y2: ty(v) }, trade);
-      el("text", { x: TM.l - 8, y: ty(v) + 4, "text-anchor": "end" }, trade).textContent = pct0(v);
+      el("text", { x: TM.l - 8, y: ty(v) + 4, "text-anchor": "end" }, trade).textContent = fmt.pct0(v);
     }
     for (let v = 0; v <= 1 + 1e-9; v += 0.2) {
       el("line", { class: "gridline", x1: tx(v), x2: tx(v), y1: TM.t, y2: TM.t + TPH }, trade);
-      el("text", { x: tx(v), y: TM.t + TPH + 20, "text-anchor": "middle" }, trade).textContent = pct0(v);
+      el("text", { x: tx(v), y: TM.t + TPH + 20, "text-anchor": "middle" }, trade).textContent = fmt.pct0(v);
     }
-    el("text", { class: "axis-title", x: TM.l + TPW / 2, y: TH - 10, "text-anchor": "middle" }, trade).textContent = "Décisions automatiques (vert + rouge)";
-    el("text", { class: "axis-title", transform: "translate(16 " + (TM.t + TPH / 2) + ") rotate(-90)", "text-anchor": "middle" }, trade).textContent = "Taux de défaut en zone verte";
+    el("text", { class: "axis-title", x: TM.l + TPW / 2, y: TH - 10, "text-anchor": "middle" }, trade).textContent = T.axisX;
+    el("text", { class: "axis-title", transform: "translate(16 " + (TM.t + TPH / 2) + ") rotate(-90)", "text-anchor": "middle" }, trade).textContent = T.axisY;
     el("line", { class: "avg", x1: TM.l, x2: TW - TM.r, y1: ty(AVG), y2: ty(AVG) }, trade);
-    el("text", { class: "avg-label", x: TM.l + 8, y: ty(AVG) - 8 }, trade).textContent = "Moyenne " + pct(AVG);
+    el("text", { class: "avg-label", x: TM.l + 8, y: ty(AVG) - 8 }, trade).textContent = T.avg(fmt.pct(AVG));
     tradeLayer = el("g", {}, trade);
     el("rect", { class: "plot-hit", x: TM.l, y: TM.t, width: TPW, height: TPH }, trade);
-  })();
+  }
 
   function renderTrade() {
     const { g, r } = state;
@@ -755,9 +1009,8 @@ const DATA = /*__DATA__*/null;
     }
     const text = document.getElementById("trade-text");
     if (!tradePoints.length) {
-      el("text", { class: "empty-msg", x: TM.l + TPW / 2, y: TM.t + TPH / 2, "text-anchor": "middle" }, tradeLayer).textContent =
-        "Aucune courbe : le feu rouge commence au centile 0.";
-      text.innerHTML = "Le feu rouge couvre toutes les demandes. Déplacez-le vers la droite pour voir la courbe.";
+      el("text", { class: "empty-msg", x: TM.l + TPW / 2, y: TM.t + TPH / 2, "text-anchor": "middle" }, tradeLayer).textContent = T.emptyCurve;
+      text.innerHTML = T.tradeAllRed;
       return;
     }
     const pts = tradePoints.map((p) => tx(p.x).toFixed(1) + "," + ty(p.y).toFixed(1));
@@ -773,10 +1026,10 @@ const DATA = /*__DATA__*/null;
       el("circle", { class: "curve-dot", cx, cy, r: 8 }, tradeLayer);
       const right = cx > TW - 220;
       el("text", { class: "curve-label", x: right ? cx - 14 : cx + 14, y: cy - 14, "text-anchor": right ? "end" : "start" }, tradeLayer)
-        .textContent = "Vert jusqu'à " + g + " : " + pct(cur.x) + " · " + pct(cur.y);
-      text.innerHTML = "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert, du centile 1 au centile " + r + ". Votre choix actuel (<strong>" + g + "</strong>) automatise <strong>" + pct(cur.x) + "</strong> des demandes, avec <strong>" + pct(cur.y) + "</strong> de défaut en zone verte.";
+        .textContent = T.curveLabel(g, fmt.pct(cur.x), fmt.pct(cur.y));
+      text.innerHTML = T.tradeText(r, g, fmt.pct(cur.x), fmt.pct(cur.y));
     } else {
-      text.innerHTML = "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert. La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.";
+      text.innerHTML = T.tradeNoGreen(r);
     }
   }
   trade.addEventListener("click", (evt) => {
@@ -793,12 +1046,12 @@ const DATA = /*__DATA__*/null;
   const setWidth = (id, v) => { $(id).style.width = (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) * 100 : 0) + "%"; };
 
   function renderMoney(mm) {
-    const L = state.lgd;
-    setText("m-loss", usd(mm.green.md * L));
-    setText("m-loss-sub", usd(mm.green.md) + " de prêts en défaut × " + fInt.format(L * 100) + " % de LGD");
-    setText("m-avoided", usd(mm.red.md * L));
-    setText("m-avoided-sub", usd(mm.red.md) + " de prêts en défaut refusés × " + fInt.format(L * 100) + " % de LGD");
-    setText("m-refused", usd(mm.red.m - mm.red.md));
+    const L = state.lgd, lgdText = fmt.pct0(L);
+    setText("m-loss", fmt.usd(mm.green.md * L));
+    setText("m-loss-sub", T.lossSub(fmt.usd(mm.green.md), lgdText));
+    setText("m-avoided", fmt.usd(mm.red.md * L));
+    setText("m-avoided-sub", T.avoidedSub(fmt.usd(mm.red.md), lgdText));
+    setText("m-refused", fmt.usd(mm.red.m - mm.red.md));
   }
 
   function render() {
@@ -806,62 +1059,74 @@ const DATA = /*__DATA__*/null;
     const mm = metrics(g, r);
 
     gRange.value = g; rRange.value = r;
-    setText("g-out", "centile " + g);
-    setText("r-out", "centile " + r);
-    gRange.setAttribute("aria-valuetext", "centile " + g);
-    rRange.setAttribute("aria-valuetext", "centile " + r);
+    setText("g-out", T.percentile(g));
+    setText("r-out", T.percentile(r));
+    gRange.setAttribute("aria-valuetext", T.percentile(g));
+    rRange.setAttribute("aria-valuetext", T.percentile(r));
 
-    $("summary").innerHTML =
-      "Vert jusqu'au centile <strong class=\"g\">" + g + "</strong>, rouge dès le centile <strong class=\"r\">" + r + "</strong> : " +
-      "<strong>" + pct(mm.auto) + "</strong> des demandes sont décidées automatiquement, et la zone verte a un taux de défaut de <strong>" +
-      pct(mm.greenRate) + "</strong> (moyenne " + pct(AVG) + ").";
+    $("summary").innerHTML = T.summary(g, r, fmt.pct(mm.auto), fmt.pct(mm.greenRate), fmt.pct(AVG));
 
     // Bande tricolore
-    const segs = $("strip").children, shares = [mm.green.n / N, mm.yellow.n / N, mm.red.n / N], names = ["Vert", "Jaune", "Rouge"];
+    const segs = $("strip").children, shares = [mm.green.n / N, mm.yellow.n / N, mm.red.n / N];
     for (let k = 0; k < 3; k++) {
       segs[k].style.flex = shares[k] + " 1 0";
-      segs[k].textContent = shares[k] >= 0.1 ? names[k] + " " + pct(shares[k]) : shares[k] >= 0.05 ? pct0(shares[k]) : "";
+      segs[k].textContent = shares[k] >= 0.1 ? T.stripNames[k] + " " + fmt.pct(shares[k]) : shares[k] >= 0.05 ? fmt.pct0(shares[k]) : "";
     }
 
     // Cartes des zones
     for (const z of ["green", "yellow", "red"]) {
       const zz = mm[z];
-      $("z-" + z + "-share").innerHTML = pct(zz.n / N) + "<small>des demandes</small>";
-      setText("z-" + z + "-n", int(zz.n));
-      setText("z-" + z + "-dr", pct(rate(zz.d, zz.n)));
+      $("z-" + z + "-share").innerHTML = fmt.pct(zz.n / N) + "<small>" + T.ofApps + "</small>";
+      setText("z-" + z + "-n", fmt.int(zz.n));
+      setText("z-" + z + "-dr", fmt.pct(rate(zz.d, zz.n)));
     }
     setText("z-green-rule", ruleGreen(g));
     setText("z-yellow-rule", ruleYellow(g, r));
     setText("z-red-rule", ruleRed(r));
-    $("workload").innerHTML = mm.yellow.n
-      ? "Charge des analystes : <strong>" + int(mm.yellow.n) + "</strong> dossiers en 2013, soit environ <strong>" + int(Math.round(mm.yellow.n / 12)) + "</strong> par mois."
-      : "Charge des analystes : aucun dossier. Tout est décidé automatiquement.";
+    $("workload").innerHTML = mm.yellow.n ? T.workload(fmt.int(mm.yellow.n), fmt.int(Math.round(mm.yellow.n / 12))) : T.workloadNone;
 
     // Indicateurs
-    setText("k-auto", pct(mm.auto)); setWidth("k-auto-m", mm.auto);
-    setText("k-green", pct(mm.greenRate));
+    setText("k-auto", fmt.pct(mm.auto)); setWidth("k-auto-m", mm.auto);
+    setText("k-green", fmt.pct(mm.greenRate));
     const scale = Math.max(AVG, Number.isFinite(mm.greenRate) ? mm.greenRate : 0);
     setWidth("k-green-m", mm.greenRate / scale); setWidth("k-avg-m", AVG / scale);
-    if (!Number.isFinite(mm.greenRate)) setText("k-green-sub", "Aucune demande en zone verte.");
+    if (!Number.isFinite(mm.greenRate)) setText("k-green-sub", T.greenEmpty);
     else {
       const rel = mm.greenRate / AVG - 1;
-      setText("k-green-sub", Math.abs(rel) < 0.005 ? "Égal à la moyenne de " + pct(AVG) + "."
-        : pct0(Math.abs(rel)) + (rel < 0 ? " de moins" : " de plus") + " que la moyenne de " + pct(AVG) + ".");
+      setText("k-green-sub", Math.abs(rel) < 0.005 ? T.greenEqual(fmt.pct(AVG))
+        : (rel < 0 ? T.greenLess : T.greenMore)(fmt.pct0(Math.abs(rel)), fmt.pct(AVG)));
     }
-    setText("k-caught", pct(mm.caught)); setWidth("k-caught-m", mm.caught);
-    setText("k-caught-sub", int(mm.red.d) + " défauts arrêtés sur " + int(D) + ".");
-    setText("k-good", pct(mm.goodRefused)); setWidth("k-good-m", mm.goodRefused);
-    setText("k-good-sub", int(mm.red.n - mm.red.d) + " clients qui ont remboursé, sur " + int(N - D) + ".");
+    setText("k-caught", fmt.pct(mm.caught)); setWidth("k-caught-m", mm.caught);
+    setText("k-caught-sub", T.caughtSub(fmt.int(mm.red.d), fmt.int(D)));
+    setText("k-good", fmt.pct(mm.goodRefused)); setWidth("k-good-m", mm.goodRefused);
+    setText("k-good-sub", T.goodSub(fmt.int(mm.red.n - mm.red.d), fmt.int(N - D)));
 
     renderMoney(mm);
     renderMain();
     renderTrade();
   }
 
-  setText("note-data", "Prêts personnels de 36 mois de Lending Club, aux États-Unis. Le modèle est entraîné sur les prêts de 2010 à 2012 et testé sur ceux de 2013 (" +
-    int(N) + " prêts, " + pct(AVG) + " de défauts). Les centiles et les seuils de PD viennent des données d'entraînement : ils ne sont pas ajustés sur l'année testée.");
+  // ---------- Changement de langue ----------
+  function setLang(lang) {
+    T = I18N[lang] || I18N.fr;
+    fmt = makeFormats(T.locale);
+    hideTooltip();
+    applyStaticText();
+    checkLgd();
+    setText("note-data", T.noteData(fmt.int(N), fmt.pct(AVG)));
+    buildMain();
+    buildTrade();
+    render();
+  }
+  document.getElementById("lang").addEventListener("click", (evt) => {
+    const b = evt.target.closest("button[data-lang]");
+    if (!b) return;
+    history.replaceState(null, "", b.dataset.lang === "fr" ? location.pathname : "#" + b.dataset.lang);
+    setLang(b.dataset.lang);
+  });
+  window.addEventListener("hashchange", () => setLang(langFromHash()));
 
-  setThresholds(DEFAULT.g, DEFAULT.r, "init");
+  setLang(langFromHash());
 })();
 </script>
 </body>
