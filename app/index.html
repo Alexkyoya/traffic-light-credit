@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feu vert, feu jaune, feu rouge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Mise en page : une colonne calme ; le graphique des centiles est la pièce centrale,
+   les feux de circulation donnent la couleur (vert, jaune, rouge), le reste reste neutre. */
+:root {
+  --bg: #f1f3f2;
+  --surface: #ffffff;
+  --surface-2: #f7f8f7;
+  --ink: #1a1f24;
+  --muted: #5a636c;
+  --line: #dde1df;
+  --grid: #e9ecea;
+  --accent: #27477a;
+  --housing: #1f2429;
+
+  --go: #1f8a57;      --go-ink: #13683f;   --go-soft: #e2f1e8;
+  --wait: #d09412;    --wait-ink: #845800; --wait-soft: #fbefd5;
+  --stop: #c63f30;    --stop-ink: #a12d1f; --stop-soft: #f8e2de;
+  --on-signal: #ffffff;
+  --shadow: 0 1px 2px rgb(20 30 30 / 0.06), 0 6px 24px rgb(20 30 30 / 0.06);
+
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111417; --surface: #191d21; --surface-2: #1f2428; --ink: #e7eaec; --muted: #9ba4ac;
+    --line: #2c3237; --grid: #242a2f; --accent: #93b4ec; --housing: #0b0d0f;
+    --go: #3cbd7d;   --go-ink: #6fd9a2;   --go-soft: #16291f;
+    --wait: #e5b23c; --wait-ink: #f1c867; --wait-soft: #2e2511;
+    --stop: #ec6a58; --stop-ink: #ff9585; --stop-soft: #351b18;
+    --on-signal: #0c1210;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px rgb(0 0 0 / 0.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111417; --surface: #191d21; --surface-2: #1f2428; --ink: #e7eaec; --muted: #9ba4ac;
+  --line: #2c3237; --grid: #242a2f; --accent: #93b4ec; --housing: #0b0d0f;
+  --go: #3cbd7d;   --go-ink: #6fd9a2;   --go-soft: #16291f;
+  --wait: #e5b23c; --wait-ink: #f1c867; --wait-soft: #2e2511;
+  --stop: #ec6a58; --stop-ink: #ff9585; --stop-soft: #351b18;
+  --on-signal: #0c1210;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.55 var(--font-body);
+  padding-inline: 20px;
+}
+.page { max-width: 1120px; margin: 0 auto; padding-block: 40px 24px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+  min-width: 0;
+}
+.eyebrow {
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+.section-head h2 { font-size: 22px; font-weight: 700; }
+.section-head p { color: var(--muted); max-width: 62ch; }
+
+/* ---------- En-tête ---------- */
+.hero { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; }
+.signal {
+  width: 58px; padding: 9px 0; border-radius: 16px; background: var(--housing);
+  display: grid; justify-items: center; gap: 7px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06), var(--shadow);
+}
+.lamp { width: 32px; height: 32px; border-radius: 50%; transition: opacity .3s, box-shadow .3s; }
+.lamp.stop { background: var(--stop); box-shadow: 0 0 16px var(--stop); }
+.lamp.wait { background: var(--wait); box-shadow: 0 0 16px var(--wait); }
+.lamp.go   { background: var(--go);   box-shadow: 0 0 16px var(--go); }
+.hero h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
+.hero .lede { margin-top: 10px; font-size: 18px; color: var(--muted); max-width: 60ch; }
+.hero .eyebrow { margin-bottom: 8px; }
+
+/* ---------- Graphique principal ---------- */
+.chart-panel { display: grid; gap: 18px; }
+.summary { font-size: 17px; max-width: 72ch; }
+.summary strong { font-weight: 600; }
+.summary .g { color: var(--go-ink); } .summary .r { color: var(--stop-ink); }
+.scroll { overflow-x: auto; overscroll-behavior-x: contain; margin-inline: -8px; padding-inline: 8px; }
+.chart-wrap { position: relative; min-width: 720px; }
+.chart-wrap svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.axis-ends { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); padding-inline: 5% 4%; }
+
+svg text { font-family: var(--font-data); font-size: 12px; fill: var(--muted); }
+svg .gridline { stroke: var(--grid); stroke-width: 1; }
+svg .baseline { stroke: var(--line); stroke-width: 1.2; }
+svg .avg { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 6 5; opacity: 0.75; }
+svg .avg-label { fill: var(--ink); font-weight: 500; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+svg .zone-label { font-family: var(--font-body); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; }
+svg .tint { transition: x .12s, width .12s; }
+svg .bar { transition: fill .18s; }
+svg .bar.z-green { fill: var(--go); } svg .bar.z-yellow { fill: var(--wait); } svg .bar.z-red { fill: var(--stop); }
+svg .bar.hover { filter: brightness(1.15); stroke: var(--ink); stroke-width: 1.2; }
+svg .handle { cursor: ew-resize; touch-action: none; }
+svg .handle .hit { fill: transparent; }
+svg .handle .rule { stroke-width: 2.5; }
+svg .handle .flag-text { fill: var(--on-signal); font-weight: 500; font-size: 13px; }
+svg .handle.green .rule, svg .handle.green .flag { stroke: var(--go); fill: var(--go); }
+svg .handle.red .rule, svg .handle.red .flag { stroke: var(--stop); fill: var(--stop); }
+svg .handle .flag { filter: drop-shadow(0 0 5px currentColor); }
+svg .handle.green { color: var(--go); } svg .handle.red { color: var(--stop); }
+svg .handle.dragging .flag { filter: drop-shadow(0 0 10px currentColor); }
+svg .plot-hit { fill: transparent; cursor: pointer; }
+
+.tooltip {
+  position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: var(--shadow); padding: 9px 12px; font-size: 13px; line-height: 1.45; white-space: nowrap;
+}
+.tooltip b { font-family: var(--font-display); font-size: 14px; }
+.tooltip .num { font-size: 12.5px; }
+
+.controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px 28px; align-items: end; }
+.control { display: grid; gap: 6px; min-width: 0; }
+.control label { font-weight: 500; display: flex; justify-content: space-between; gap: 8px; }
+.control label .num { font-weight: 500; }
+.control.green label .num { color: var(--go-ink); } .control.red label .num { color: var(--stop-ink); }
+input[type="range"] { width: 100%; margin: 0; height: 28px; cursor: pointer; }
+.control.green input { accent-color: var(--go); } .control.red input { accent-color: var(--stop); }
+.control .hint { font-size: 12.5px; color: var(--muted); }
+button.reset {
+  font: inherit; font-weight: 500; color: var(--accent); background: transparent;
+  border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; white-space: nowrap;
+}
+button.reset:hover { background: var(--surface-2); }
+
+/* ---------- Zones ---------- */
+.strip { display: flex; height: 38px; border-radius: 10px; overflow: hidden; background: var(--grid); }
+.strip > div {
+  display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden;
+  font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--on-signal);
+  transition: flex-grow .15s;
+}
+.strip .s-green { background: var(--go); } .strip .s-yellow { background: var(--wait); } .strip .s-red { background: var(--stop); }
+.strip .s-yellow { color: #2b1d00; }
+
+.zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.zone {
+  border-radius: 12px; padding: 18px; display: grid; gap: 12px; align-content: start;
+  background: var(--surface-2); border: 1px solid var(--line);
+}
+.zone header { display: flex; gap: 12px; align-items: center; }
+.zone .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; }
+.zone.green .dot { background: var(--go); box-shadow: 0 0 12px var(--go); }
+.zone.yellow .dot { background: var(--wait); box-shadow: 0 0 12px var(--wait); }
+.zone.red .dot { background: var(--stop); box-shadow: 0 0 12px var(--stop); }
+.zone h3 { font-size: 18px; font-weight: 700; line-height: 1.2; }
+.zone header p { font-size: 13px; color: var(--muted); }
+.zone .big { font-family: var(--font-display); font-size: 38px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.zone.green .big { color: var(--go-ink); } .zone.yellow .big { color: var(--wait-ink); } .zone.red .big { color: var(--stop-ink); }
+.zone .big small { font-family: var(--font-body); font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 6px; }
+dl.facts { margin: 0; display: grid; gap: 8px; }
+dl.facts div { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+dl.facts dt { color: var(--muted); }
+dl.facts dd { margin: 0; text-align: right; font-weight: 500; }
+.workload { border-radius: 8px; padding: 10px 12px; background: var(--wait-soft); font-size: 13.5px; }
+.workload strong { font-family: var(--font-data); font-weight: 500; }
+
+/* ---------- Indicateurs ---------- */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.kpi { display: grid; gap: 10px; align-content: start; }
+.kpi .label { font-weight: 500; }
+.kpi .value { font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.kpi .sub { font-size: 13px; color: var(--muted); }
+.meter { height: 8px; border-radius: 99px; background: var(--grid); overflow: hidden; }
+.meter i { display: block; height: 100%; border-radius: 99px; background: var(--accent); transition: width .15s; }
+.meter.go i { background: var(--go); } .meter.stop i { background: var(--stop); }
+.compare { display: grid; gap: 5px; font-size: 12px; color: var(--muted); }
+.compare .row { display: grid; grid-template-columns: 74px 1fr; gap: 8px; align-items: center; }
+.compare .meter { height: 6px; }
+.compare .avg-bar i { background: var(--muted); }
+
+/* ---------- Argent ---------- */
+.money { display: grid; grid-template-columns: minmax(0, 260px) repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+.lgd { display: grid; gap: 8px; align-content: start; padding-right: 8px; }
+.lgd label { font-weight: 600; }
+.lgd .field { display: flex; align-items: center; gap: 8px; }
+.lgd input {
+  width: 96px; font: 500 22px var(--font-data); color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+}
+.lgd input[aria-invalid="true"] { border-color: var(--stop); }
+.lgd .field span { font: 500 20px var(--font-data); color: var(--muted); }
+.lgd p { font-size: 13px; color: var(--muted); }
+.lgd .error { color: var(--stop-ink); font-weight: 500; }
+.amount { border-radius: 12px; padding: 16px 18px; background: var(--surface-2); border: 1px solid var(--line); display: grid; gap: 8px; align-content: start; }
+.amount .label { font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.amount .label .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.amount .value { font-family: var(--font-data); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.15; overflow-wrap: anywhere; }
+.amount .sub { font-size: 13px; color: var(--muted); }
+
+/* ---------- Courbe d'arbitrage ---------- */
+.tradeoff { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+.tradeoff .scroll .chart-wrap { min-width: 520px; }
+.tradeoff aside { display: grid; gap: 12px; color: var(--muted); }
+.tradeoff aside strong { color: var(--ink); font-weight: 600; }
+svg .curve { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+svg .curve-area { fill: var(--accent); opacity: 0.08; }
+svg .curve-dot { fill: var(--go); stroke: var(--surface); stroke-width: 3; filter: drop-shadow(0 0 6px var(--go)); }
+svg .curve-guide { stroke: var(--go); stroke-width: 1; stroke-dasharray: 3 4; }
+svg .curve-label { fill: var(--ink); font-weight: 500; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+svg .axis-title { font-family: var(--font-body); font-size: 13px; fill: var(--muted); }
+svg .empty-msg { font-family: var(--font-body); font-size: 15px; fill: var(--muted); }
+
+/* ---------- Notes ---------- */
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.notes h3 { font-size: 16px; margin-bottom: 8px; }
+.notes p, .notes li { color: var(--muted); font-size: 14px; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+
+footer { text-align: center; color: var(--muted); font-size: 13px; padding-block: 8px 24px; }
+
+/* ---------- Petits écrans ---------- */
+@media (max-width: 960px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .money { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lgd { grid-column: 1 / -1; }
+  .tradeoff { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  body { padding-inline: 16px; }
+  .page { padding-block: 24px 16px; gap: 20px; }
+  .panel { padding: 18px 16px; }
+  .hero { grid-template-columns: 1fr; gap: 14px; }
+  .signal { grid-auto-flow: column; width: auto; justify-self: start; padding: 7px 9px; gap: 7px; }
+  .lamp { width: 22px; height: 22px; }
+  .controls { grid-template-columns: 1fr; }
+  .zones, .money, .notes { grid-template-columns: 1fr; }
+}
+@media (max-width: 440px) {
+  .kpis { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header class="hero">
+    <div class="signal" aria-hidden="true">
+      <span class="lamp stop"></span><span class="lamp wait"></span><span class="lamp go"></span>
+    </div>
+    <div>
+      <p class="eyebrow">Simulateur · Prêts personnels de 36 mois</p>
+      <h1>Feu vert, feu jaune, feu rouge</h1>
+      <p class="lede">Peut-on décider plus de demandes de prêt personnel automatiquement, sans prendre plus de risque&nbsp;?</p>
+    </div>
+  </header>
+
+  <!-- 1. Graphique des centiles -->
+  <section class="panel chart-panel" aria-labelledby="t-chart">
+    <div class="section-head">
+      <h2 id="t-chart">Taux de défaut réel par centile de risque</h2>
+      <p>Glissez la ligne verte et la ligne rouge sur le graphique, ou utilisez les curseurs.</p>
+    </div>
+    <p class="summary" id="summary" aria-live="polite"></p>
+    <div class="scroll">
+      <div class="chart-wrap" id="main-wrap">
+        <svg id="main-chart" viewBox="0 0 1000 400" role="img" aria-labelledby="main-desc">
+          <desc id="main-desc">Cent barres, une par centile de risque, qui montrent le taux de défaut réel en 2013. Les barres sont vertes, jaunes ou rouges selon la zone. Une ligne pointillée montre le taux de défaut moyen.</desc>
+        </svg>
+        <div class="tooltip" id="tooltip" hidden></div>
+      </div>
+      <div class="axis-ends"><span>← Moins risqué</span><span>Centile de risque prédit</span><span>Plus risqué →</span></div>
+    </div>
+    <div class="controls">
+      <div class="control green">
+        <label for="g-range"><span>Fin du feu vert</span><span class="num" id="g-out"></span></label>
+        <input type="range" id="g-range" min="0" max="100" step="1" value="40">
+        <span class="hint">Les demandes sous ce centile sont approuvées automatiquement.</span>
+      </div>
+      <div class="control red">
+        <label for="r-range"><span>Début du feu rouge</span><span class="num" id="r-out"></span></label>
+        <input type="range" id="r-range" min="0" max="100" step="1" value="90">
+        <span class="hint">Les demandes à partir de ce centile sont refusées automatiquement.</span>
+      </div>
+      <button type="button" class="reset" id="reset">Revenir à 40 / 90</button>
+    </div>
+  </section>
+
+  <!-- 2. Les trois zones -->
+  <section class="panel" aria-labelledby="t-zones" style="display:grid;gap:18px">
+    <div class="section-head">
+      <h2 id="t-zones">Les trois zones</h2>
+      <p>Part des demandes de 2013 dans chaque zone.</p>
+    </div>
+    <div class="strip" id="strip" aria-hidden="true">
+      <div class="s-green"></div><div class="s-yellow"></div><div class="s-red"></div>
+    </div>
+    <div class="zones">
+      <article class="zone green">
+        <header><span class="dot"></span><div><h3>Feu vert</h3><p>Approuvé automatiquement</p></div></header>
+        <div class="big" id="z-green-share"></div>
+        <dl class="facts">
+          <div><dt>Demandes</dt><dd class="num" id="z-green-n"></dd></div>
+          <div><dt>Taux de défaut</dt><dd class="num" id="z-green-dr"></dd></div>
+          <div><dt>Règle</dt><dd id="z-green-rule"></dd></div>
+        </dl>
+      </article>
+      <article class="zone yellow">
+        <header><span class="dot"></span><div><h3>Feu jaune</h3><p>Revu par un analyste</p></div></header>
+        <div class="big" id="z-yellow-share"></div>
+        <dl class="facts">
+          <div><dt>Demandes</dt><dd class="num" id="z-yellow-n"></dd></div>
+          <div><dt>Taux de défaut</dt><dd class="num" id="z-yellow-dr"></dd></div>
+          <div><dt>Règle</dt><dd id="z-yellow-rule"></dd></div>
+        </dl>
+        <p class="workload" id="workload"></p>
+      </article>
+      <article class="zone red">
+        <header><span class="dot"></span><div><h3>Feu rouge</h3><p>Refusé automatiquement</p></div></header>
+        <div class="big" id="z-red-share"></div>
+        <dl class="facts">
+          <div><dt>Demandes</dt><dd class="num" id="z-red-n"></dd></div>
+          <div><dt>Taux de défaut</dt><dd class="num" id="z-red-dr"></dd></div>
+          <div><dt>Règle</dt><dd id="z-red-rule"></dd></div>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3. Indicateurs -->
+  <section class="kpis" aria-label="Indicateurs clés">
+    <article class="panel kpi">
+      <span class="label">Décisions automatiques</span>
+      <span class="value" id="k-auto"></span>
+      <div class="meter"><i id="k-auto-m"></i></div>
+      <span class="sub">Part des demandes décidées sans analyste (vert + rouge).</span>
+    </article>
+    <article class="panel kpi">
+      <span class="label">Taux de défaut en zone verte</span>
+      <span class="value" id="k-green" style="color:var(--go-ink)"></span>
+      <div class="compare">
+        <div class="row"><span>Zone verte</span><div class="meter go"><i id="k-green-m"></i></div></div>
+        <div class="row"><span>Moyenne</span><div class="meter avg-bar"><i id="k-avg-m"></i></div></div>
+      </div>
+      <span class="sub" id="k-green-sub"></span>
+    </article>
+    <article class="panel kpi">
+      <span class="label">Défauts arrêtés par le feu rouge</span>
+      <span class="value" id="k-caught" style="color:var(--stop-ink)"></span>
+      <div class="meter stop"><i id="k-caught-m"></i></div>
+      <span class="sub" id="k-caught-sub"></span>
+    </article>
+    <article class="panel kpi">
+      <span class="label">Bons clients refusés</span>
+      <span class="value" id="k-good"></span>
+      <div class="meter"><i id="k-good-m"></i></div>
+      <span class="sub" id="k-good-sub"></span>
+    </article>
+  </section>
+
+  <!-- 4. Argent -->
+  <section class="panel" aria-labelledby="t-money" style="display:grid;gap:18px">
+    <div class="section-head">
+      <h2 id="t-money">Combien d'argent est en jeu&nbsp;?</h2>
+      <p>Montants des prêts de 2013. La perte estimée est le montant des prêts en défaut multiplié par la LGD.</p>
+    </div>
+    <div class="money">
+      <div class="lgd">
+        <label for="lgd">Perte en cas de défaut (LGD)</label>
+        <div class="field"><input type="number" id="lgd" min="0" max="100" step="1" value="60" inputmode="decimal" aria-describedby="lgd-help"><span>%</span></div>
+        <p id="lgd-help">Part du montant du prêt qu'on perd quand le client ne rembourse pas. Entre 0 et 100.</p>
+      </div>
+      <article class="amount">
+        <span class="label"><span class="dot" style="background:var(--go)"></span>Perte estimée en zone verte</span>
+        <span class="value" id="m-loss"></span>
+        <span class="sub" id="m-loss-sub"></span>
+      </article>
+      <article class="amount">
+        <span class="label"><span class="dot" style="background:var(--stop)"></span>Pertes évitées par le feu rouge</span>
+        <span class="value" id="m-avoided"></span>
+        <span class="sub" id="m-avoided-sub"></span>
+      </article>
+      <article class="amount">
+        <span class="label"><span class="dot" style="background:var(--muted)"></span>Prêts refusés à des clients qui ont remboursé</span>
+        <span class="value" id="m-refused"></span>
+        <span class="sub">Ce n'est pas une perte : ce sont des affaires qu'on laisse passer.</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- 5. Courbe d'arbitrage -->
+  <section class="panel" aria-labelledby="t-trade" style="display:grid;gap:18px">
+    <div class="section-head">
+      <h2 id="t-trade">Automatiser plus, mais à quel prix&nbsp;?</h2>
+    </div>
+    <div class="tradeoff">
+      <div class="scroll">
+        <div class="chart-wrap">
+          <svg id="trade-chart" viewBox="0 0 760 400" role="img" aria-labelledby="trade-desc">
+            <desc id="trade-desc">Courbe d'arbitrage : pour chaque fin possible du feu vert, la part de décisions automatiques et le taux de défaut en zone verte. Le point vert montre le choix actuel.</desc>
+          </svg>
+        </div>
+      </div>
+      <aside>
+        <p id="trade-text"></p>
+        <p>Plus le point va vers la droite, plus on automatise. Plus il monte, plus la zone verte contient de défauts. <strong>Cliquez sur la courbe</strong> pour déplacer la fin du feu vert.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 6. Notes -->
+  <section class="panel" aria-labelledby="t-notes" style="display:grid;gap:18px">
+    <div class="section-head"><h2 id="t-notes">À savoir</h2></div>
+    <div class="notes">
+      <div>
+        <h3>Données</h3>
+        <p id="note-data"></p>
+      </div>
+      <div>
+        <h3>Modèle</h3>
+        <p>Une régression logistique prédit la probabilité de défaut (PD) de chaque prêt. Elle n'utilise ni la cote (grade) de Lending Club ni le taux d'intérêt, qui contiennent déjà l'avis de Lending Club sur le risque.</p>
+      </div>
+      <div>
+        <h3>Limites</h3>
+        <ul>
+          <li>On voit seulement les prêts accordés. On ne sait rien des demandes refusées par Lending Club.</li>
+          <li>On suppose que les analystes traitent la zone jaune comme aujourd'hui.</li>
+          <li>Ce sont des données américaines, utilisées ici comme exemple.</li>
+          <li>La LGD s'applique au montant initial du prêt. C'est une simplification : une partie du prêt est souvent déjà remboursée au moment du défaut.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Alex (Qichao) Zhao, MMA, Université McGill</footer>
+</main>
+
+<script>
+"use strict";
+// Données agrégées par centile (insérées par build_simulator.py).
+const DATA = [{"percentile":0,"n":801,"defauts":47,"montant":17114150.0,"montant_defaut":1237500.0,"pd_seuil":6.425473959380742e-16},{"percentile":1,"n":615,"defauts":35,"montant":10872175.0,"montant_defaut":600475.0,"pd_seuil":0.033249433945034025},{"percentile":2,"n":558,"defauts":23,"montant":8866050.0,"montant_defaut":365050.0,"pd_seuil":0.040907824538909614},{"percentile":3,"n":598,"defauts":29,"montant":9200950.0,"montant_defaut":426775.0,"pd_seuil":0.04578035076134196},{"percentile":4,"n":580,"defauts":33,"montant":8904275.0,"montant_defaut":606100.0,"pd_seuil":0.049510199182804075},{"percentile":5,"n":575,"defauts":22,"montant":8554275.0,"montant_defaut":393850.0,"pd_seuil":0.05256303077368686},{"percentile":6,"n":606,"defauts":21,"montant":9051950.0,"montant_defaut":401550.0,"pd_seuil":0.05537998237324342},{"percentile":7,"n":626,"defauts":39,"montant":9130650.0,"montant_defaut":647225.0,"pd_seuil":0.057726190258458},{"percentile":8,"n":657,"defauts":41,"montant":9213425.0,"montant_defaut":608500.0,"pd_seuil":0.05998357117442969},{"percentile":9,"n":625,"defauts":27,"montant":8204000.0,"montant_defaut":448225.0,"pd_seuil":0.06202751090466776},{"percentile":10,"n":721,"defauts":42,"montant":9688775.0,"montant_defaut":628875.0,"pd_seuil":0.06406485641995094},{"percentile":11,"n":716,"defauts":43,"montant":9786150.0,"montant_defaut":731850.0,"pd_seuil":0.06618398432607756},{"percentile":12,"n":699,"defauts":55,"montant":9608400.0,"montant_defaut":666325.0,"pd_seuil":0.06805259071587841},{"percentile":13,"n":655,"defauts":35,"montant":8897625.0,"montant_defaut":495125.0,"pd_seuil":0.06977814169224432},{"percentile":14,"n":655,"defauts":39,"montant":8920400.0,"montant_defaut":557650.0,"pd_seuil":0.07140566512137311},{"percentile":15,"n":659,"defauts":55,"montant":8854450.0,"montant_defaut":766450.0,"pd_seuil":0.07291089857390005},{"percentile":16,"n":668,"defauts":49,"montant":8761000.0,"montant_defaut":637825.0,"pd_seuil":0.07437410863154696},{"percentile":17,"n":706,"defauts":44,"montant":9309900.0,"montant_defaut":501075.0,"pd_seuil":0.07581435283302734},{"percentile":18,"n":689,"defauts":50,"montant":8784700.0,"montant_defaut":651800.0,"pd_seuil":0.07731002600761913},{"percentile":19,"n":707,"defauts":56,"montant":9028225.0,"montant_defaut":580325.0,"pd_seuil":0.07880774472029049},{"percentile":20,"n":738,"defauts":61,"montant":9641350.0,"montant_defaut":743275.0,"pd_seuil":0.08024717232992445},{"percentile":21,"n":722,"defauts":56,"montant":9272575.0,"montant_defaut":601075.0,"pd_seuil":0.08159479230908001},{"percentile":22,"n":768,"defauts":57,"montant":10032875.0,"montant_defaut":713125.0,"pd_seuil":0.08291679244085509},{"percentile":23,"n":734,"defauts":52,"montant":9455525.0,"montant_defaut":641275.0,"pd_seuil":0.08436414884663337},{"percentile":24,"n":763,"defauts":71,"montant":9303375.0,"montant_defaut":872125.0,"pd_seuil":0.0856991737437693},{"percentile":25,"n":706,"defauts":41,"montant":9293100.0,"montant_defaut":515225.0,"pd_seuil":0.08704867953054561},{"percentile":26,"n":838,"defauts":75,"montant":10957325.0,"montant_defaut":926050.0,"pd_seuil":0.08823169028838256},{"percentile":27,"n":742,"defauts":62,"montant":9336250.0,"montant_defaut":717575.0,"pd_seuil":0.08953337449895243},{"percentile":28,"n":824,"defauts":63,"montant":10365200.0,"montant_defaut":607275.0,"pd_seuil":0.0908170326509145},{"percentile":29,"n":733,"defauts":72,"montant":9548175.0,"montant_defaut":837900.0,"pd_seuil":0.09210413169248872},{"percentile":30,"n":784,"defauts":58,"montant":10290150.0,"montant_defaut":705050.0,"pd_seuil":0.0933385163426244},{"percentile":31,"n":726,"defauts":77,"montant":9186275.0,"montant_defaut":1009675.0,"pd_seuil":0.09456704632179862},{"percentile":32,"n":831,"defauts":64,"montant":10641475.0,"montant_defaut":756850.0,"pd_seuil":0.09574076706881895},{"percentile":33,"n":816,"defauts":76,"montant":10393600.0,"montant_defaut":871725.0,"pd_seuil":0.09702905394126624},{"percentile":34,"n":812,"defauts":87,"montant":10118550.0,"montant_defaut":969550.0,"pd_seuil":0.09834535806525159},{"percentile":35,"n":819,"defauts":82,"montant":10443400.0,"montant_defaut":1054475.0,"pd_seuil":0.09956466725751029},{"percentile":36,"n":763,"defauts":75,"montant":9598000.0,"montant_defaut":885700.0,"pd_seuil":0.10076159332894828},{"percentile":37,"n":852,"defauts":80,"montant":11246600.0,"montant_defaut":969350.0,"pd_seuil":0.1019112909233542},{"percentile":38,"n":786,"defauts":83,"montant":9806750.0,"montant_defaut":989850.0,"pd_seuil":0.1031587535352632},{"percentile":39,"n":802,"defauts":75,"montant":9856700.0,"montant_defaut":809325.0,"pd_seuil":0.10437656347030773},{"percentile":40,"n":820,"defauts":78,"montant":9833625.0,"montant_defaut":891475.0,"pd_seuil":0.1056110573707884},{"percentile":41,"n":888,"defauts":100,"montant":11401025.0,"montant_defaut":1264900.0,"pd_seuil":0.10677196152658473},{"percentile":42,"n":784,"defauts":90,"montant":9897800.0,"montant_defaut":1068400.0,"pd_seuil":0.10803152860602448},{"percentile":43,"n":802,"defauts":79,"montant":10312175.0,"montant_defaut":834000.0,"pd_seuil":0.10922799529481196},{"percentile":44,"n":855,"defauts":95,"montant":10427175.0,"montant_defaut":1100250.0,"pd_seuil":0.11043457060682803},{"percentile":45,"n":827,"defauts":91,"montant":9946750.0,"montant_defaut":1107725.0,"pd_seuil":0.11172010117215304},{"percentile":46,"n":779,"defauts":82,"montant":9906225.0,"montant_defaut":938125.0,"pd_seuil":0.11294681645032902},{"percentile":47,"n":854,"defauts":91,"montant":10887675.0,"montant_defaut":1037275.0,"pd_seuil":0.11413237466077313},{"percentile":48,"n":879,"defauts":129,"montant":11183225.0,"montant_defaut":1538300.0,"pd_seuil":0.11536671562549872},{"percentile":49,"n":825,"defauts":93,"montant":10481425.0,"montant_defaut":1052100.0,"pd_seuil":0.11667358344212644},{"percentile":50,"n":923,"defauts":105,"montant":10983700.0,"montant_defaut":1195575.0,"pd_seuil":0.11796405692472693},{"percentile":51,"n":847,"defauts":100,"montant":10483075.0,"montant_defaut":1175375.0,"pd_seuil":0.11926750375015735},{"percentile":52,"n":934,"defauts":108,"montant":11302950.0,"montant_defaut":1210525.0,"pd_seuil":0.1205360357437333},{"percentile":53,"n":894,"defauts":96,"montant":11040925.0,"montant_defaut":1098300.0,"pd_seuil":0.12188792366966819},{"percentile":54,"n":835,"defauts":116,"montant":10105625.0,"montant_defaut":1219825.0,"pd_seuil":0.12321308489378947},{"percentile":55,"n":866,"defauts":117,"montant":10344075.0,"montant_defaut":1411825.0,"pd_seuil":0.12449478677910529},{"percentile":56,"n":865,"defauts":87,"montant":10554900.0,"montant_defaut":891875.0,"pd_seuil":0.12582949258955894},{"percentile":57,"n":848,"defauts":77,"montant":10511400.0,"montant_defaut":839225.0,"pd_seuil":0.127142999585649},{"percentile":58,"n":877,"defauts":121,"montant":10610700.0,"montant_defaut":1348000.0,"pd_seuil":0.1284204085721689},{"percentile":59,"n":816,"defauts":114,"montant":9594450.0,"montant_defaut":1185250.0,"pd_seuil":0.12977438062115712},{"percentile":60,"n":892,"defauts":114,"montant":11159550.0,"montant_defaut":1403950.0,"pd_seuil":0.13108463216440938},{"percentile":61,"n":883,"defauts":104,"montant":10764600.0,"montant_defaut":1260650.0,"pd_seuil":0.13254475091807805},{"percentile":62,"n":872,"defauts":117,"montant":10884525.0,"montant_defaut":1585675.0,"pd_seuil":0.13394709985179074},{"percentile":63,"n":913,"defauts":127,"montant":10948125.0,"montant_defaut":1501525.0,"pd_seuil":0.13536088244559336},{"percentile":64,"n":984,"defauts":113,"montant":11755225.0,"montant_defaut":1299025.0,"pd_seuil":0.13688727407192347},{"percentile":65,"n":874,"defauts":126,"montant":10515850.0,"montant_defaut":1470200.0,"pd_seuil":0.13847325126365853},{"percentile":66,"n":839,"defauts":105,"montant":10130300.0,"montant_defaut":1216750.0,"pd_seuil":0.13998265196681053},{"percentile":67,"n":910,"defauts":103,"montant":11240625.0,"montant_defaut":1263900.0,"pd_seuil":0.14147606461468576},{"percentile":68,"n":791,"defauts":131,"montant":9661200.0,"montant_defaut":1614350.0,"pd_seuil":0.14305372896121205},{"percentile":69,"n":788,"defauts":115,"montant":9756350.0,"montant_defaut":1456875.0,"pd_seuil":0.14452126434032483},{"percentile":70,"n":928,"defauts":141,"montant":11304950.0,"montant_defaut":1598425.0,"pd_seuil":0.1460866107880522},{"percentile":71,"n":886,"defauts":133,"montant":10732700.0,"montant_defaut":1568975.0,"pd_seuil":0.14776286612924452},{"percentile":72,"n":801,"defauts":123,"montant":9439025.0,"montant_defaut":1320625.0,"pd_seuil":0.14945114277885482},{"percentile":73,"n":896,"defauts":137,"montant":10775075.0,"montant_defaut":1656850.0,"pd_seuil":0.1510936145635417},{"percentile":74,"n":884,"defauts":144,"montant":10822475.0,"montant_defaut":1676250.0,"pd_seuil":0.15288358044333772},{"percentile":75,"n":814,"defauts":109,"montant":9901025.0,"montant_defaut":1294775.0,"pd_seuil":0.1547143886958557},{"percentile":76,"n":841,"defauts":122,"montant":10342750.0,"montant_defaut":1557125.0,"pd_seuil":0.15653065466753993},{"percentile":77,"n":884,"defauts":135,"montant":10690625.0,"montant_defaut":1593725.0,"pd_seuil":0.1583250340227591},{"percentile":78,"n":807,"defauts":127,"montant":9730900.0,"montant_defaut":1438725.0,"pd_seuil":0.16030135479016142},{"percentile":79,"n":865,"defauts":138,"montant":10431125.0,"montant_defaut":1561050.0,"pd_seuil":0.1622010916211753},{"percentile":80,"n":926,"defauts":141,"montant":11056125.0,"montant_defaut":1618325.0,"pd_seuil":0.16427579447276777},{"percentile":81,"n":820,"defauts":125,"montant":10066575.0,"montant_defaut":1422425.0,"pd_seuil":0.16651265736970544},{"percentile":82,"n":904,"defauts":154,"montant":11116750.0,"montant_defaut":2110000.0,"pd_seuil":0.16870582698363976},{"percentile":83,"n":912,"defauts":141,"montant":11144500.0,"montant_defaut":1751725.0,"pd_seuil":0.1711819277190075},{"percentile":84,"n":808,"defauts":131,"montant":9941400.0,"montant_defaut":1611625.0,"pd_seuil":0.17363921445930144},{"percentile":85,"n":916,"defauts":136,"montant":11180125.0,"montant_defaut":1526800.0,"pd_seuil":0.17612857352260503},{"percentile":86,"n":891,"defauts":151,"montant":10738450.0,"montant_defaut":1818550.0,"pd_seuil":0.179011924985792},{"percentile":87,"n":893,"defauts":164,"montant":10831300.0,"montant_defaut":2058700.0,"pd_seuil":0.18196667715770115},{"percentile":88,"n":883,"defauts":164,"montant":10682150.0,"montant_defaut":2117875.0,"pd_seuil":0.18517142026085484},{"percentile":89,"n":814,"defauts":152,"montant":9814775.0,"montant_defaut":1948300.0,"pd_seuil":0.1885860081950615},{"percentile":90,"n":856,"defauts":147,"montant":10026500.0,"montant_defaut":1788875.0,"pd_seuil":0.1921352640387766},{"percentile":91,"n":828,"defauts":162,"montant":10019900.0,"montant_defaut":1978875.0,"pd_seuil":0.19598468183987303},{"percentile":92,"n":863,"defauts":154,"montant":10250950.0,"montant_defaut":1684125.0,"pd_seuil":0.20005803499434202},{"percentile":93,"n":924,"defauts":196,"montant":10826275.0,"montant_defaut":2292475.0,"pd_seuil":0.20495996897243127},{"percentile":94,"n":883,"defauts":170,"montant":10563775.0,"montant_defaut":2157050.0,"pd_seuil":0.21084439518343637},{"percentile":95,"n":887,"defauts":180,"montant":10468850.0,"montant_defaut":2156900.0,"pd_seuil":0.21747610987305452},{"percentile":96,"n":931,"defauts":181,"montant":10965175.0,"montant_defaut":2119000.0,"pd_seuil":0.22533763218361724},{"percentile":97,"n":848,"defauts":184,"montant":10140175.0,"montant_defaut":2263100.0,"pd_seuil":0.235933235665981},{"percentile":98,"n":821,"defauts":203,"montant":9696000.0,"montant_defaut":2409025.0,"pd_seuil":0.2500668941078505},{"percentile":99,"n":713,"defauts":170,"montant":8520175.0,"montant_defaut":2074050.0,"pd_seuil":0.27527469878618727}];
+
+(function () {
+  if (!Array.isArray(DATA) || DATA.length !== 100) {
+    document.getElementById("summary").textContent =
+      "Données manquantes. Lancez « python app/build_simulator.py » puis ouvrez app/index.html.";
+    return;
+  }
+
+  // ---------- Données et sommes cumulées ----------
+  const K = 100;
+  const col = (key) => DATA.map((row) => row[key]);
+  const n = col("n"), d = col("defauts"), m = col("montant"), md = col("montant_defaut"), pd = col("pd_seuil");
+
+  // P[k] = somme des centiles 0 à k-1, donc la somme de [a, b) vaut P[b] - P[a].
+  const prefix = (arr) => arr.reduce((acc, v) => (acc.push(acc[acc.length - 1] + v), acc), [0]);
+  const Pn = prefix(n), Pd = prefix(d), Pm = prefix(m), Pmd = prefix(md);
+  const N = Pn[K], D = Pd[K], AVG = D / N;
+
+  const zone = (a, b) => ({ n: Pn[b] - Pn[a], d: Pd[b] - Pd[a], m: Pm[b] - Pm[a], md: Pmd[b] - Pmd[a] });
+  const rate = (num, den) => (den > 0 ? num / den : NaN);
+
+  function metrics(g, r) {
+    const green = zone(0, g), yellow = zone(g, r), red = zone(r, K);
+    return {
+      green, yellow, red,
+      auto: (green.n + red.n) / N,
+      greenRate: rate(green.d, green.n),
+      caught: rate(red.d, D),
+      goodRefused: rate(red.n - red.d, N - D),
+    };
+  }
+
+  // ---------- Formats fr-CA ----------
+  const fPct1 = new Intl.NumberFormat("fr-CA", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const fPct0 = new Intl.NumberFormat("fr-CA", { style: "percent", maximumFractionDigits: 0 });
+  const fInt = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 0 });
+  const pct = (v) => (Number.isFinite(v) ? fPct1.format(v) : "—");
+  const pct0 = (v) => (Number.isFinite(v) ? fPct0.format(v) : "—");
+  const int = (v) => fInt.format(v);
+  const usd = (v) => fInt.format(Math.round(v)) + " $ US";
+
+  // ---------- Règles de PD ----------
+  function ruleGreen(g) {
+    if (g === 0) return "Aucune demande";
+    if (g === K) return "Toutes les demandes";
+    return "PD prédite sous " + pct(pd[g]);
+  }
+  function ruleRed(r) {
+    if (r === K) return "Aucune demande";
+    if (r === 0) return "Toutes les demandes";
+    return "PD prédite de " + pct(pd[r]) + " ou plus";
+  }
+  function ruleYellow(g, r) {
+    if (g === r) return "Aucune demande";
+    const lo = g === 0 ? null : pd[g];
+    const hi = r === K ? null : pd[r];
+    if (lo === null && hi === null) return "Toutes les demandes";
+    if (lo === null) return "PD prédite sous " + pct(hi);
+    if (hi === null) return "PD prédite de " + pct(lo) + " ou plus";
+    return "PD prédite de " + pct(lo) + " à moins de " + pct(hi);
+  }
+
+  // ---------- État ----------
+  const DEFAULT = { g: 40, r: 90 };
+  const state = { g: DEFAULT.g, r: DEFAULT.r, lgd: 0.6 };
+
+  function setThresholds(g, r, source) {
+    g = Math.max(0, Math.min(K, Math.round(g)));
+    r = Math.max(0, Math.min(K, Math.round(r)));
+    // On garde toujours 0 ≤ g ≤ r ≤ 100 : la ligne déplacée pousse jusqu'à l'autre, sans la dépasser.
+    if (source === "g") g = Math.min(g, r);
+    else if (source === "r") r = Math.max(r, g);
+    else if (g > r) g = r;
+    if (g === state.g && r === state.r && source !== "init") return;
+    state.g = g; state.r = r;
+    render();
+  }
+
+  // ---------- Outils SVG ----------
+  const NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    const node = document.createElementNS(NS, tag);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(node);
+    return node;
+  }
+  function svgPoint(svg, evt) {
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  // ---------- Graphique principal ----------
+  const main = document.getElementById("main-chart");
+  const W = 1000, H = 400, M = { l: 52, r: 44, t: 50, b: 34 };
+  const PW = W - M.l - M.r, PH = H - M.t - M.b, BAND = PW / K;
+  const Y_MAX = 0.3;
+  const x = (i) => M.l + i * BAND;
+  const y = (v) => M.t + PH * (1 - v / Y_MAX);
+
+  const tints = {}, zoneLabels = {}, bars = [], handles = {};
+  (function buildMain() {
+    for (const z of ["green", "yellow", "red"]) {
+      const soft = { green: "var(--go-soft)", yellow: "var(--wait-soft)", red: "var(--stop-soft)" }[z];
+      tints[z] = el("rect", { class: "tint", y: M.t, height: PH, fill: soft }, main);
+    }
+    for (let v = 0; v <= Y_MAX + 1e-9; v += 0.05) {
+      el("line", { class: v === 0 ? "baseline" : "gridline", x1: M.l, x2: W - M.r, y1: y(v), y2: y(v) }, main);
+      el("text", { x: M.l - 8, y: y(v) + 4, "text-anchor": "end" }, main).textContent = pct0(v);
+    }
+    for (let i = 0; i <= K; i += 10) {
+      el("text", { x: x(i), y: H - M.b + 20, "text-anchor": "middle" }, main).textContent = i;
+    }
+    for (let i = 0; i < K; i++) {
+      const v = rate(d[i], n[i]);
+      const gap = BAND * 0.14;
+      bars.push(el("rect", { class: "bar", x: x(i) + gap / 2, width: BAND - gap, y: y(v), height: y(0) - y(v), rx: 1.5 }, main));
+    }
+    el("line", { class: "avg", x1: M.l, x2: W - M.r, y1: y(AVG), y2: y(AVG) }, main);
+    el("text", { class: "avg-label", x: M.l + 8, y: y(AVG) - 8 }, main).textContent = "Moyenne " + pct(AVG);
+
+    const colors = { green: "var(--go-ink)", yellow: "var(--wait-ink)", red: "var(--stop-ink)" };
+    const names = { green: "VERT", yellow: "JAUNE", red: "ROUGE" };
+    for (const z of ["green", "yellow", "red"]) {
+      zoneLabels[z] = el("text", { class: "zone-label", y: M.t + 18, "text-anchor": "middle", fill: colors[z] }, main);
+      zoneLabels[z].textContent = names[z];
+    }
+
+    // Zone cliquable : un clic déplace la ligne la plus proche.
+    el("rect", { class: "plot-hit", x: M.l, y: M.t, width: PW, height: PH }, main);
+
+    // Poignées : le drapeau vert pointe vers la gauche (zone verte), le rouge vers la droite.
+    for (const key of ["g", "r"]) {
+      const cls = key === "g" ? "green" : "red";
+      const grp = el("g", { class: "handle " + cls, "data-handle": key, "aria-hidden": "true" }, main);
+      const hit = el("rect", { class: "hit", y: M.t - 36, width: 40, height: PH + 36 }, grp);
+      const rule = el("line", { class: "rule", y1: M.t - 32, y2: M.t + PH }, grp);
+      const flag = el("rect", { class: "flag", y: M.t - 36, width: 40, height: 24, rx: 6 }, grp);
+      const text = el("text", { class: "flag-text", y: M.t - 19.5, "text-anchor": "middle" }, grp);
+      handles[key] = { grp, hit, rule, flag, text };
+    }
+  })();
+
+  function renderMain() {
+    const { g, r } = state;
+    const spans = { green: [0, g], yellow: [g, r], red: [r, K] };
+    for (const z in spans) {
+      const [a, b] = spans[z];
+      tints[z].setAttribute("x", x(a));
+      tints[z].setAttribute("width", Math.max(0, x(b) - x(a)));
+      const w = x(b) - x(a);
+      zoneLabels[z].setAttribute("x", (x(a) + x(b)) / 2);
+      zoneLabels[z].style.display = w >= 60 ? "" : "none";
+    }
+    for (let i = 0; i < K; i++) {
+      bars[i].setAttribute("class", "bar " + (i < g ? "z-green" : i < r ? "z-yellow" : "z-red") + (i === hoverIndex ? " hover" : ""));
+    }
+    for (const key of ["g", "r"]) {
+      const h = handles[key], xv = x(state[key]);
+      const fx = key === "g" ? xv - 40 : xv;
+      h.rule.setAttribute("x1", xv); h.rule.setAttribute("x2", xv);
+      h.flag.setAttribute("x", fx);
+      h.hit.setAttribute("x", key === "g" ? xv - 30 : xv - 10);
+      h.text.setAttribute("x", fx + 20);
+      h.text.textContent = state[key];
+    }
+  }
+
+  // Glisser les lignes (souris, doigt ou stylet).
+  let dragging = null, justDragged = false, hoverIndex = -1;
+  const tooltip = document.getElementById("tooltip");
+  const wrap = document.getElementById("main-wrap");
+  const valueAt = (evt) => Math.round((svgPoint(main, evt).x - M.l) / BAND);
+
+  main.addEventListener("pointerdown", (evt) => {
+    const h = evt.target.closest("[data-handle]");
+    if (!h) return;
+    dragging = h.dataset.handle;
+    handles[dragging].grp.classList.add("dragging");
+    main.setPointerCapture(evt.pointerId);
+    evt.preventDefault();
+    hideTooltip();
+  });
+  main.addEventListener("pointermove", (evt) => {
+    if (dragging) {
+      const v = valueAt(evt);
+      if (dragging === "g") setThresholds(v, state.r, "g");
+      else setThresholds(state.g, v, "r");
+      justDragged = true;
+      return;
+    }
+    if (evt.pointerType === "mouse") showTooltip(evt);
+  });
+  function endDrag() {
+    if (!dragging) return;
+    handles[dragging].grp.classList.remove("dragging");
+    dragging = null;
+    setTimeout(() => { justDragged = false; }, 0);
+  }
+  main.addEventListener("pointerup", endDrag);
+  main.addEventListener("pointercancel", endDrag);
+  main.addEventListener("pointerleave", () => { if (!dragging) hideTooltip(); });
+  main.addEventListener("click", (evt) => {
+    if (justDragged || evt.target.closest("[data-handle]")) return;
+    const v = Math.max(0, Math.min(K, valueAt(evt)));
+    // Déplace la ligne la plus proche ; entre les deux, celle du côté cliqué.
+    const useG = Math.abs(v - state.g) < Math.abs(v - state.r) || (state.g === state.r && v < state.g);
+    if (useG) setThresholds(v, state.r, "g"); else setThresholds(state.g, v, "r");
+  });
+
+  function showTooltip(evt) {
+    const p = svgPoint(main, evt);
+    const i = Math.floor((p.x - M.l) / BAND);
+    if (i < 0 || i >= K || p.y < M.t || p.y > M.t + PH) { hideTooltip(); return; }
+    if (i !== hoverIndex) {
+      if (hoverIndex >= 0) bars[hoverIndex].classList.remove("hover");
+      hoverIndex = i;
+      bars[i].classList.add("hover");
+      const zoneName = i < state.g ? "zone verte" : i < state.r ? "zone jaune" : "zone rouge";
+      tooltip.innerHTML =
+        "<b>Centile " + i + "</b> · " + zoneName + "<br>" +
+        '<span class="num">' + int(n[i]) + " prêts · " + int(d[i]) + " défauts</span><br>" +
+        'Taux de défaut <span class="num">' + pct(rate(d[i], n[i])) + "</span><br>" +
+        'PD prédite dès <span class="num">' + pct(pd[i]) + "</span>";
+    }
+    tooltip.hidden = false;
+    const box = wrap.getBoundingClientRect();
+    const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+    let left = evt.clientX - box.left + 14;
+    if (left + tw > box.width) left = evt.clientX - box.left - tw - 14;
+    const top = Math.max(0, evt.clientY - box.top - th - 12);
+    tooltip.style.transform = "translate(" + left + "px," + top + "px)";
+  }
+  function hideTooltip() {
+    tooltip.hidden = true;
+    if (hoverIndex >= 0) bars[hoverIndex].classList.remove("hover");
+    hoverIndex = -1;
+  }
+
+  // ---------- Curseurs ----------
+  const gRange = document.getElementById("g-range"), rRange = document.getElementById("r-range");
+  gRange.addEventListener("input", () => setThresholds(+gRange.value, state.r, "g"));
+  rRange.addEventListener("input", () => setThresholds(state.g, +rRange.value, "r"));
+  document.getElementById("reset").addEventListener("click", () => setThresholds(DEFAULT.g, DEFAULT.r, "reset"));
+
+  // ---------- LGD ----------
+  const lgdInput = document.getElementById("lgd"), lgdHelp = document.getElementById("lgd-help");
+  const LGD_HELP = lgdHelp.textContent;
+  lgdInput.addEventListener("input", () => {
+    const v = parseFloat(lgdInput.value.replace(",", "."));
+    const ok = Number.isFinite(v) && v >= 0 && v <= 100;
+    lgdInput.setAttribute("aria-invalid", ok ? "false" : "true");
+    lgdHelp.textContent = ok ? LGD_HELP : "Entrez un nombre entre 0 et 100. Le calcul garde la dernière valeur valide (" + fInt.format(state.lgd * 100) + " %).";
+    lgdHelp.classList.toggle("error", !ok);
+    if (ok) { state.lgd = v / 100; renderMoney(metrics(state.g, state.r)); }
+  });
+
+  // ---------- Courbe d'arbitrage ----------
+  const trade = document.getElementById("trade-chart");
+  const TW = 760, TH = 400, TM = { l: 62, r: 26, t: 24, b: 58 };
+  const TPW = TW - TM.l - TM.r, TPH = TH - TM.t - TM.b;
+  const TX_MAX = 1, TY_MAX = 0.14;
+  const tx = (v) => TM.l + TPW * (v / TX_MAX);
+  const ty = (v) => TM.t + TPH * (1 - v / TY_MAX);
+  let tradeLayer, tradePoints = [];
+
+  (function buildTrade() {
+    for (let v = 0; v <= TY_MAX + 1e-9; v += 0.02) {
+      el("line", { class: v === 0 ? "baseline" : "gridline", x1: TM.l, x2: TW - TM.r, y1: ty(v), y2: ty(v) }, trade);
+      el("text", { x: TM.l - 8, y: ty(v) + 4, "text-anchor": "end" }, trade).textContent = pct0(v);
+    }
+    for (let v = 0; v <= 1 + 1e-9; v += 0.2) {
+      el("line", { class: "gridline", x1: tx(v), x2: tx(v), y1: TM.t, y2: TM.t + TPH }, trade);
+      el("text", { x: tx(v), y: TM.t + TPH + 20, "text-anchor": "middle" }, trade).textContent = pct0(v);
+    }
+    el("text", { class: "axis-title", x: TM.l + TPW / 2, y: TH - 10, "text-anchor": "middle" }, trade).textContent = "Décisions automatiques (vert + rouge)";
+    el("text", { class: "axis-title", transform: "translate(16 " + (TM.t + TPH / 2) + ") rotate(-90)", "text-anchor": "middle" }, trade).textContent = "Taux de défaut en zone verte";
+    el("line", { class: "avg", x1: TM.l, x2: TW - TM.r, y1: ty(AVG), y2: ty(AVG) }, trade);
+    el("text", { class: "avg-label", x: TM.l + 8, y: ty(AVG) - 8 }, trade).textContent = "Moyenne " + pct(AVG);
+    tradeLayer = el("g", {}, trade);
+    el("rect", { class: "plot-hit", x: TM.l, y: TM.t, width: TPW, height: TPH }, trade);
+  })();
+
+  function renderTrade() {
+    const { g, r } = state;
+    tradeLayer.replaceChildren();
+    tradePoints = [];
+    for (let gi = 1; gi <= r; gi++) {
+      const mm = metrics(gi, r);
+      tradePoints.push({ g: gi, x: mm.auto, y: mm.greenRate });
+    }
+    const text = document.getElementById("trade-text");
+    if (!tradePoints.length) {
+      el("text", { class: "empty-msg", x: TM.l + TPW / 2, y: TM.t + TPH / 2, "text-anchor": "middle" }, tradeLayer).textContent =
+        "Aucune courbe : le feu rouge commence au centile 0.";
+      text.innerHTML = "Le feu rouge couvre toutes les demandes. Déplacez-le vers la droite pour voir la courbe.";
+      return;
+    }
+    const pts = tradePoints.map((p) => tx(p.x).toFixed(1) + "," + ty(p.y).toFixed(1));
+    const first = tradePoints[0], last = tradePoints[tradePoints.length - 1];
+    el("path", { class: "curve-area", d: "M" + tx(first.x) + "," + ty(0) + " L" + pts.join(" L") + " L" + tx(last.x) + "," + ty(0) + " Z" }, tradeLayer);
+    el("path", { class: "curve", d: "M" + pts.join(" L") }, tradeLayer);
+
+    const cur = tradePoints.find((p) => p.g === g);
+    if (cur) {
+      const cx = tx(cur.x), cy = ty(cur.y);
+      el("line", { class: "curve-guide", x1: cx, x2: cx, y1: cy, y2: TM.t + TPH }, tradeLayer);
+      el("line", { class: "curve-guide", x1: TM.l, x2: cx, y1: cy, y2: cy }, tradeLayer);
+      el("circle", { class: "curve-dot", cx, cy, r: 8 }, tradeLayer);
+      const right = cx > TW - 220;
+      el("text", { class: "curve-label", x: right ? cx - 14 : cx + 14, y: cy - 14, "text-anchor": right ? "end" : "start" }, tradeLayer)
+        .textContent = "Vert jusqu'à " + g + " : " + pct(cur.x) + " · " + pct(cur.y);
+      text.innerHTML = "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert, du centile 1 au centile " + r + ". Votre choix actuel (<strong>" + g + "</strong>) automatise <strong>" + pct(cur.x) + "</strong> des demandes, avec <strong>" + pct(cur.y) + "</strong> de défaut en zone verte.";
+    } else {
+      text.innerHTML = "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert. La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.";
+    }
+  }
+  trade.addEventListener("click", (evt) => {
+    if (!tradePoints.length) return;
+    const px = svgPoint(trade, evt).x;
+    let best = tradePoints[0];
+    for (const p of tradePoints) if (Math.abs(tx(p.x) - px) < Math.abs(tx(best.x) - px)) best = p;
+    setThresholds(best.g, state.r, "g");
+  });
+
+  // ---------- Rendu du texte ----------
+  const $ = (id) => document.getElementById(id);
+  const setText = (id, t) => { $(id).textContent = t; };
+  const setWidth = (id, v) => { $(id).style.width = (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) * 100 : 0) + "%"; };
+
+  function renderMoney(mm) {
+    const L = state.lgd;
+    setText("m-loss", usd(mm.green.md * L));
+    setText("m-loss-sub", usd(mm.green.md) + " de prêts en défaut × " + fInt.format(L * 100) + " % de LGD");
+    setText("m-avoided", usd(mm.red.md * L));
+    setText("m-avoided-sub", usd(mm.red.md) + " de prêts en défaut refusés × " + fInt.format(L * 100) + " % de LGD");
+    setText("m-refused", usd(mm.red.m - mm.red.md));
+  }
+
+  function render() {
+    const { g, r } = state;
+    const mm = metrics(g, r);
+
+    gRange.value = g; rRange.value = r;
+    setText("g-out", "centile " + g);
+    setText("r-out", "centile " + r);
+    gRange.setAttribute("aria-valuetext", "centile " + g);
+    rRange.setAttribute("aria-valuetext", "centile " + r);
+
+    $("summary").innerHTML =
+      "Vert jusqu'au centile <strong class=\"g\">" + g + "</strong>, rouge dès le centile <strong class=\"r\">" + r + "</strong> : " +
+      "<strong>" + pct(mm.auto) + "</strong> des demandes sont décidées automatiquement, et la zone verte a un taux de défaut de <strong>" +
+      pct(mm.greenRate) + "</strong> (moyenne " + pct(AVG) + ").";
+
+    // Bande tricolore
+    const segs = $("strip").children, shares = [mm.green.n / N, mm.yellow.n / N, mm.red.n / N], names = ["Vert", "Jaune", "Rouge"];
+    for (let k = 0; k < 3; k++) {
+      segs[k].style.flex = shares[k] + " 1 0";
+      segs[k].textContent = shares[k] >= 0.1 ? names[k] + " " + pct(shares[k]) : shares[k] >= 0.05 ? pct0(shares[k]) : "";
+    }
+
+    // Cartes des zones
+    for (const z of ["green", "yellow", "red"]) {
+      const zz = mm[z];
+      $("z-" + z + "-share").innerHTML = pct(zz.n / N) + "<small>des demandes</small>";
+      setText("z-" + z + "-n", int(zz.n));
+      setText("z-" + z + "-dr", pct(rate(zz.d, zz.n)));
+    }
+    setText("z-green-rule", ruleGreen(g));
+    setText("z-yellow-rule", ruleYellow(g, r));
+    setText("z-red-rule", ruleRed(r));
+    $("workload").innerHTML = mm.yellow.n
+      ? "Charge des analystes : <strong>" + int(mm.yellow.n) + "</strong> dossiers en 2013, soit environ <strong>" + int(Math.round(mm.yellow.n / 12)) + "</strong> par mois."
+      : "Charge des analystes : aucun dossier. Tout est décidé automatiquement.";
+
+    // Indicateurs
+    setText("k-auto", pct(mm.auto)); setWidth("k-auto-m", mm.auto);
+    setText("k-green", pct(mm.greenRate));
+    const scale = Math.max(AVG, Number.isFinite(mm.greenRate) ? mm.greenRate : 0);
+    setWidth("k-green-m", mm.greenRate / scale); setWidth("k-avg-m", AVG / scale);
+    if (!Number.isFinite(mm.greenRate)) setText("k-green-sub", "Aucune demande en zone verte.");
+    else {
+      const rel = mm.greenRate / AVG - 1;
+      setText("k-green-sub", Math.abs(rel) < 0.005 ? "Égal à la moyenne de " + pct(AVG) + "."
+        : pct0(Math.abs(rel)) + (rel < 0 ? " de moins" : " de plus") + " que la moyenne de " + pct(AVG) + ".");
+    }
+    setText("k-caught", pct(mm.caught)); setWidth("k-caught-m", mm.caught);
+    setText("k-caught-sub", int(mm.red.d) + " défauts arrêtés sur " + int(D) + ".");
+    setText("k-good", pct(mm.goodRefused)); setWidth("k-good-m", mm.goodRefused);
+    setText("k-good-sub", int(mm.red.n - mm.red.d) + " clients qui ont remboursé, sur " + int(N - D) + ".");
+
+    renderMoney(mm);
+    renderMain();
+    renderTrade();
+  }
+
+  setText("note-data", "Prêts personnels de 36 mois de Lending Club, aux États-Unis. Le modèle est entraîné sur les prêts de 2010 à 2012 et testé sur ceux de 2013 (" +
+    int(N) + " prêts, " + pct(AVG) + " de défauts). Les centiles et les seuils de PD viennent des données d'entraînement : ils ne sont pas ajustés sur l'année testée.");
+
+  setThresholds(DEFAULT.g, DEFAULT.r, "init");
+})();
+</script>
+</body>
+</html>
