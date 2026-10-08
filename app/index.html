@@ -88,6 +88,55 @@ p { margin: 0; }
 .section-head h2 { font-size: 22px; font-weight: 700; }
 .section-head p { color: var(--muted); max-width: 62ch; }
 
+/* ---------- Client ---------- */
+.client-panel { display: grid; gap: 20px; }
+.client-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.client-field { display: grid; gap: 5px; min-width: 0; }
+.client-field label { font-weight: 500; }
+.client-field input, .client-field select {
+  width: 100%; min-width: 0; font: 15px var(--font-body); color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px;
+}
+.client-field input[aria-invalid="true"], .client-field select[aria-invalid="true"] { border-color: var(--stop); }
+.client-field small { color: var(--muted); font-size: 12px; }
+.client-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.client-presets button {
+  font: 500 13px var(--font-body); color: var(--accent); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer;
+}
+.client-presets button:hover { background: var(--surface-2); }
+.client-results { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 20px; }
+.client-decision, .client-drivers { min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: var(--surface-2); }
+.client-decision { display: grid; align-content: start; gap: 9px; }
+.client-decision .label, .client-drivers h3 { font-size: 16px; font-weight: 600; }
+.client-light { display: flex; align-items: center; gap: 10px; font: 700 23px var(--font-display); }
+.client-light::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); }
+.client-light[data-zone="green"] { color: var(--go-ink); }
+.client-light[data-zone="green"]::before { background: var(--go); box-shadow: 0 0 12px var(--go); }
+.client-light[data-zone="yellow"] { color: var(--wait-ink); }
+.client-light[data-zone="yellow"]::before { background: var(--wait); box-shadow: 0 0 12px var(--wait); }
+.client-light[data-zone="red"] { color: var(--stop-ink); }
+.client-light[data-zone="red"]::before { background: var(--stop); box-shadow: 0 0 12px var(--stop); }
+.client-human-note { color: var(--muted); font-size: 13px; }
+.client-pd { font: 700 36px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.client-percentile, .client-small { color: var(--muted); font-size: 13px; }
+.client-message { min-height: 1.4em; color: var(--muted); font-size: 13px; }
+.client-message.error { color: var(--stop-ink); font-weight: 500; }
+.client-note { border-left: 3px solid var(--accent); padding: 9px 12px; color: var(--muted); font-size: 13px; }
+.client-drivers { display: grid; align-content: start; gap: 12px; }
+.client-drivers > p { color: var(--muted); font-size: 12.5px; }
+.driver-list { display: grid; gap: 10px; }
+.driver-row { display: grid; gap: 5px; }
+.driver-head { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+.driver-head .num { white-space: nowrap; }
+.driver-track { height: 8px; border-radius: 99px; background: var(--grid); overflow: hidden; position: relative; }
+.driver-bar { height: 100%; border-radius: inherit; }
+.driver-bar.risk-up { background: var(--stop); }
+.driver-bar.risk-down { background: var(--go); }
+.portfolio-bridge { display: grid; gap: 8px; border-left: 3px solid var(--accent); padding: 10px 14px; background: var(--surface-2); border-radius: 0 8px 8px 0; }
+.portfolio-bridge strong { font-weight: 600; }
+.portfolio-bridge p { color: var(--muted); font-size: 13px; }
+
 /* ---------- En-tête ---------- */
 .hero { display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: center; }
 .signal {
@@ -196,7 +245,7 @@ dl.facts dd { margin: 0; text-align: right; font-weight: 500; }
 .workload strong { font-family: var(--font-data); font-weight: 500; }
 
 /* ---------- Indicateurs ---------- */
-.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .kpi { display: grid; gap: 10px; align-content: start; }
 .kpi .label { font-weight: 500; }
 .kpi .value { font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -251,10 +300,11 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
 
 /* ---------- Petits écrans ---------- */
 @media (max-width: 960px) {
-  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .money { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .lgd { grid-column: 1 / -1; }
   .tradeoff { grid-template-columns: 1fr; }
+  .client-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
   body { padding-inline: 16px; }
@@ -266,6 +316,8 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
   .lamp { width: 22px; height: 22px; }
   .controls { grid-template-columns: 1fr; }
   .zones, .money, .notes { grid-template-columns: 1fr; }
+  .client-fields, .client-results { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 440px) {
   .kpis { grid-template-columns: 1fr; }
@@ -296,8 +348,41 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
     </nav>
   </header>
 
-  <!-- 1. Graphique des centiles -->
+  <section class="panel client-panel" aria-labelledby="t-client">
+    <div class="section-head">
+      <h2 id="t-client">1. Un client</h2>
+      <p>Entrez les renseignements d’un prêt pour voir la PD estimée et les facteurs qui la font varier.</p>
+    </div>
+    <div class="client-presets" aria-label="Profils prédéfinis">
+      <button type="button" data-profile="prudent">Profil prudent</button>
+      <button type="button" data-profile="moyen">Profil moyen</button>
+      <button type="button" data-profile="risque">Profil à risque</button>
+    </div>
+    <div class="client-fields" id="client-fields"></div>
+    <p class="client-message" id="client-message" role="status" aria-live="polite"></p>
+    <div class="client-results">
+      <article class="client-decision" aria-live="polite">
+        <span class="label">Décision indicative</span>
+        <div class="client-light" id="client-light" data-zone="">À compléter</div>
+        <span class="client-pd" id="client-pd">—</span>
+        <span class="client-percentile" id="client-percentile">—</span>
+        <span class="client-human-note" id="client-human-note" hidden>La décision finale est prise par une personne.</span>
+      </article>
+      <article class="client-drivers">
+        <h3>Pourquoi ?</h3>
+        <p>Contribution au risque par rapport à un client moyen. Les barres rouges augmentent le risque; les vertes le réduisent.</p>
+        <div class="driver-list" id="driver-list"></div>
+      </article>
+    </div>
+    <p class="client-note">La PD est la probabilité de défaut sur les 36 mois du prêt, pas sur 12 mois. Le modèle classe les clients; avec une AUC d’environ 0,62, il ne peut pas prédire le comportement d’une personne. Illustration seulement : ce n’est pas une vraie décision de crédit. Données de prêts américains Lending Club, modèle entraîné sur 2010 à 2012.</p>
+  </section>
+
+  <!-- 2. Le portefeuille -->
   <section class="panel chart-panel" aria-labelledby="t-chart">
+    <div class="portfolio-bridge">
+      <strong>2. Le portefeuille</strong>
+      <p>Perte attendue de ce client = PD × LGD × EAD : <span class="num" id="client-expected-loss" aria-live="polite">—</span></p>
+    </div>
     <div class="section-head">
       <h2 id="t-chart" data-i18n="chartTitle"></h2>
       <p data-i18n="chartHint"></p>
@@ -375,6 +460,12 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
       <span class="sub" data-i18n="kAutoSub"></span>
     </article>
     <article class="panel kpi">
+      <span class="label" data-i18n="kAnalysts"></span>
+      <span class="value" id="k-analysts"></span>
+      <div class="meter"><i id="k-analysts-m"></i></div>
+      <span class="sub" data-i18n="kAnalystsSub"></span>
+    </article>
+    <article class="panel kpi">
       <span class="label" data-i18n="kGreen"></span>
       <span class="value" id="k-green" style="color:var(--go-ink)"></span>
       <div class="compare">
@@ -420,9 +511,9 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
         <span class="sub" id="m-avoided-sub"></span>
       </article>
       <article class="amount">
-        <span class="label"><span class="dot" style="background:var(--muted)"></span><span data-i18n="mRefused"></span></span>
-        <span class="value" id="m-refused"></span>
-        <span class="sub" data-i18n="mRefusedSub"></span>
+        <span class="label"><span class="dot" style="background:var(--muted)"></span><span data-i18n="mGoodReviewed"></span></span>
+        <span class="value" id="m-good-reviewed"></span>
+        <span class="sub" data-i18n="mGoodReviewedSub"></span>
       </article>
     </div>
   </section>
@@ -464,6 +555,7 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
           <li data-i18n="lim2"></li>
           <li data-i18n="lim3"></li>
           <li data-i18n="lim4"></li>
+          <li data-i18n="lim5"></li>
         </ul>
       </div>
     </div>
@@ -476,6 +568,82 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
 "use strict";
 // Données agrégées par centile (insérées par build_simulator.py).
 const DATA = [{"percentile":0,"n":801,"defauts":47,"montant":17114150.0,"montant_defaut":1237500.0,"pd_seuil":6.425473959380742e-16},{"percentile":1,"n":615,"defauts":35,"montant":10872175.0,"montant_defaut":600475.0,"pd_seuil":0.033249433945034025},{"percentile":2,"n":558,"defauts":23,"montant":8866050.0,"montant_defaut":365050.0,"pd_seuil":0.040907824538909614},{"percentile":3,"n":598,"defauts":29,"montant":9200950.0,"montant_defaut":426775.0,"pd_seuil":0.04578035076134196},{"percentile":4,"n":580,"defauts":33,"montant":8904275.0,"montant_defaut":606100.0,"pd_seuil":0.049510199182804075},{"percentile":5,"n":575,"defauts":22,"montant":8554275.0,"montant_defaut":393850.0,"pd_seuil":0.05256303077368686},{"percentile":6,"n":606,"defauts":21,"montant":9051950.0,"montant_defaut":401550.0,"pd_seuil":0.05537998237324342},{"percentile":7,"n":626,"defauts":39,"montant":9130650.0,"montant_defaut":647225.0,"pd_seuil":0.057726190258458},{"percentile":8,"n":657,"defauts":41,"montant":9213425.0,"montant_defaut":608500.0,"pd_seuil":0.05998357117442969},{"percentile":9,"n":625,"defauts":27,"montant":8204000.0,"montant_defaut":448225.0,"pd_seuil":0.06202751090466776},{"percentile":10,"n":721,"defauts":42,"montant":9688775.0,"montant_defaut":628875.0,"pd_seuil":0.06406485641995094},{"percentile":11,"n":716,"defauts":43,"montant":9786150.0,"montant_defaut":731850.0,"pd_seuil":0.06618398432607756},{"percentile":12,"n":699,"defauts":55,"montant":9608400.0,"montant_defaut":666325.0,"pd_seuil":0.06805259071587841},{"percentile":13,"n":655,"defauts":35,"montant":8897625.0,"montant_defaut":495125.0,"pd_seuil":0.06977814169224432},{"percentile":14,"n":655,"defauts":39,"montant":8920400.0,"montant_defaut":557650.0,"pd_seuil":0.07140566512137311},{"percentile":15,"n":659,"defauts":55,"montant":8854450.0,"montant_defaut":766450.0,"pd_seuil":0.07291089857390005},{"percentile":16,"n":668,"defauts":49,"montant":8761000.0,"montant_defaut":637825.0,"pd_seuil":0.07437410863154696},{"percentile":17,"n":706,"defauts":44,"montant":9309900.0,"montant_defaut":501075.0,"pd_seuil":0.07581435283302734},{"percentile":18,"n":689,"defauts":50,"montant":8784700.0,"montant_defaut":651800.0,"pd_seuil":0.07731002600761913},{"percentile":19,"n":707,"defauts":56,"montant":9028225.0,"montant_defaut":580325.0,"pd_seuil":0.07880774472029049},{"percentile":20,"n":738,"defauts":61,"montant":9641350.0,"montant_defaut":743275.0,"pd_seuil":0.08024717232992445},{"percentile":21,"n":722,"defauts":56,"montant":9272575.0,"montant_defaut":601075.0,"pd_seuil":0.08159479230908001},{"percentile":22,"n":768,"defauts":57,"montant":10032875.0,"montant_defaut":713125.0,"pd_seuil":0.08291679244085509},{"percentile":23,"n":734,"defauts":52,"montant":9455525.0,"montant_defaut":641275.0,"pd_seuil":0.08436414884663337},{"percentile":24,"n":763,"defauts":71,"montant":9303375.0,"montant_defaut":872125.0,"pd_seuil":0.0856991737437693},{"percentile":25,"n":706,"defauts":41,"montant":9293100.0,"montant_defaut":515225.0,"pd_seuil":0.08704867953054561},{"percentile":26,"n":838,"defauts":75,"montant":10957325.0,"montant_defaut":926050.0,"pd_seuil":0.08823169028838256},{"percentile":27,"n":742,"defauts":62,"montant":9336250.0,"montant_defaut":717575.0,"pd_seuil":0.08953337449895243},{"percentile":28,"n":824,"defauts":63,"montant":10365200.0,"montant_defaut":607275.0,"pd_seuil":0.0908170326509145},{"percentile":29,"n":733,"defauts":72,"montant":9548175.0,"montant_defaut":837900.0,"pd_seuil":0.09210413169248872},{"percentile":30,"n":784,"defauts":58,"montant":10290150.0,"montant_defaut":705050.0,"pd_seuil":0.0933385163426244},{"percentile":31,"n":726,"defauts":77,"montant":9186275.0,"montant_defaut":1009675.0,"pd_seuil":0.09456704632179862},{"percentile":32,"n":831,"defauts":64,"montant":10641475.0,"montant_defaut":756850.0,"pd_seuil":0.09574076706881895},{"percentile":33,"n":816,"defauts":76,"montant":10393600.0,"montant_defaut":871725.0,"pd_seuil":0.09702905394126624},{"percentile":34,"n":812,"defauts":87,"montant":10118550.0,"montant_defaut":969550.0,"pd_seuil":0.09834535806525159},{"percentile":35,"n":819,"defauts":82,"montant":10443400.0,"montant_defaut":1054475.0,"pd_seuil":0.09956466725751029},{"percentile":36,"n":763,"defauts":75,"montant":9598000.0,"montant_defaut":885700.0,"pd_seuil":0.10076159332894828},{"percentile":37,"n":852,"defauts":80,"montant":11246600.0,"montant_defaut":969350.0,"pd_seuil":0.1019112909233542},{"percentile":38,"n":786,"defauts":83,"montant":9806750.0,"montant_defaut":989850.0,"pd_seuil":0.1031587535352632},{"percentile":39,"n":802,"defauts":75,"montant":9856700.0,"montant_defaut":809325.0,"pd_seuil":0.10437656347030773},{"percentile":40,"n":820,"defauts":78,"montant":9833625.0,"montant_defaut":891475.0,"pd_seuil":0.1056110573707884},{"percentile":41,"n":888,"defauts":100,"montant":11401025.0,"montant_defaut":1264900.0,"pd_seuil":0.10677196152658473},{"percentile":42,"n":784,"defauts":90,"montant":9897800.0,"montant_defaut":1068400.0,"pd_seuil":0.10803152860602448},{"percentile":43,"n":802,"defauts":79,"montant":10312175.0,"montant_defaut":834000.0,"pd_seuil":0.10922799529481196},{"percentile":44,"n":855,"defauts":95,"montant":10427175.0,"montant_defaut":1100250.0,"pd_seuil":0.11043457060682803},{"percentile":45,"n":827,"defauts":91,"montant":9946750.0,"montant_defaut":1107725.0,"pd_seuil":0.11172010117215304},{"percentile":46,"n":779,"defauts":82,"montant":9906225.0,"montant_defaut":938125.0,"pd_seuil":0.11294681645032902},{"percentile":47,"n":854,"defauts":91,"montant":10887675.0,"montant_defaut":1037275.0,"pd_seuil":0.11413237466077313},{"percentile":48,"n":879,"defauts":129,"montant":11183225.0,"montant_defaut":1538300.0,"pd_seuil":0.11536671562549872},{"percentile":49,"n":825,"defauts":93,"montant":10481425.0,"montant_defaut":1052100.0,"pd_seuil":0.11667358344212644},{"percentile":50,"n":923,"defauts":105,"montant":10983700.0,"montant_defaut":1195575.0,"pd_seuil":0.11796405692472693},{"percentile":51,"n":847,"defauts":100,"montant":10483075.0,"montant_defaut":1175375.0,"pd_seuil":0.11926750375015735},{"percentile":52,"n":934,"defauts":108,"montant":11302950.0,"montant_defaut":1210525.0,"pd_seuil":0.1205360357437333},{"percentile":53,"n":894,"defauts":96,"montant":11040925.0,"montant_defaut":1098300.0,"pd_seuil":0.12188792366966819},{"percentile":54,"n":835,"defauts":116,"montant":10105625.0,"montant_defaut":1219825.0,"pd_seuil":0.12321308489378947},{"percentile":55,"n":866,"defauts":117,"montant":10344075.0,"montant_defaut":1411825.0,"pd_seuil":0.12449478677910529},{"percentile":56,"n":865,"defauts":87,"montant":10554900.0,"montant_defaut":891875.0,"pd_seuil":0.12582949258955894},{"percentile":57,"n":848,"defauts":77,"montant":10511400.0,"montant_defaut":839225.0,"pd_seuil":0.127142999585649},{"percentile":58,"n":877,"defauts":121,"montant":10610700.0,"montant_defaut":1348000.0,"pd_seuil":0.1284204085721689},{"percentile":59,"n":816,"defauts":114,"montant":9594450.0,"montant_defaut":1185250.0,"pd_seuil":0.12977438062115712},{"percentile":60,"n":892,"defauts":114,"montant":11159550.0,"montant_defaut":1403950.0,"pd_seuil":0.13108463216440938},{"percentile":61,"n":883,"defauts":104,"montant":10764600.0,"montant_defaut":1260650.0,"pd_seuil":0.13254475091807805},{"percentile":62,"n":872,"defauts":117,"montant":10884525.0,"montant_defaut":1585675.0,"pd_seuil":0.13394709985179074},{"percentile":63,"n":913,"defauts":127,"montant":10948125.0,"montant_defaut":1501525.0,"pd_seuil":0.13536088244559336},{"percentile":64,"n":984,"defauts":113,"montant":11755225.0,"montant_defaut":1299025.0,"pd_seuil":0.13688727407192347},{"percentile":65,"n":874,"defauts":126,"montant":10515850.0,"montant_defaut":1470200.0,"pd_seuil":0.13847325126365853},{"percentile":66,"n":839,"defauts":105,"montant":10130300.0,"montant_defaut":1216750.0,"pd_seuil":0.13998265196681053},{"percentile":67,"n":910,"defauts":103,"montant":11240625.0,"montant_defaut":1263900.0,"pd_seuil":0.14147606461468576},{"percentile":68,"n":791,"defauts":131,"montant":9661200.0,"montant_defaut":1614350.0,"pd_seuil":0.14305372896121205},{"percentile":69,"n":788,"defauts":115,"montant":9756350.0,"montant_defaut":1456875.0,"pd_seuil":0.14452126434032483},{"percentile":70,"n":928,"defauts":141,"montant":11304950.0,"montant_defaut":1598425.0,"pd_seuil":0.1460866107880522},{"percentile":71,"n":886,"defauts":133,"montant":10732700.0,"montant_defaut":1568975.0,"pd_seuil":0.14776286612924452},{"percentile":72,"n":801,"defauts":123,"montant":9439025.0,"montant_defaut":1320625.0,"pd_seuil":0.14945114277885482},{"percentile":73,"n":896,"defauts":137,"montant":10775075.0,"montant_defaut":1656850.0,"pd_seuil":0.1510936145635417},{"percentile":74,"n":884,"defauts":144,"montant":10822475.0,"montant_defaut":1676250.0,"pd_seuil":0.15288358044333772},{"percentile":75,"n":814,"defauts":109,"montant":9901025.0,"montant_defaut":1294775.0,"pd_seuil":0.1547143886958557},{"percentile":76,"n":841,"defauts":122,"montant":10342750.0,"montant_defaut":1557125.0,"pd_seuil":0.15653065466753993},{"percentile":77,"n":884,"defauts":135,"montant":10690625.0,"montant_defaut":1593725.0,"pd_seuil":0.1583250340227591},{"percentile":78,"n":807,"defauts":127,"montant":9730900.0,"montant_defaut":1438725.0,"pd_seuil":0.16030135479016142},{"percentile":79,"n":865,"defauts":138,"montant":10431125.0,"montant_defaut":1561050.0,"pd_seuil":0.1622010916211753},{"percentile":80,"n":926,"defauts":141,"montant":11056125.0,"montant_defaut":1618325.0,"pd_seuil":0.16427579447276777},{"percentile":81,"n":820,"defauts":125,"montant":10066575.0,"montant_defaut":1422425.0,"pd_seuil":0.16651265736970544},{"percentile":82,"n":904,"defauts":154,"montant":11116750.0,"montant_defaut":2110000.0,"pd_seuil":0.16870582698363976},{"percentile":83,"n":912,"defauts":141,"montant":11144500.0,"montant_defaut":1751725.0,"pd_seuil":0.1711819277190075},{"percentile":84,"n":808,"defauts":131,"montant":9941400.0,"montant_defaut":1611625.0,"pd_seuil":0.17363921445930144},{"percentile":85,"n":916,"defauts":136,"montant":11180125.0,"montant_defaut":1526800.0,"pd_seuil":0.17612857352260503},{"percentile":86,"n":891,"defauts":151,"montant":10738450.0,"montant_defaut":1818550.0,"pd_seuil":0.179011924985792},{"percentile":87,"n":893,"defauts":164,"montant":10831300.0,"montant_defaut":2058700.0,"pd_seuil":0.18196667715770115},{"percentile":88,"n":883,"defauts":164,"montant":10682150.0,"montant_defaut":2117875.0,"pd_seuil":0.18517142026085484},{"percentile":89,"n":814,"defauts":152,"montant":9814775.0,"montant_defaut":1948300.0,"pd_seuil":0.1885860081950615},{"percentile":90,"n":856,"defauts":147,"montant":10026500.0,"montant_defaut":1788875.0,"pd_seuil":0.1921352640387766},{"percentile":91,"n":828,"defauts":162,"montant":10019900.0,"montant_defaut":1978875.0,"pd_seuil":0.19598468183987303},{"percentile":92,"n":863,"defauts":154,"montant":10250950.0,"montant_defaut":1684125.0,"pd_seuil":0.20005803499434202},{"percentile":93,"n":924,"defauts":196,"montant":10826275.0,"montant_defaut":2292475.0,"pd_seuil":0.20495996897243127},{"percentile":94,"n":883,"defauts":170,"montant":10563775.0,"montant_defaut":2157050.0,"pd_seuil":0.21084439518343637},{"percentile":95,"n":887,"defauts":180,"montant":10468850.0,"montant_defaut":2156900.0,"pd_seuil":0.21747610987305452},{"percentile":96,"n":931,"defauts":181,"montant":10965175.0,"montant_defaut":2119000.0,"pd_seuil":0.22533763218361724},{"percentile":97,"n":848,"defauts":184,"montant":10140175.0,"montant_defaut":2263100.0,"pd_seuil":0.235933235665981},{"percentile":98,"n":821,"defauts":203,"montant":9696000.0,"montant_defaut":2409025.0,"pd_seuil":0.2500668941078505},{"percentile":99,"n":713,"defauts":170,"montant":8520175.0,"montant_defaut":2074050.0,"pd_seuil":0.27527469878618727}];
+const MODEL = {"features":["emp_length","annual_inc","dti","open_acc","pub_rec","revol_bal","revol_util","total_acc","mort_acc","pub_rec_bankruptcies","credit_hist_years","loan_to_income","home_ownership_OTHER","home_ownership_OWN","home_ownership_RENT","verification_status_Source Verified","verification_status_Verified","purpose_credit_card","purpose_debt_consolidation","purpose_educational","purpose_home_improvement","purpose_house","purpose_major_purchase","purpose_medical","purpose_moving","purpose_other","purpose_renewable_energy","purpose_small_business","purpose_vacation","purpose_wedding"],"mean":[5.375030581327512,67044.64151457553,15.331787831454541,10.014923687825808,0.03750682198844496,13465.01117865141,54.16095225549053,22.45058998438,0.83689331351036,0.029790917816210925,14.111456474712217,0.18728845374218023,0.0010915181511940832,0.08116754803620829,0.48555620377514724,0.2509550783822948,0.29757043114966975,0.18845625458719914,0.5241733631932551,0.0013361687712893087,0.059431281404670945,0.007602988501420855,0.038711255810452226,0.015337711952123755,0.011837326156915145,0.07147561962474358,0.001976024239230668,0.028718218943485706,0.009390819955962889,0.01842407362101737],"scale":[3.4751080533376344,64925.25658359121,7.468250393595184,4.440787462540409,0.19975373474226332,14292.008900761013,26.068251234831394,10.945089887330173,1.7431972761756669,0.17297300387400724,6.87214047874461,0.10703513192990344,0.03302009599198187,0.273092250314794,0.4997913332087852,0.4335627140523399,0.4571895336237143,0.3910760727712243,0.4994153066456083,0.03652921329982265,0.23643012539706054,0.08686301322926876,0.19290592132962106,0.12289209309063555,0.10815361235931954,0.2576176535565887,0.044408552863571676,0.16701342114991755,0.09645015529545597,0.13447909552129172],"coef":[0.02685096772047863,-0.3021767528942814,0.05633589624420884,0.1637815609335413,0.03937170218276113,-0.11157187156499773,0.2918819953674724,-0.08544926816860574,0.02404699773054634,0.029648797398014553,-0.015518994927297998,0.15097847642865816,0.023614317533067364,0.03698521053565639,0.07618593865573692,0.022897506195250807,0.011252186847128313,-0.10775827504448512,0.025771593880824756,0.015611259563453224,0.034747079366884,0.025394516773454473,-0.018109782886917523,0.04565423836633239,0.042304884307255264,0.08871843485142596,0.04287450872465869,0.14383923933445938,0.03970308814788285,-0.012144372717665912],"intercept":-2.0442399255883488,"numeric_inputs":["loan_amnt","emp_length","annual_inc","dti","open_acc","pub_rec","revol_bal","revol_util","total_acc","mort_acc","pub_rec_bankruptcies","credit_hist_years"],"categories":{"home_ownership":["MORTGAGE","OTHER","OWN","RENT"],"verification_status":["Not Verified","Source Verified","Verified"],"purpose":["car","credit_card","debt_consolidation","educational","home_improvement","house","major_purchase","medical","moving","other","renewable_energy","small_business","vacation","wedding"]},"ranges":{"loan_amnt":{"p1":1200.0,"median":10000.0,"p99":35000.0},"emp_length":{"p1":0.0,"median":5.0,"p99":10.0},"annual_inc":{"p1":15360.0,"median":57000.0,"p99":225000.0},"dti":{"p1":0.79,"median":15.15,"p99":32.84},"open_acc":{"p1":3.0,"median":9.0,"p99":23.0},"pub_rec":{"p1":0.0,"median":0.0,"p99":1.0},"revol_bal":{"p1":0.0,"median":10134.0,"p99":69253.71999999997},"revol_util":{"p1":0.0,"median":56.9,"p99":97.3},"total_acc":{"p1":5.0,"median":21.0,"p99":55.0},"mort_acc":{"p1":0.0,"median":0.0,"p99":8.0},"pub_rec_bankruptcies":{"p1":0.0,"median":0.0,"p99":1.0},"credit_hist_years":{"p1":3.8329911019849416,"median":12.83230663928816,"p99":36.41889117043121}},"pd_cuts":[6.425473959380742e-16,0.033249433945034025,0.040907824538909614,0.04578035076134196,0.049510199182804075,0.05256303077368686,0.05537998237324342,0.057726190258458,0.05998357117442969,0.06202751090466776,0.06406485641995094,0.06618398432607756,0.06805259071587841,0.06977814169224432,0.07140566512137311,0.07291089857390005,0.07437410863154696,0.07581435283302734,0.07731002600761913,0.07880774472029049,0.08024717232992445,0.08159479230908001,0.08291679244085509,0.08436414884663337,0.0856991737437693,0.08704867953054561,0.08823169028838256,0.08953337449895243,0.0908170326509145,0.09210413169248872,0.0933385163426244,0.09456704632179862,0.09574076706881895,0.09702905394126624,0.09834535806525159,0.09956466725751031,0.10076159332894828,0.1019112909233542,0.1031587535352632,0.10437656347030773,0.1056110573707884,0.10677196152658473,0.10803152860602448,0.10922799529481196,0.11043457060682803,0.11172010117215304,0.11294681645032902,0.11413237466077313,0.11536671562549872,0.11667358344212644,0.11796405692472693,0.11926750375015735,0.1205360357437333,0.12188792366966819,0.12321308489378947,0.12449478677910529,0.12582949258955894,0.12714299958564906,0.1284204085721689,0.12977438062115712,0.13108463216440938,0.13254475091807805,0.13394709985179074,0.13536088244559336,0.13688727407192347,0.13847325126365853,0.13998265196681053,0.14147606461468576,0.14305372896121205,0.14452126434032483,0.14608661078805224,0.14776286612924452,0.14945114277885482,0.1510936145635417,0.15288358044333772,0.1547143886958557,0.15653065466753993,0.1583250340227591,0.16030135479016142,0.1622010916211753,0.16427579447276777,0.16651265736970544,0.1687058269836399,0.17118192771900753,0.17363921445930144,0.17612857352260503,0.179011924985792,0.18196667715770115,0.18517142026085484,0.1885860081950615,0.1921352640387766,0.19598468183987303,0.20005803499434202,0.20495996897243127,0.21084439518343642,0.21747610987305457,0.22533763218361724,0.235933235665981,0.2500668941078505,0.27527469878618727,0.4810980340264555],"check":[{"input":{"loan_amnt":10000.0,"emp_length":2.0,"home_ownership":"RENT","annual_inc":95000.0,"verification_status":"Verified","purpose":"debt_consolidation","dti":12.04,"open_acc":5.0,"pub_rec":1.0,"revol_bal":4702.0,"revol_util":64.4,"total_acc":26.0,"mort_acc":4.0,"pub_rec_bankruptcies":1.0,"credit_hist_years":22.49965776865161,"loan_to_income":0.10526315789473684},"pd":0.12848856037276624},{"input":{"loan_amnt":7350.0,"emp_length":10.0,"home_ownership":"MORTGAGE","annual_inc":54800.0,"verification_status":"Not Verified","purpose":"debt_consolidation","dti":7.47,"open_acc":10.0,"pub_rec":0.0,"revol_bal":3240.0,"revol_util":37.2,"total_acc":36.0,"mort_acc":6.0,"pub_rec_bankruptcies":0.0,"credit_hist_years":14.25325119780972,"loan_to_income":0.13412408759124086},"pd":0.08743300979197016},{"input":{"loan_amnt":23050.0,"emp_length":3.0,"home_ownership":"RENT","annual_inc":80000.0,"verification_status":"Verified","purpose":"debt_consolidation","dti":25.47,"open_acc":18.0,"pub_rec":0.0,"revol_bal":26693.0,"revol_util":24.6,"total_acc":23.0,"mort_acc":0.0,"pub_rec_bankruptcies":0.0,"credit_hist_years":14.247775496235455,"loan_to_income":0.288125},"pd":0.11950877609857172}]};
+"use strict";
+
+function normalizeClient(model, input) {
+  const normalized = { ...input };
+  const clamped = {};
+
+  for (const name of model.numeric_inputs) {
+    if (name === "loan_to_income") continue;
+    const value = Number(input[name]);
+    const range = model.ranges[name];
+    if (!Number.isFinite(value) || !range) {
+      throw new Error("Valeur numérique manquante ou invalide : " + name);
+    }
+    normalized[name] = Math.max(range.p1, Math.min(range.p99, value));
+    if (normalized[name] !== value) clamped[name] = { from: value, to: normalized[name] };
+  }
+
+  if (normalized.annual_inc <= 0) {
+    throw new Error("Le revenu annuel doit être supérieur à zéro.");
+  }
+  for (const [name, levels] of Object.entries(model.categories)) {
+    if (!levels.includes(input[name])) {
+      throw new Error("Catégorie invalide : " + name);
+    }
+  }
+
+  normalized.loan_to_income = normalized.loan_amnt / normalized.annual_inc;
+  return { input: normalized, clamped };
+}
+
+function scoreClient(model, input) {
+  const normalized = normalizeClient(model, input);
+  const contributions = {};
+  let logit = model.intercept;
+
+  for (let i = 0; i < model.features.length; i += 1) {
+    const feature = model.features[i];
+    let value;
+    if (feature === "loan_to_income") {
+      value = normalized.input.loan_to_income;
+    } else if (model.numeric_inputs.includes(feature)) {
+      value = normalized.input[feature];
+    } else {
+      const category = Object.keys(model.categories).find((name) =>
+        feature.startsWith(name + "_")
+      );
+      if (!category) throw new Error("Caractéristique inconnue : " + feature);
+      const level = feature.slice(category.length + 1);
+      value = normalized.input[category] === level ? 1 : 0;
+    }
+
+    const z = (value - model.mean[i]) / model.scale[i];
+    const contribution = model.coef[i] * z;
+    logit += contribution;
+
+    const category = Object.keys(model.categories).find((name) =>
+      feature.startsWith(name + "_")
+    );
+    const variable = category || feature;
+    contributions[variable] = (contributions[variable] || 0) + contribution;
+  }
+
+  return {
+    ...normalized,
+    logit,
+    pd: 1 / (1 + Math.exp(-logit)),
+    contributions,
+  };
+}
+
+const api = { normalizeClient, scoreClient };
+if (typeof module !== "undefined" && module.exports) module.exports = api;
+if (typeof window !== "undefined") window.TrafficLightScoring = api;
+
+const calculateClient = window.TrafficLightScoring.scoreClient;
 
 // ---------- Textes : français (défaut), anglais, chinois ----------
 const I18N = {
@@ -491,47 +659,49 @@ const I18N = {
     mainDesc: "Cent barres, une par centile de risque, qui montrent le taux de défaut réel en 2013. Les barres sont vertes, jaunes ou rouges selon la zone. Une ligne pointillée montre le taux de défaut moyen.",
     axisLess: "← Moins risqué", axisMid: "Centile de risque prédit", axisMore: "Plus risqué →",
     gLabel: "Fin du feu vert", gHint: "Les demandes sous ce centile sont approuvées automatiquement.",
-    rLabel: "Début du feu rouge", rHint: "Les demandes à partir de ce centile sont refusées automatiquement.",
+    rLabel: "Début de la révision approfondie", rHint: "Les demandes à partir de ce centile sont envoyées en révision approfondie.",
     reset: "Revenir à 40 / 90",
     zonesTitle: "Les trois zones", zonesHint: "Part des demandes de 2013 dans chaque zone.",
-    zGreen: "Feu vert", zGreenSub: "Approuvé automatiquement",
-    zYellow: "Feu jaune", zYellowSub: "Revu par un analyste",
-    zRed: "Feu rouge", zRedSub: "Refusé automatiquement",
+    zGreen: "Approbation automatique", zGreenSub: "Décision automatique",
+    zYellow: "Révision par un analyste", zYellowSub: "Examen du dossier",
+    zRed: "Révision approfondie", zRedSub: "Décision prise par une personne",
     factN: "Demandes", factRate: "Taux de défaut", factRule: "Règle",
     ofApps: "des demandes",
     kpisAria: "Indicateurs clés",
-    kAuto: "Décisions automatiques", kAutoSub: "Part des demandes décidées sans analyste (vert + rouge).",
+    kAuto: "Automatisation", kAutoSub: "des demandes approuvées automatiquement",
+    kAnalysts: "Charge des analystes", kAnalystsSub: "Demandes en révision ordinaire ou approfondie.",
     kGreen: "Taux de défaut en zone verte", compareGreen: "Zone verte", compareAvg: "Moyenne",
-    kCaught: "Défauts arrêtés par le feu rouge", kGood: "Bons clients refusés",
+    kCaught: "Défauts envoyés en révision approfondie", kGood: "Bons clients envoyés en révision approfondie",
     moneyTitle: "Combien d'argent est en jeu&nbsp;?",
     moneyHint: "Montants des prêts de 2013. La perte estimée est le montant des prêts en défaut multiplié par la LGD.",
     lgdLabel: "Perte en cas de défaut (LGD)",
     lgdHelp: "Part du montant du prêt qu'on perd quand le client ne rembourse pas. Entre 0 et 100.",
     lgdError: (v) => "Entrez un nombre entre 0 et 100. Le calcul garde la dernière valeur valide (" + v + ").",
-    mLoss: "Perte estimée en zone verte", mAvoided: "Pertes évitées par le feu rouge",
-    mRefused: "Prêts refusés à des clients qui ont remboursé",
-    mRefusedSub: "Ce n'est pas une perte : ce sont des affaires qu'on laisse passer.",
+    mLoss: "Perte estimée en zone verte", mAvoided: "Pertes potentielles dans le rouge (à examiner)",
+    mGoodReviewed: "Prêts de bons clients envoyés en révision approfondie",
+    mGoodReviewedSub: "Clients qui ont remboursé leur prêt.",
     lossSub: (md, l) => md + " de prêts en défaut × " + l + " de LGD",
-    avoidedSub: (md, l) => md + " de prêts en défaut refusés × " + l + " de LGD",
+    avoidedSub: (md, l) => md + " de prêts en défaut à examiner × " + l + " de LGD",
     tradeTitle: "Automatiser plus, mais à quel prix&nbsp;?",
-    tradeDesc: "Courbe d'arbitrage : pour chaque fin possible du feu vert, la part de décisions automatiques et le taux de défaut en zone verte. Le point vert montre le choix actuel.",
+    tradeDesc: "Courbe d'arbitrage : pour chaque fin possible de la zone verte, la part des demandes approuvées automatiquement et le taux de défaut en zone verte. Le point vert montre le choix actuel.",
     tradeHow: "Plus le point va vers la droite, plus on automatise. Plus il monte, plus la zone verte contient de défauts. <strong>Cliquez sur la courbe</strong> pour déplacer la fin du feu vert.",
-    tradeText: (r, g, x, y) => "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert, du centile 1 au centile " + r + ". Votre choix actuel (<strong>" + g + "</strong>) automatise <strong>" + x + "</strong> des demandes, avec <strong>" + y + "</strong> de défaut en zone verte.",
-    tradeNoGreen: (r) => "Avec le feu rouge fixé au centile <strong>" + r + "</strong>, chaque point de la courbe est une fin possible du feu vert. La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
-    tradeAllRed: "Le feu rouge couvre toutes les demandes. Déplacez-le vers la droite pour voir la courbe.",
-    emptyCurve: "Aucune courbe : le feu rouge commence au centile 0.",
+    tradeText: (g, x, y) => "Chaque point montre une fin possible de la zone verte. Votre choix actuel (<strong>" + g + "</strong>) représente <strong>" + x + "</strong> des demandes approuvées automatiquement, avec <strong>" + y + "</strong> de défaut en zone verte.",
+    tradeNoGreen: () => "La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
+    tradeAllRed: "La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
+    emptyCurve: "Aucune demande en zone verte.",
     curveLabel: (g, x, y) => "Vert jusqu'à " + g + " : " + x + " · " + y,
-    axisX: "Décisions automatiques (vert + rouge)", axisY: "Taux de défaut en zone verte",
+    axisX: "Demandes approuvées automatiquement (zone verte)", axisY: "Taux de défaut en zone verte",
     avg: (x) => "Moyenne " + x,
     notesTitle: "À savoir", nData: "Données", nModel: "Modèle", nLimits: "Limites",
     nModelText: "Une régression logistique prédit la probabilité de défaut (PD) de chaque prêt. Elle n'utilise ni la cote (grade) de Lending Club ni le taux d'intérêt, qui contiennent déjà l'avis de Lending Club sur le risque.",
-    lim1: "On voit seulement les prêts accordés. On ne sait rien des demandes refusées par Lending Club.",
+    lim1: "On voit seulement les prêts accordés par Lending Club; les demandes non financées ne sont pas représentées.",
     lim2: "On suppose que les analystes traitent la zone jaune comme aujourd'hui.",
     lim3: "Ce sont des données américaines, utilisées ici comme exemple.",
     lim4: "La LGD s'applique au montant initial du prêt. C'est une simplification : une partie du prêt est souvent déjà remboursée au moment du défaut.",
+    lim5: "Nous ne modélisons pas le résultat de la révision humaine.",
     noteData: (N, avg) => "Prêts personnels de 36 mois de Lending Club, aux États-Unis. Le modèle est entraîné sur les prêts de 2010 à 2012 et testé sur ceux de 2013 (" + N + " prêts, " + avg + " de défauts). Les centiles et les seuils de PD viennent des données d'entraînement : ils ne sont pas ajustés sur l'année testée.",
     percentile: (i) => "centile " + i,
-    summary: (g, r, auto, gr, avg) => "Vert jusqu'au centile <strong class=\"g\">" + g + "</strong>, rouge dès le centile <strong class=\"r\">" + r + "</strong> : <strong>" + auto + "</strong> des demandes sont décidées automatiquement, et la zone verte a un taux de défaut de <strong>" + gr + "</strong> (moyenne " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Approbation automatique jusqu'au centile <strong class=\"g\">" + g + "</strong>, révision approfondie dès le centile <strong class=\"r\">" + r + "</strong> : <strong>" + auto + "</strong> des demandes sont approuvées automatiquement, et la zone verte a un taux de défaut de <strong>" + gr + "</strong> (moyenne " + avg + ").",
     ruleNone: "Aucune demande", ruleAll: "Toutes les demandes",
     ruleBelow: (x) => "PD prédite sous " + x,
     ruleAtLeast: (x) => "PD prédite de " + x + " ou plus",
@@ -542,8 +712,8 @@ const I18N = {
     greenMore: (rel, avg) => rel + " de plus que la moyenne de " + avg + ".",
     greenEqual: (avg) => "Égal à la moyenne de " + avg + ".",
     greenEmpty: "Aucune demande en zone verte.",
-    caughtSub: (a, b) => a + " défauts arrêtés sur " + b + ".",
-    goodSub: (a, b) => a + " clients qui ont remboursé, sur " + b + ".",
+    caughtSub: (a, b) => a + " défauts envoyés en révision approfondie sur " + b + ".",
+    goodSub: (a, b) => a + " bons clients envoyés en révision approfondie, sur " + b + ".",
     zoneLabels: ["VERT", "JAUNE", "ROUGE"],
     zoneNames: ["zone verte", "zone jaune", "zone rouge"],
     stripNames: ["Vert", "Jaune", "Rouge"],
@@ -563,47 +733,49 @@ const I18N = {
     mainDesc: "One hundred bars, one per risk percentile, showing the actual default rate in 2013. Bars are green, yellow or red by zone. A dashed line shows the average default rate.",
     axisLess: "← Less risky", axisMid: "Predicted risk percentile", axisMore: "Riskier →",
     gLabel: "End of green", gHint: "Applications below this percentile are approved automatically.",
-    rLabel: "Start of red", rHint: "Applications from this percentile up are declined automatically.",
+    rLabel: "Start of in-depth review", rHint: "Applications from this percentile up are sent for in-depth review.",
     reset: "Back to 40 / 90",
     zonesTitle: "The three zones", zonesHint: "Share of 2013 applications in each zone.",
     zGreen: "Green light", zGreenSub: "Approved automatically",
     zYellow: "Yellow light", zYellowSub: "Reviewed by an analyst",
-    zRed: "Red light", zRedSub: "Declined automatically",
+    zRed: "In-depth review", zRedSub: "A person makes the decision",
     factN: "Applications", factRate: "Default rate", factRule: "Rule",
     ofApps: "of applications",
     kpisAria: "Key indicators",
-    kAuto: "Automated decisions", kAutoSub: "Share of applications decided without an analyst (green + red).",
+    kAuto: "Automation", kAutoSub: "of applications approved automatically",
+    kAnalysts: "Analyst workload", kAnalystsSub: "Applications for regular or in-depth review.",
     kGreen: "Default rate in green", compareGreen: "Green", compareAvg: "Average",
-    kCaught: "Defaults stopped by red", kGood: "Good clients declined",
+    kCaught: "Defaults sent for in-depth review", kGood: "Good clients sent for in-depth review",
     moneyTitle: "How much money is at stake?",
     moneyHint: "Loan amounts for 2013. The estimated loss is the amount of defaulted loans times the LGD.",
     lgdLabel: "Loss given default (LGD)",
     lgdHelp: "Share of the loan amount lost when the client does not repay. Between 0 and 100.",
     lgdError: (v) => "Enter a number between 0 and 100. The calculation keeps the last valid value (" + v + ").",
-    mLoss: "Estimated loss in green", mAvoided: "Losses avoided by red",
-    mRefused: "Loans declined to clients who repaid",
-    mRefusedSub: "This is not a loss: it is business we turn away.",
+    mLoss: "Estimated loss in green", mAvoided: "Potential losses in red (to review)",
+    mGoodReviewed: "Loans to good clients sent for in-depth review",
+    mGoodReviewedSub: "Clients who repaid their loans.",
     lossSub: (md, l) => md + " of defaulted loans × " + l + " LGD",
-    avoidedSub: (md, l) => md + " of defaulted loans declined × " + l + " LGD",
+    avoidedSub: (md, l) => md + " of defaulted loans for review × " + l + " LGD",
     tradeTitle: "Automate more, but at what cost?",
     tradeDesc: "Trade-off curve: for each possible end of green, the share of automated decisions and the default rate in green. The green dot shows the current choice.",
     tradeHow: "The further right the dot, the more we automate. The higher it goes, the more defaults the green zone contains. <strong>Click the curve</strong> to move the end of green.",
-    tradeText: (r, g, x, y) => "With red fixed at percentile <strong>" + r + "</strong>, each point on the curve is a possible end of green, from percentile 1 to percentile " + r + ". Your current choice (<strong>" + g + "</strong>) automates <strong>" + x + "</strong> of applications, with a <strong>" + y + "</strong> default rate in green.",
-    tradeNoGreen: (r) => "With red fixed at percentile <strong>" + r + "</strong>, each point on the curve is a possible end of green. The green zone is empty for now: click the curve to pick a point.",
-    tradeAllRed: "Red covers every application. Move it to the right to see the curve.",
-    emptyCurve: "No curve: red starts at percentile 0.",
+    tradeText: (g, x, y) => "Each point shows a possible end of the green zone. Your current choice (<strong>" + g + "</strong>) represents <strong>" + x + "</strong> of applications approved automatically, with a <strong>" + y + "</strong> default rate in green.",
+    tradeNoGreen: () => "The green zone is empty for now: click the curve to pick a point.",
+    tradeAllRed: "The green zone is empty for now: click the curve to pick a point.",
+    emptyCurve: "No applications in green.",
     curveLabel: (g, x, y) => "Green up to " + g + ": " + x + " · " + y,
-    axisX: "Automated decisions (green + red)", axisY: "Default rate in green",
+    axisX: "Applications approved automatically (green)", axisY: "Default rate in green",
     avg: (x) => "Average " + x,
     notesTitle: "Good to know", nData: "Data", nModel: "Model", nLimits: "Limitations",
     nModelText: "A logistic regression predicts each loan's probability of default (PD). It uses neither Lending Club's grade nor the interest rate, which already contain Lending Club's view of the risk.",
-    lim1: "We only see approved loans. We know nothing about applications Lending Club declined.",
+    lim1: "We only see loans funded by Lending Club; unfunded applications are not represented.",
     lim2: "We assume analysts handle the yellow zone as they do today.",
     lim3: "This is U.S. data, used here as an example.",
     lim4: "LGD is applied to the initial loan amount. This is a simplification: part of the loan is often already repaid when the default happens.",
+    lim5: "We do not model the outcome of human review.",
     noteData: (N, avg) => "36-month personal loans from Lending Club, in the United States. The model is trained on 2010–2012 loans and tested on 2013 loans (" + N + " loans, " + avg + " defaults). Percentiles and PD thresholds come from the training data: they are not tuned on the test year.",
     percentile: (i) => "percentile " + i,
-    summary: (g, r, auto, gr, avg) => "Green up to percentile <strong class=\"g\">" + g + "</strong>, red from percentile <strong class=\"r\">" + r + "</strong>: <strong>" + auto + "</strong> of applications are decided automatically, and the green zone has a default rate of <strong>" + gr + "</strong> (average " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Automatic approval up to percentile <strong class=\"g\">" + g + "</strong>, in-depth review from percentile <strong class=\"r\">" + r + "</strong>: <strong>" + auto + "</strong> of applications are approved automatically, and the green zone has a default rate of <strong>" + gr + "</strong> (average " + avg + ").",
     ruleNone: "No applications", ruleAll: "All applications",
     ruleBelow: (x) => "Predicted PD below " + x,
     ruleAtLeast: (x) => "Predicted PD of " + x + " or more",
@@ -614,8 +786,8 @@ const I18N = {
     greenMore: (rel, avg) => rel + " higher than the average of " + avg + ".",
     greenEqual: (avg) => "Equal to the average of " + avg + ".",
     greenEmpty: "No applications in green.",
-    caughtSub: (a, b) => a + " defaults stopped out of " + b + ".",
-    goodSub: (a, b) => a + " clients who repaid, out of " + b + ".",
+    caughtSub: (a, b) => a + " defaults sent for in-depth review, out of " + b + ".",
+    goodSub: (a, b) => a + " good clients sent for in-depth review, out of " + b + ".",
     zoneLabels: ["GREEN", "YELLOW", "RED"],
     zoneNames: ["green zone", "yellow zone", "red zone"],
     stripNames: ["Green", "Yellow", "Red"],
@@ -635,47 +807,49 @@ const I18N = {
     mainDesc: "100 根柱子，每根代表一个风险百分位，显示 2013 年的实际违约率。柱子按区域分为绿、黄、红三色。虚线表示平均违约率。",
     axisLess: "← 风险较低", axisMid: "预测风险百分位", axisMore: "风险较高 →",
     gLabel: "绿灯终点", gHint: "低于这个百分位的申请自动批准。",
-    rLabel: "红灯起点", rHint: "从这个百分位开始的申请自动拒绝。",
+    rLabel: "深度复核起点", rHint: "从这个百分位开始的申请将进入深度复核。",
     reset: "恢复 40 / 90",
     zonesTitle: "三个区域", zonesHint: "2013 年各区域的申请占比。",
     zGreen: "绿灯", zGreenSub: "自动批准",
     zYellow: "黄灯", zYellowSub: "分析师人工审核",
-    zRed: "红灯", zRedSub: "自动拒绝",
+    zRed: "深度复核", zRedSub: "由人工做出最终决定",
     factN: "申请数", factRate: "违约率", factRule: "规则",
     ofApps: "的申请",
     kpisAria: "关键指标",
-    kAuto: "自动决策比例", kAutoSub: "无需分析师即可决策的申请占比（绿灯 + 红灯）。",
+    kAuto: "自动化", kAutoSub: "的申请获自动批准",
+    kAnalysts: "分析师工作量", kAnalystsSub: "常规或深度复核的申请占比。",
     kGreen: "绿灯区违约率", compareGreen: "绿灯区", compareAvg: "平均",
-    kCaught: "红灯拦下的违约", kGood: "被误拒的好客户",
+    kCaught: "送交深度复核的违约", kGood: "送交深度复核的优质客户",
     moneyTitle: "涉及多少金额？",
     moneyHint: "2013 年的贷款金额。预计损失 = 违约贷款金额 × 违约损失率（LGD）。",
     lgdLabel: "违约损失率（LGD）",
     lgdHelp: "客户不还款时，贷款金额中损失的比例。介于 0 和 100 之间。",
     lgdError: (v) => "请输入 0 到 100 之间的数字。计算暂时使用上一个有效值（" + v + "）。",
-    mLoss: "绿灯区预计损失", mAvoided: "红灯避免的损失",
-    mRefused: "拒给按时还款客户的贷款金额",
-    mRefusedSub: "这不是损失，而是放弃掉的业务。",
+    mLoss: "绿灯区预计损失", mAvoided: "红灯区潜在损失（待审核）",
+    mGoodReviewed: "送交深度复核的优质客户贷款金额",
+    mGoodReviewedSub: "这些客户已按时偿还贷款。",
     lossSub: (md, l) => md + " 违约贷款 × " + l + " LGD",
-    avoidedSub: (md, l) => md + " 被拒的违约贷款 × " + l + " LGD",
+    avoidedSub: (md, l) => md + " 待审核的违约贷款 × " + l + " LGD",
     tradeTitle: "自动化更多，代价是什么？",
     tradeDesc: "权衡曲线：对每个可能的绿灯终点，显示自动决策比例和绿灯区违约率。绿点表示当前选择。",
     tradeHow: "点越往右，自动化程度越高；点越往上，绿灯区包含的违约越多。<strong>点击曲线</strong>可以移动绿灯终点。",
-    tradeText: (r, g, x, y) => "红灯固定在第 <strong>" + r + "</strong> 百分位时，曲线上每个点对应一个可能的绿灯终点（第 1 到第 " + r + " 百分位）。当前选择（<strong>" + g + "</strong>）可自动决策 <strong>" + x + "</strong> 的申请，绿灯区违约率为 <strong>" + y + "</strong>。",
-    tradeNoGreen: (r) => "红灯固定在第 <strong>" + r + "</strong> 百分位时，曲线上每个点对应一个可能的绿灯终点。目前绿灯区为空：点击曲线选择一个点。",
-    tradeAllRed: "红灯覆盖了全部申请。把红线往右移就能看到曲线。",
-    emptyCurve: "没有曲线：红灯从第 0 百分位开始。",
+    tradeText: (g, x, y) => "曲线上的每个点对应一个可能的绿灯终点。当前选择（<strong>" + g + "</strong>）有 <strong>" + x + "</strong> 的申请获自动批准，绿灯区违约率为 <strong>" + y + "</strong>。",
+    tradeNoGreen: () => "当前绿灯区为空：点击曲线选择一个点。",
+    tradeAllRed: "当前绿灯区为空：点击曲线选择一个点。",
+    emptyCurve: "绿灯区没有申请。",
     curveLabel: (g, x, y) => "绿灯到 " + g + "：" + x + " · " + y,
-    axisX: "自动决策比例（绿灯 + 红灯）", axisY: "绿灯区违约率",
+    axisX: "自动批准的申请比例（绿灯）", axisY: "绿灯区违约率",
     avg: (x) => "平均 " + x,
     notesTitle: "说明", nData: "数据", nModel: "模型", nLimits: "局限性",
     nModelText: "用逻辑回归预测每笔贷款的违约概率（PD）。模型没有使用 Lending Club 的等级（grade）和利率，因为这两项已经包含了 Lending Club 自己对风险的判断。",
-    lim1: "我们只能看到获批的贷款，对 Lending Club 拒绝的申请一无所知。",
+    lim1: "这里只包含 Lending Club 提供资金的贷款；未获资金的申请没有纳入模型。",
     lim2: "假设分析师对黄灯区的处理方式与现在相同。",
     lim3: "这是美国的数据，这里仅作为示例。",
     lim4: "LGD 作用于贷款的初始金额。这是一种简化：实际违约时，贷款往往已经还了一部分。",
+    lim5: "模型没有预测人工复核的结果。",
     noteData: (N, avg) => "Lending Club（美国）的 36 个月个人贷款。模型用 2010–2012 年的贷款训练，用 2013 年的贷款测试（" + N + " 笔贷款，违约率 " + avg + "）。百分位和 PD 阈值来自训练数据，没有根据测试年份调整。",
     percentile: (i) => "第 " + i + " 百分位",
-    summary: (g, r, auto, gr, avg) => "绿灯到第 <strong class=\"g\">" + g + "</strong> 百分位，红灯从第 <strong class=\"r\">" + r + "</strong> 百分位开始：<strong>" + auto + "</strong> 的申请自动决策，绿灯区违约率为 <strong>" + gr + "</strong>（平均 " + avg + "）。",
+    summary: (g, r, auto, gr, avg) => "自动批准至第 <strong class=\"g\">" + g + "</strong> 百分位，深度复核从第 <strong class=\"r\">" + r + "</strong> 百分位开始：<strong>" + auto + "</strong> 的申请获自动批准，绿灯区违约率为 <strong>" + gr + "</strong>（平均 " + avg + "）。",
     ruleNone: "无申请", ruleAll: "全部申请",
     ruleBelow: (x) => "预测 PD 低于 " + x,
     ruleAtLeast: (x) => "预测 PD 不低于 " + x,
@@ -686,8 +860,8 @@ const I18N = {
     greenMore: (rel, avg) => "比平均值 " + avg + " 高 " + rel + "。",
     greenEqual: (avg) => "与平均值 " + avg + " 持平。",
     greenEmpty: "绿灯区没有申请。",
-    caughtSub: (a, b) => "共 " + b + " 笔违约，拦下 " + a + " 笔。",
-    goodSub: (a, b) => "共 " + b + " 位按时还款的客户，其中 " + a + " 位被拒。",
+    caughtSub: (a, b) => "共 " + b + " 笔违约，其中 " + a + " 笔送交深度复核。",
+    goodSub: (a, b) => "共 " + b + " 位按时还款的客户，其中 " + a + " 位送交深度复核。",
     zoneLabels: ["绿灯", "黄灯", "红灯"],
     zoneNames: ["绿灯区", "黄灯区", "红灯区"],
     stripNames: ["绿灯", "黄灯", "红灯"],
@@ -707,47 +881,49 @@ const I18N = {
     mainDesc: "Cien barras, una por percentil de riesgo, que muestran la tasa de incumplimiento real en 2013. Las barras son verdes, amarillas o rojas según la zona. Una línea discontinua muestra la tasa de incumplimiento promedio.",
     axisLess: "← Menos riesgo", axisMid: "Percentil de riesgo predicho", axisMore: "Más riesgo →",
     gLabel: "Fin de la luz verde", gHint: "Las solicitudes por debajo de este percentil se aprueban automáticamente.",
-    rLabel: "Inicio de la luz roja", rHint: "Las solicitudes a partir de este percentil se rechazan automáticamente.",
+    rLabel: "Inicio de la revisión profunda", rHint: "Las solicitudes a partir de este percentil se envían a revisión profunda.",
     reset: "Volver a 40 / 90",
     zonesTitle: "Las tres zonas", zonesHint: "Proporción de las solicitudes de 2013 en cada zona.",
     zGreen: "Luz verde", zGreenSub: "Aprobado automáticamente",
     zYellow: "Luz amarilla", zYellowSub: "Revisado por un analista",
-    zRed: "Luz roja", zRedSub: "Rechazado automáticamente",
+    zRed: "Revisión profunda", zRedSub: "Una persona toma la decisión final",
     factN: "Solicitudes", factRate: "Tasa de incumplimiento", factRule: "Regla",
     ofApps: "de las solicitudes",
     kpisAria: "Indicadores clave",
-    kAuto: "Decisiones automáticas", kAutoSub: "Proporción de solicitudes decididas sin analista (verde + rojo).",
+    kAuto: "Automatización", kAutoSub: "de solicitudes aprobadas automáticamente",
+    kAnalysts: "Carga de los analistas", kAnalystsSub: "Solicitudes en revisión habitual o profunda.",
     kGreen: "Tasa de incumplimiento en verde", compareGreen: "Verde", compareAvg: "Promedio",
-    kCaught: "Incumplimientos detenidos por el rojo", kGood: "Buenos clientes rechazados",
+    kCaught: "Incumplimientos enviados a revisión profunda", kGood: "Buenos clientes enviados a revisión profunda",
     moneyTitle: "¿Cuánto dinero está en juego?",
     moneyHint: "Montos de los préstamos de 2013. La pérdida estimada es el monto de los préstamos en incumplimiento multiplicado por la LGD.",
     lgdLabel: "Pérdida en caso de incumplimiento (LGD)",
     lgdHelp: "Parte del monto del préstamo que se pierde cuando el cliente no paga. Entre 0 y 100.",
     lgdError: (v) => "Ingrese un número entre 0 y 100. El cálculo conserva el último valor válido (" + v + ").",
-    mLoss: "Pérdida estimada en verde", mAvoided: "Pérdidas evitadas por el rojo",
-    mRefused: "Préstamos rechazados a clientes que pagaron",
-    mRefusedSub: "No es una pérdida: es negocio que se deja pasar.",
+    mLoss: "Pérdida estimada en verde", mAvoided: "Pérdidas potenciales en rojo (por revisar)",
+    mGoodReviewed: "Préstamos de buenos clientes enviados a revisión profunda",
+    mGoodReviewedSub: "Clientes que pagaron sus préstamos.",
     lossSub: (md, l) => md + " en préstamos en incumplimiento × " + l + " de LGD",
-    avoidedSub: (md, l) => md + " en préstamos en incumplimiento rechazados × " + l + " de LGD",
+    avoidedSub: (md, l) => md + " en préstamos en incumplimiento por revisar × " + l + " de LGD",
     tradeTitle: "Automatizar más, pero ¿a qué costo?",
     tradeDesc: "Curva de compromiso: para cada fin posible de la luz verde, la proporción de decisiones automáticas y la tasa de incumplimiento en verde. El punto verde muestra la elección actual.",
     tradeHow: "Cuanto más a la derecha está el punto, más se automatiza. Cuanto más sube, más incumplimientos contiene la zona verde. <strong>Haga clic en la curva</strong> para mover el fin de la luz verde.",
-    tradeText: (r, g, x, y) => "Con la luz roja fija en el percentil <strong>" + r + "</strong>, cada punto de la curva es un fin posible de la luz verde, del percentil 1 al percentil " + r + ". Su elección actual (<strong>" + g + "</strong>) automatiza el <strong>" + x + "</strong> de las solicitudes, con una tasa de incumplimiento de <strong>" + y + "</strong> en verde.",
-    tradeNoGreen: (r) => "Con la luz roja fija en el percentil <strong>" + r + "</strong>, cada punto de la curva es un fin posible de la luz verde. Por ahora la zona verde está vacía: haga clic en la curva para elegir un punto.",
-    tradeAllRed: "La luz roja cubre todas las solicitudes. Muévala hacia la derecha para ver la curva.",
-    emptyCurve: "Sin curva: la luz roja empieza en el percentil 0.",
+    tradeText: (g, x, y) => "Cada punto muestra un posible fin de la zona verde. La selección actual (<strong>" + g + "</strong>) representa <strong>" + x + "</strong> de solicitudes aprobadas automáticamente, con una tasa de incumplimiento de <strong>" + y + "</strong> en verde.",
+    tradeNoGreen: () => "Por ahora la zona verde está vacía: haga clic en la curva para elegir un punto.",
+    tradeAllRed: "Por ahora la zona verde está vacía: haga clic en la curva para elegir un punto.",
+    emptyCurve: "No hay solicitudes en verde.",
     curveLabel: (g, x, y) => "Verde hasta " + g + ": " + x + " · " + y,
-    axisX: "Decisiones automáticas (verde + rojo)", axisY: "Tasa de incumplimiento en verde",
+    axisX: "Solicitudes aprobadas automáticamente (verde)", axisY: "Tasa de incumplimiento en verde",
     avg: (x) => "Promedio " + x,
     notesTitle: "Para saber", nData: "Datos", nModel: "Modelo", nLimits: "Limitaciones",
     nModelText: "Una regresión logística predice la probabilidad de incumplimiento (PD) de cada préstamo. No usa la calificación (grade) de Lending Club ni la tasa de interés, que ya contienen la opinión de Lending Club sobre el riesgo.",
-    lim1: "Solo vemos los préstamos aprobados. No sabemos nada de las solicitudes que Lending Club rechazó.",
+    lim1: "Solo vemos los préstamos financiados por Lending Club; las solicitudes sin financiación no están representadas.",
     lim2: "Suponemos que los analistas tratan la zona amarilla como hoy.",
     lim3: "Son datos de Estados Unidos, usados aquí como ejemplo.",
     lim4: "La LGD se aplica al monto inicial del préstamo. Es una simplificación: a menudo una parte del préstamo ya se pagó cuando ocurre el incumplimiento.",
+    lim5: "No modelamos el resultado de la revisión humana.",
     noteData: (N, avg) => "Préstamos personales a 36 meses de Lending Club, en Estados Unidos. El modelo se entrena con los préstamos de 2010 a 2012 y se prueba con los de 2013 (" + N + " préstamos, " + avg + " de incumplimiento). Los percentiles y los umbrales de PD vienen de los datos de entrenamiento: no se ajustan al año de prueba.",
     percentile: (i) => "percentil " + i,
-    summary: (g, r, auto, gr, avg) => "Verde hasta el percentil <strong class=\"g\">" + g + "</strong>, rojo desde el percentil <strong class=\"r\">" + r + "</strong>: el <strong>" + auto + "</strong> de las solicitudes se decide automáticamente, y la zona verde tiene una tasa de incumplimiento de <strong>" + gr + "</strong> (promedio " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Aprobación automática hasta el percentil <strong class=\"g\">" + g + "</strong>, revisión profunda desde el percentil <strong class=\"r\">" + r + "</strong>: el <strong>" + auto + "</strong> de las solicitudes se aprueba automáticamente, y la zona verde tiene una tasa de incumplimiento de <strong>" + gr + "</strong> (promedio " + avg + ").",
     ruleNone: "Ninguna solicitud", ruleAll: "Todas las solicitudes",
     ruleBelow: (x) => "PD predicha menor que " + x,
     ruleAtLeast: (x) => "PD predicha de " + x + " o más",
@@ -758,8 +934,8 @@ const I18N = {
     greenMore: (rel, avg) => rel + " más que el promedio de " + avg + ".",
     greenEqual: (avg) => "Igual al promedio de " + avg + ".",
     greenEmpty: "Ninguna solicitud en verde.",
-    caughtSub: (a, b) => a + " incumplimientos detenidos de " + b + ".",
-    goodSub: (a, b) => a + " clientes que pagaron, de " + b + ".",
+    caughtSub: (a, b) => a + " incumplimientos enviados a revisión profunda, de " + b + ".",
+    goodSub: (a, b) => a + " buenos clientes enviados a revisión profunda, de " + b + ".",
     zoneLabels: ["VERDE", "AMARILLO", "ROJO"],
     zoneNames: ["zona verde", "zona amarilla", "zona roja"],
     stripNames: ["Verde", "Amarillo", "Rojo"],
@@ -779,47 +955,49 @@ const I18N = {
     mainDesc: "100本の棒はそれぞれリスク百分位を表し、2013年の実際のデフォルト率を示します。棒はゾーンごとに緑・黄・赤で色分けされています。破線は平均デフォルト率です。",
     axisLess: "← リスク低", axisMid: "予測リスク百分位", axisMore: "リスク高 →",
     gLabel: "青信号の終わり", gHint: "この百分位より下の申込は自動で承認されます。",
-    rLabel: "赤信号の始まり", rHint: "この百分位以上の申込は自動で否決されます。",
+    rLabel: "詳細審査の始まり", rHint: "この百分位以上の申込は詳細審査に回されます。",
     reset: "40 / 90 に戻す",
     zonesTitle: "3つのゾーン", zonesHint: "2013年の申込に占める各ゾーンの割合。",
     zGreen: "青信号", zGreenSub: "自動承認",
     zYellow: "黄信号", zYellowSub: "アナリストが審査",
-    zRed: "赤信号", zRedSub: "自動否決",
+    zRed: "詳細審査", zRedSub: "最終判断は担当者が行います",
     factN: "申込件数", factRate: "デフォルト率", factRule: "ルール",
     ofApps: "の申込",
     kpisAria: "主要指標",
-    kAuto: "自動判断の割合", kAutoSub: "アナリストを介さずに判断される申込の割合（青 + 赤）。",
+    kAuto: "自動化", kAutoSub: "自動承認される申込の割合",
+    kAnalysts: "アナリストの負荷", kAnalystsSub: "通常審査または詳細審査に回る申込の割合。",
     kGreen: "青信号ゾーンのデフォルト率", compareGreen: "青信号", compareAvg: "平均",
-    kCaught: "赤信号で止めたデフォルト", kGood: "否決された優良顧客",
+    kCaught: "詳細審査に回ったデフォルト", kGood: "詳細審査に回った優良顧客",
     moneyTitle: "どれだけの金額がかかっているか？",
     moneyHint: "2013年の融資額。予想損失 = デフォルトした融資額 × LGD。",
     lgdLabel: "デフォルト時損失率（LGD）",
     lgdHelp: "顧客が返済しない場合に失われる融資額の割合。0から100の間。",
     lgdError: (v) => "0から100の数値を入力してください。計算には最後の有効な値（" + v + "）を使います。",
-    mLoss: "青信号ゾーンの予想損失", mAvoided: "赤信号で回避した損失",
-    mRefused: "返済した顧客への否決額",
-    mRefusedSub: "これは損失ではなく、見送った取引です。",
+    mLoss: "青信号ゾーンの予想損失", mAvoided: "赤信号ゾーンの潜在損失（要確認）",
+    mGoodReviewed: "詳細審査に回った優良顧客の融資額",
+    mGoodReviewedSub: "融資を返済した顧客です。",
     lossSub: (md, l) => "デフォルト融資 " + md + " × LGD " + l,
-    avoidedSub: (md, l) => "否決したデフォルト融資 " + md + " × LGD " + l,
+    avoidedSub: (md, l) => "要確認のデフォルト融資 " + md + " × LGD " + l,
     tradeTitle: "自動化を増やすと、代償は？",
     tradeDesc: "トレードオフ曲線：青信号の終わりの各候補について、自動判断の割合と青信号ゾーンのデフォルト率を示します。緑の点は現在の選択です。",
     tradeHow: "点が右に行くほど自動化が進みます。上に行くほど青信号ゾーンのデフォルトが増えます。<strong>曲線をクリック</strong>すると青信号の終わりを動かせます。",
-    tradeText: (r, g, x, y) => "赤信号を第 <strong>" + r + "</strong> 百分位に固定した場合、曲線上の各点は青信号の終わりの候補です（第1〜第" + r + "百分位）。現在の選択（<strong>" + g + "</strong>）では申込の <strong>" + x + "</strong> を自動判断し、青信号ゾーンのデフォルト率は <strong>" + y + "</strong> です。",
-    tradeNoGreen: (r) => "赤信号を第 <strong>" + r + "</strong> 百分位に固定した場合、曲線上の各点は青信号の終わりの候補です。現在、青信号ゾーンは空です。曲線をクリックして点を選んでください。",
-    tradeAllRed: "赤信号がすべての申込をカバーしています。右に動かすと曲線が表示されます。",
-    emptyCurve: "曲線なし：赤信号が第0百分位から始まっています。",
+    tradeText: (g, x, y) => "各点は青信号ゾーンの終わりの候補です。現在の選択（<strong>" + g + "</strong>）では申込の <strong>" + x + "</strong> が自動承認され、青信号ゾーンのデフォルト率は <strong>" + y + "</strong> です。",
+    tradeNoGreen: () => "現在、青信号ゾーンは空です。曲線をクリックして点を選んでください。",
+    tradeAllRed: "現在、青信号ゾーンは空です。曲線をクリックして点を選んでください。",
+    emptyCurve: "青信号ゾーンに申込はありません。",
     curveLabel: (g, x, y) => "青信号 " + g + " まで：" + x + " · " + y,
-    axisX: "自動判断の割合（青 + 赤）", axisY: "青信号ゾーンのデフォルト率",
+    axisX: "自動承認の申込割合（青信号）", axisY: "青信号ゾーンのデフォルト率",
     avg: (x) => "平均 " + x,
     notesTitle: "補足", nData: "データ", nModel: "モデル", nLimits: "制約",
     nModelText: "ロジスティック回帰で各融資のデフォルト確率（PD）を予測します。Lending Club のグレードと金利は使っていません。これらにはすでに Lending Club 自身のリスク判断が含まれているためです。",
-    lim1: "見えるのは承認された融資だけです。Lending Club が否決した申込については何もわかりません。",
+    lim1: "Lending Club が融資した案件のみを扱い、資金が出なかった申込は表現していません。",
     lim2: "アナリストは黄信号ゾーンを現在と同じように扱うと仮定しています。",
     lim3: "米国のデータで、ここでは例として使っています。",
     lim4: "LGD は融資の当初額に適用しています。これは簡略化で、実際にはデフォルト時点で一部がすでに返済されていることが多いです。",
+    lim5: "人による審査の結果はモデル化していません。",
     noteData: (N, avg) => "Lending Club（米国）の36か月個人ローン。モデルは2010〜2012年の融資で学習し、2013年の融資でテストしています（" + N + "件、デフォルト率 " + avg + "）。百分位と PD の閾値は学習データから決めており、テスト年に合わせた調整はしていません。",
     percentile: (i) => "第 " + i + " 百分位",
-    summary: (g, r, auto, gr, avg) => "青信号は第 <strong class=\"g\">" + g + "</strong> 百分位まで、赤信号は第 <strong class=\"r\">" + r + "</strong> 百分位から：申込の <strong>" + auto + "</strong> を自動判断し、青信号ゾーンのデフォルト率は <strong>" + gr + "</strong>（平均 " + avg + "）です。",
+    summary: (g, r, auto, gr, avg) => "第 <strong class=\"g\">" + g + "</strong> 百分位まで自動承認し、第 <strong class=\"r\">" + r + "</strong> 百分位から詳細審査に回します。申込の <strong>" + auto + "</strong> を自動承認し、青信号ゾーンのデフォルト率は <strong>" + gr + "</strong>（平均 " + avg + "）です。",
     ruleNone: "該当なし", ruleAll: "すべての申込",
     ruleBelow: (x) => "予測PD " + x + " 未満",
     ruleAtLeast: (x) => "予測PD " + x + " 以上",
@@ -830,8 +1008,8 @@ const I18N = {
     greenMore: (rel, avg) => "平均 " + avg + " より " + rel + " 高い。",
     greenEqual: (avg) => "平均 " + avg + " と同じ。",
     greenEmpty: "青信号ゾーンに申込はありません。",
-    caughtSub: (a, b) => b + " 件のデフォルトのうち " + a + " 件を阻止。",
-    goodSub: (a, b) => "返済した顧客 " + b + " 人のうち " + a + " 人を否決。",
+    caughtSub: (a, b) => b + " 件のデフォルトのうち " + a + " 件を詳細審査に回しました。",
+    goodSub: (a, b) => "返済した顧客 " + b + " 人のうち " + a + " 人を詳細審査に回しました。",
     zoneLabels: ["青信号", "黄信号", "赤信号"],
     zoneNames: ["青信号ゾーン", "黄信号ゾーン", "赤信号ゾーン"],
     stripNames: ["青", "黄", "赤"],
@@ -894,10 +1072,11 @@ const I18N = {
     const green = zone(0, g), yellow = zone(g, r), red = zone(r, K);
     return {
       green, yellow, red,
-      auto: (green.n + red.n) / N,
+      auto: green.n / N,
+      analystLoad: (yellow.n + red.n) / N,
       greenRate: rate(green.d, green.n),
       caught: rate(red.d, D),
-      goodRefused: rate(red.n - red.d, N - D),
+      goodReviewed: rate(red.n - red.d, N - D),
     };
   }
 
@@ -937,6 +1116,276 @@ const I18N = {
     state.g = g; state.r = r;
     render();
   }
+
+  // ---------- Client individuel ----------
+  const CLIENT_LABELS = {
+    loan_amnt: "Montant du prêt",
+    emp_length: "Années d’emploi",
+    annual_inc: "Revenu annuel",
+    dti: "Ratio dette / revenu",
+    open_acc: "Comptes de crédit ouverts",
+    pub_rec: "Dossiers publics",
+    revol_bal: "Solde de crédit renouvelable",
+    revol_util: "Utilisation du crédit renouvelable",
+    total_acc: "Nombre total de comptes",
+    mort_acc: "Prêts hypothécaires",
+    pub_rec_bankruptcies: "Faillites publiques",
+    credit_hist_years: "Âge du dossier de crédit (années)",
+    home_ownership: "Logement",
+    verification_status: "Vérification du revenu",
+    purpose: "Motif du prêt",
+  };
+  const CLIENT_STEPS = {
+    loan_amnt: "any", emp_length: "1", annual_inc: "any", dti: "any",
+    open_acc: "1", pub_rec: "1", revol_bal: "any", revol_util: "any",
+    total_acc: "1", mort_acc: "1", pub_rec_bankruptcies: "1",
+    credit_hist_years: "any",
+  };
+  const CATEGORY_LABELS = {
+    home_ownership: {
+      MORTGAGE: "Hypothèque", OTHER: "Autre", OWN: "Propriétaire", RENT: "Locataire",
+    },
+    verification_status: {
+      "Not Verified": "Non vérifié", "Source Verified": "Source vérifiée", Verified: "Vérifié",
+    },
+    purpose: {
+      car: "Achat d’une voiture", credit_card: "Carte de crédit",
+      debt_consolidation: "Consolidation de dettes", educational: "Études",
+      home_improvement: "Rénovation", house: "Achat d’une maison",
+      major_purchase: "Achat important", medical: "Soins médicaux", moving: "Déménagement",
+      other: "Autre", renewable_energy: "Énergie renouvelable",
+      small_business: "Petite entreprise", vacation: "Vacances", wedding: "Mariage",
+    },
+  };
+  const DRIVER_LABELS = {
+    emp_length: "Années d’emploi",
+    annual_inc: "Revenu annuel",
+    dti: "Ratio dette / revenu",
+    open_acc: "Comptes de crédit ouverts",
+    pub_rec: "Dossiers publics",
+    revol_bal: "Solde de crédit renouvelable",
+    revol_util: "Utilisation du crédit renouvelable",
+    total_acc: "Nombre total de comptes",
+    mort_acc: "Prêts hypothécaires",
+    pub_rec_bankruptcies: "Faillites publiques",
+    credit_hist_years: "Âge du dossier de crédit",
+    loan_to_income: "Prêt / revenu annuel",
+    home_ownership: "Logement",
+    verification_status: "Vérification du revenu",
+    purpose: "Motif du prêt",
+  };
+  const clientNumber = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 2 });
+  const clientPercent = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 1 });
+  const clientUsd = new Intl.NumberFormat("fr-CA", {
+    style: "currency", currency: "USD", maximumFractionDigits: 2,
+  });
+
+  function clientValue(value) {
+    return clientNumber.format(value);
+  }
+  function categoryMode(name) {
+    const levels = MODEL.categories[name];
+    let bestLevel = levels[0], bestShare = -1;
+    for (const level of levels) {
+      const index = MODEL.features.indexOf(name + "_" + level);
+      const share = index < 0
+        ? 1 - levels.reduce((total, item) => {
+          const i = MODEL.features.indexOf(name + "_" + item);
+          return total + (i < 0 ? 0 : MODEL.mean[i]);
+        }, 0)
+        : MODEL.mean[index];
+      if (share > bestShare) { bestLevel = level; bestShare = share; }
+    }
+    return bestLevel;
+  }
+  function buildClientInputs() {
+    const fields = $("client-fields");
+    for (const name of MODEL.numeric_inputs) {
+      if (name === "loan_to_income") continue;
+      const range = MODEL.ranges[name];
+      const wrapper = document.createElement("div");
+      wrapper.className = "client-field";
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      const hint = document.createElement("small");
+      input.id = "client-" + name;
+      input.type = "number";
+      input.inputMode = "decimal";
+      input.min = range.p1;
+      input.max = range.p99;
+      input.step = CLIENT_STEPS[name] || "any";
+      input.value = range.median;
+      input.dataset.variable = name;
+      label.htmlFor = input.id;
+      label.textContent = CLIENT_LABELS[name] || name;
+      hint.textContent = "Plage observée : " + clientValue(range.p1) + " à "
+        + clientValue(range.p99) + " · médiane : " + clientValue(range.median);
+      wrapper.append(label, input, hint);
+      fields.appendChild(wrapper);
+      input.addEventListener("input", () => renderClient(false));
+      input.addEventListener("change", () => renderClient(true));
+    }
+    for (const [name, levels] of Object.entries(MODEL.categories)) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "client-field";
+      const label = document.createElement("label");
+      const select = document.createElement("select");
+      select.id = "client-" + name;
+      select.dataset.variable = name;
+      label.htmlFor = select.id;
+      label.textContent = CLIENT_LABELS[name] || name;
+      for (const level of levels) {
+        const option = document.createElement("option");
+        option.value = level;
+        option.textContent = (CATEGORY_LABELS[name] && CATEGORY_LABELS[name][level]) || level;
+        select.appendChild(option);
+      }
+      select.value = categoryMode(name);
+      wrapper.append(label, select);
+      fields.appendChild(wrapper);
+      select.addEventListener("change", () => renderClient(false));
+    }
+  }
+
+  function percentilePosition(value) {
+    const cuts = MODEL.pd_cuts;
+    let lo = 0, hi = cuts.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (cuts[mid] <= value) lo = mid + 1;
+      else hi = mid;
+    }
+    if (lo === 0) return 0;
+    if (lo === cuts.length) return 100;
+    const lower = lo - 1, span = cuts[lo] - cuts[lower];
+    const fraction = span > 0 ? (value - cuts[lower]) / span : 0;
+    return lower + fraction;
+  }
+
+  function driverLabel(name, values) {
+    const base = DRIVER_LABELS[name] || name;
+    if (!MODEL.categories[name]) return base;
+    const level = (CATEGORY_LABELS[name] && CATEGORY_LABELS[name][values[name]]) || values[name];
+    return base + " · " + level;
+  }
+
+  function renderDrivers(result) {
+    const list = $("driver-list");
+    list.replaceChildren();
+    const drivers = Object.entries(result.contributions)
+      .filter(([, amount]) => amount !== 0)
+      .map(([name, amount]) => ({ name, amount }))
+      .sort((a, b) => b.amount - a.amount);
+    const selected = drivers.filter((item) => item.amount > 0).slice(0, 3)
+      .concat(drivers.filter((item) => item.amount < 0).slice(-2).reverse());
+    if (!selected.length) {
+      list.textContent = "Aucun facteur ne s’écarte du client moyen.";
+      return;
+    }
+    const max = Math.max(...selected.map((item) => Math.abs(item.amount)));
+    for (const item of selected) {
+      const row = document.createElement("div");
+      row.className = "driver-row";
+      const head = document.createElement("div");
+      head.className = "driver-head";
+      const label = document.createElement("span");
+      label.textContent = driverLabel(item.name, result.input);
+      const amount = document.createElement("span");
+      amount.className = "num";
+      amount.textContent = (item.amount > 0 ? "+" : "") + item.amount.toFixed(3);
+      head.append(label, amount);
+      const track = document.createElement("div");
+      track.className = "driver-track";
+      track.setAttribute("aria-hidden", "true");
+      const bar = document.createElement("div");
+      bar.className = "driver-bar " + (item.amount > 0 ? "risk-up" : "risk-down");
+      bar.style.width = (Math.abs(item.amount) / max * 100) + "%";
+      if (item.amount < 0) bar.style.marginLeft = "auto";
+      track.appendChild(bar);
+      row.append(head, track);
+      list.appendChild(row);
+    }
+  }
+
+  function renderClient(applyClamps) {
+    const input = {};
+    let invalid = null;
+    for (const name of MODEL.numeric_inputs) {
+      if (name === "loan_to_income") continue;
+      const field = $("client-" + name);
+      field.setAttribute("aria-invalid", "false");
+      if (field.value.trim() === "" || !Number.isFinite(Number(field.value))) {
+        field.setAttribute("aria-invalid", "true");
+        invalid = field;
+        break;
+      }
+      input[name] = Number(field.value);
+    }
+    if (invalid) {
+      $("client-message").textContent = "Entrez une valeur numérique pour continuer.";
+      $("client-message").classList.add("error");
+      $("client-light").textContent = "À compléter";
+      $("client-light").dataset.zone = "";
+      $("client-human-note").hidden = true;
+      setText("client-pd", "—");
+      setText("client-percentile", "—");
+      setText("client-expected-loss", "—");
+      $("driver-list").replaceChildren();
+      return;
+    }
+    for (const name of Object.keys(MODEL.categories)) input[name] = $("client-" + name).value;
+    const result = calculateClient(MODEL, input);
+    const clamped = Object.entries(result.clamped);
+    if (applyClamps) {
+      for (const [name, value] of clamped) $("client-" + name).value = value.to;
+    }
+    const message = $("client-message");
+    message.classList.toggle("error", clamped.length > 0);
+    message.textContent = clamped.length
+      ? "Valeur(s) limitée(s) à la plage d’entraînement : " + clamped.map(([name, value]) =>
+        (CLIENT_LABELS[name] || name) + " (" + clientValue(value.to) + ")").join(", ") + "."
+      : "";
+
+    const greenCut = MODEL.pd_cuts[state.g], redCut = MODEL.pd_cuts[state.r];
+    const zone = result.pd < greenCut ? "green" : result.pd >= redCut ? "red" : "yellow";
+    const zoneName = {
+      green: "Approbation automatique",
+      yellow: "Révision par un analyste",
+      red: "Révision approfondie recommandée",
+    }[zone];
+    $("client-light").textContent = zoneName;
+    $("client-light").dataset.zone = zone;
+    $("client-human-note").hidden = zone !== "red";
+    setText("client-pd", clientPercent.format(result.pd * 100) + " %");
+    const percentile = percentilePosition(result.pd);
+    setText("client-percentile", "Plus risqué que " + clientPercent.format(percentile)
+      + " % des clients d’entraînement.");
+    const lgdText = clientPercent.format(state.lgd * 100) + " %";
+    const eadText = clientUsd.format(result.input.loan_amnt);
+    setText("client-expected-loss", clientPercent.format(result.pd * 100) + " % × "
+      + lgdText + " × " + eadText + " = "
+      + clientUsd.format(result.pd * state.lgd * result.input.loan_amnt));
+    renderDrivers(result);
+  }
+
+  document.querySelectorAll("[data-profile]").forEach((button) => {
+    button.addEventListener("click", () => {
+      let profile;
+      if (button.dataset.profile === "moyen") {
+        profile = Object.fromEntries(MODEL.numeric_inputs.filter((name) => name !== "loan_to_income")
+          .map((name) => [name, MODEL.ranges[name].median]));
+        for (const name of Object.keys(MODEL.categories)) profile[name] = categoryMode(name);
+      } else {
+        const checkIndex = button.dataset.profile === "prudent" ? 1 : 0;
+        profile = MODEL.check[checkIndex].input;
+      }
+      for (const name of MODEL.numeric_inputs) {
+        if (name !== "loan_to_income") $("client-" + name).value = profile[name];
+      }
+      for (const name of Object.keys(MODEL.categories)) $("client-" + name).value = profile[name];
+      renderClient(true);
+    });
+  });
 
   // ---------- Outils SVG ----------
   const NS = "http://www.w3.org/2000/svg";
@@ -1116,7 +1565,11 @@ const I18N = {
   }
   lgdInput.addEventListener("input", () => {
     const v = checkLgd();
-    if (v !== null) { state.lgd = v; renderMoney(metrics(state.g, state.r)); }
+    if (v !== null) {
+      state.lgd = v;
+      renderMoney(metrics(state.g, state.r));
+      renderClient(false);
+    }
   });
 
   // ---------- Courbe d'arbitrage ----------
@@ -1151,14 +1604,14 @@ const I18N = {
     const { g, r } = state;
     tradeLayer.replaceChildren();
     tradePoints = [];
-    for (let gi = 1; gi <= r; gi++) {
-      const mm = metrics(gi, r);
-      tradePoints.push({ g: gi, x: mm.auto, y: mm.greenRate });
+    for (let gi = 1; gi <= K; gi++) {
+      const mm = metrics(gi, K);
+      tradePoints.push({ g: gi, x: mm.green.n / N, y: mm.greenRate });
     }
     const text = document.getElementById("trade-text");
     if (!tradePoints.length) {
       el("text", { class: "empty-msg", x: TM.l + TPW / 2, y: TM.t + TPH / 2, "text-anchor": "middle" }, tradeLayer).textContent = T.emptyCurve;
-      text.innerHTML = T.tradeAllRed;
+      text.innerHTML = T.tradeNoGreen();
       return;
     }
     const pts = tradePoints.map((p) => tx(p.x).toFixed(1) + "," + ty(p.y).toFixed(1));
@@ -1175,9 +1628,9 @@ const I18N = {
       const right = cx > TW - 220;
       el("text", { class: "curve-label", x: right ? cx - 14 : cx + 14, y: cy - 14, "text-anchor": right ? "end" : "start" }, tradeLayer)
         .textContent = T.curveLabel(g, fmt.pct(cur.x), fmt.pct(cur.y));
-      text.innerHTML = T.tradeText(r, g, fmt.pct(cur.x), fmt.pct(cur.y));
+      text.innerHTML = T.tradeText(g, fmt.pct(cur.x), fmt.pct(cur.y));
     } else {
-      text.innerHTML = T.tradeNoGreen(r);
+      text.innerHTML = T.tradeNoGreen();
     }
   }
   trade.addEventListener("click", (evt) => {
@@ -1185,7 +1638,7 @@ const I18N = {
     const px = svgPoint(trade, evt).x;
     let best = tradePoints[0];
     for (const p of tradePoints) if (Math.abs(tx(p.x) - px) < Math.abs(tx(best.x) - px)) best = p;
-    setThresholds(best.g, state.r, "g");
+    setThresholds(best.g, Math.max(state.r, best.g), "reset");
   });
 
   // ---------- Rendu du texte ----------
@@ -1199,7 +1652,7 @@ const I18N = {
     setText("m-loss-sub", T.lossSub(fmt.usd(mm.green.md), lgdText));
     setText("m-avoided", fmt.usd(mm.red.md * L));
     setText("m-avoided-sub", T.avoidedSub(fmt.usd(mm.red.md), lgdText));
-    setText("m-refused", fmt.usd(mm.red.m - mm.red.md));
+    setText("m-good-reviewed", fmt.usd(mm.red.m - mm.red.md));
   }
 
   function render() {
@@ -1235,6 +1688,7 @@ const I18N = {
 
     // Indicateurs
     setText("k-auto", fmt.pct(mm.auto)); setWidth("k-auto-m", mm.auto);
+    setText("k-analysts", fmt.pct(mm.analystLoad)); setWidth("k-analysts-m", mm.analystLoad);
     setText("k-green", fmt.pct(mm.greenRate));
     const scale = Math.max(AVG, Number.isFinite(mm.greenRate) ? mm.greenRate : 0);
     setWidth("k-green-m", mm.greenRate / scale); setWidth("k-avg-m", AVG / scale);
@@ -1246,12 +1700,13 @@ const I18N = {
     }
     setText("k-caught", fmt.pct(mm.caught)); setWidth("k-caught-m", mm.caught);
     setText("k-caught-sub", T.caughtSub(fmt.int(mm.red.d), fmt.int(D)));
-    setText("k-good", fmt.pct(mm.goodRefused)); setWidth("k-good-m", mm.goodRefused);
+    setText("k-good", fmt.pct(mm.goodReviewed)); setWidth("k-good-m", mm.goodReviewed);
     setText("k-good-sub", T.goodSub(fmt.int(mm.red.n - mm.red.d), fmt.int(N - D)));
 
     renderMoney(mm);
     renderMain();
     renderTrade();
+    renderClient(false);
   }
 
   // ---------- Changement de langue ----------
@@ -1274,6 +1729,7 @@ const I18N = {
   });
   window.addEventListener("hashchange", () => setLang(langFromHash()));
 
+  buildClientInputs();
   setLang(langFromHash());
 })();
 </script>
