@@ -350,38 +350,38 @@ footer { text-align: center; color: var(--muted); font-size: 13px; padding-block
 
   <section class="panel client-panel" aria-labelledby="t-client">
     <div class="section-head">
-      <h2 id="t-client">1. Un client</h2>
-      <p>Entrez les renseignements d’un prêt pour voir la PD estimée et les facteurs qui la font varier.</p>
+      <h2 id="t-client" data-client-text="title"></h2>
+      <p data-client-text="hint"></p>
     </div>
-    <div class="client-presets" aria-label="Profils prédéfinis">
-      <button type="button" data-profile="prudent">Profil prudent</button>
-      <button type="button" data-profile="moyen">Profil moyen</button>
-      <button type="button" data-profile="risque">Profil à risque</button>
+    <div class="client-presets" data-client-aria="presetAria">
+      <button type="button" data-profile="prudent" data-client-text="profilePrudent"></button>
+      <button type="button" data-profile="moyen" data-client-text="profileMedium"></button>
+      <button type="button" data-profile="risque" data-client-text="profileRisk"></button>
     </div>
     <div class="client-fields" id="client-fields"></div>
     <p class="client-message" id="client-message" role="status" aria-live="polite"></p>
     <div class="client-results">
       <article class="client-decision" aria-live="polite">
-        <span class="label">Décision indicative</span>
-        <div class="client-light" id="client-light" data-zone="">À compléter</div>
+        <span class="label" data-client-text="decisionLabel"></span>
+        <div class="client-light" id="client-light" data-zone=""></div>
         <span class="client-pd" id="client-pd">—</span>
         <span class="client-percentile" id="client-percentile">—</span>
-        <span class="client-human-note" id="client-human-note" hidden>La décision finale est prise par une personne.</span>
+        <span class="client-human-note" id="client-human-note" data-client-text="humanNote" hidden></span>
       </article>
       <article class="client-drivers">
-        <h3>Pourquoi ?</h3>
-        <p>Contribution au risque par rapport à un client moyen. Les barres rouges augmentent le risque; les vertes le réduisent.</p>
+        <h3 data-client-text="driversTitle"></h3>
+        <p data-client-text="driversHint"></p>
         <div class="driver-list" id="driver-list"></div>
       </article>
     </div>
-    <p class="client-note">La PD est la probabilité de défaut sur les 36 mois du prêt, pas sur 12 mois. Le modèle classe les clients; avec une AUC d’environ 0,62, il ne peut pas prédire le comportement d’une personne. Illustration seulement : ce n’est pas une vraie décision de crédit. Données de prêts américains Lending Club, modèle entraîné sur 2010 à 2012.</p>
+    <p class="client-note" data-client-text="note"></p>
   </section>
 
   <!-- 2. Le portefeuille -->
   <section class="panel chart-panel" aria-labelledby="t-chart">
     <div class="portfolio-bridge">
-      <strong>2. Le portefeuille</strong>
-      <p>Perte attendue de ce client = PD × LGD × EAD : <span class="num" id="client-expected-loss" aria-live="polite">—</span></p>
+      <strong data-client-text="bridgeTitle"></strong>
+      <p><span data-client-text="bridgeLabel"></span> <span class="num" id="client-expected-loss" aria-live="polite">—</span></p>
     </div>
     <div class="section-head">
       <h2 id="t-chart" data-i18n="chartTitle"></h2>
@@ -585,7 +585,7 @@ const I18N = {
     chartHint: "Glissez la ligne verte et la ligne rouge sur le graphique, ou utilisez les curseurs.",
     mainDesc: "Cent barres, une par centile de risque, qui montrent le taux de défaut réel en 2013. Les barres sont vertes, jaunes ou rouges selon la zone. Une ligne pointillée montre le taux de défaut moyen.",
     axisLess: "← Moins risqué", axisMid: "Centile de risque prédit", axisMore: "Plus risqué →",
-    gLabel: "Fin du feu vert", gHint: "Les demandes sous ce centile sont approuvées automatiquement.",
+    gLabel: "Fin de l’approbation automatique", gHint: "Les demandes sous ce centile sont approuvées automatiquement.",
     rLabel: "Début de la révision approfondie", rHint: "Les demandes à partir de ce centile sont envoyées en révision approfondie.",
     reset: "Revenir à 40 / 90",
     zonesTitle: "Les trois zones", zonesHint: "Part des demandes de 2013 dans chaque zone.",
@@ -597,38 +597,38 @@ const I18N = {
     kpisAria: "Indicateurs clés",
     kAuto: "Automatisation", kAutoSub: "des demandes approuvées automatiquement",
     kAnalysts: "Charge des analystes", kAnalystsSub: "Demandes en révision ordinaire ou approfondie.",
-    kGreen: "Taux de défaut en zone verte", compareGreen: "Zone verte", compareAvg: "Moyenne",
+    kGreen: "Taux de défaut des demandes approuvées automatiquement", compareGreen: "Approbation automatique", compareAvg: "Moyenne",
     kCaught: "Défauts envoyés en révision approfondie", kGood: "Bons clients envoyés en révision approfondie",
     moneyTitle: "Combien d'argent est en jeu&nbsp;?",
     moneyHint: "Montants des prêts de 2013. La perte estimée est le montant des prêts en défaut multiplié par la LGD.",
     lgdLabel: "Perte en cas de défaut (LGD)",
     lgdHelp: "Part du montant du prêt qu'on perd quand le client ne rembourse pas. Entre 0 et 100.",
     lgdError: (v) => "Entrez un nombre entre 0 et 100. Le calcul garde la dernière valeur valide (" + v + ").",
-    mLoss: "Perte estimée en zone verte", mAvoided: "Pertes potentielles dans le rouge (à examiner)",
+    mLoss: "Perte estimée des demandes approuvées automatiquement", mAvoided: "Pertes potentielles en révision approfondie (à examiner)",
     mGoodReviewed: "Prêts de bons clients envoyés en révision approfondie",
     mGoodReviewedSub: "Clients qui ont remboursé leur prêt.",
     lossSub: (md, l) => md + " de prêts en défaut × " + l + " de LGD",
     avoidedSub: (md, l) => md + " de prêts en défaut à examiner × " + l + " de LGD",
     tradeTitle: "Automatiser plus, mais à quel prix&nbsp;?",
-    tradeDesc: "Courbe d'arbitrage : pour chaque fin possible de la zone verte, la part des demandes approuvées automatiquement et le taux de défaut en zone verte. Le point vert montre le choix actuel.",
-    tradeHow: "Plus le point va vers la droite, plus on automatise. Plus il monte, plus la zone verte contient de défauts. <strong>Cliquez sur la courbe</strong> pour déplacer la fin du feu vert.",
-    tradeText: (g, x, y) => "Chaque point montre une fin possible de la zone verte. Votre choix actuel (<strong>" + g + "</strong>) représente <strong>" + x + "</strong> des demandes approuvées automatiquement, avec <strong>" + y + "</strong> de défaut en zone verte.",
-    tradeNoGreen: () => "La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
-    tradeAllRed: "La zone verte est vide pour l'instant : cliquez sur la courbe pour choisir un point.",
-    emptyCurve: "Aucune demande en zone verte.",
-    curveLabel: (g, x, y) => "Vert jusqu'à " + g + " : " + x + " · " + y,
-    axisX: "Demandes approuvées automatiquement (zone verte)", axisY: "Taux de défaut en zone verte",
+    tradeDesc: "Courbe d'arbitrage : pour chaque seuil d'approbation automatique, elle montre la part des demandes approuvées automatiquement et leur taux de défaut. Le point vert montre le choix actuel.",
+    tradeHow: "Plus le point va vers la droite, plus on automatise. Plus il monte, plus le taux de défaut des demandes approuvées automatiquement est élevé. <strong>Cliquez sur la courbe</strong> pour déplacer le seuil d'approbation automatique.",
+    tradeText: (g, x, y) => "Chaque point montre un seuil possible d'approbation automatique. Votre choix actuel (<strong>" + g + "</strong>) représente <strong>" + x + "</strong> des demandes approuvées automatiquement, avec un taux de défaut de <strong>" + y + "</strong> dans ce groupe.",
+    tradeNoGreen: () => "Aucune demande n'est approuvée automatiquement avec ce seuil : cliquez sur la courbe pour choisir un point.",
+    tradeAllRed: "Aucune demande n'est approuvée automatiquement avec ce seuil : cliquez sur la courbe pour choisir un point.",
+    emptyCurve: "Aucune demande n'est approuvée automatiquement.",
+    curveLabel: (g, x, y) => "Approbation automatique jusqu'à " + g + " : " + x + " · " + y,
+    axisX: "Demandes approuvées automatiquement", axisY: "Taux de défaut des demandes approuvées automatiquement",
     avg: (x) => "Moyenne " + x,
     notesTitle: "À savoir", nData: "Données", nModel: "Modèle", nLimits: "Limites",
     nModelText: "Une régression logistique prédit la probabilité de défaut (PD) de chaque prêt. Elle n'utilise ni la cote (grade) de Lending Club ni le taux d'intérêt, qui contiennent déjà l'avis de Lending Club sur le risque.",
     lim1: "On voit seulement les prêts accordés par Lending Club; les demandes non financées ne sont pas représentées.",
-    lim2: "On suppose que les analystes traitent la zone jaune comme aujourd'hui.",
+    lim2: "On suppose que les analystes traitent les demandes en révision ordinaire comme aujourd'hui.",
     lim3: "Ce sont des données américaines, utilisées ici comme exemple.",
     lim4: "La LGD s'applique au montant initial du prêt. C'est une simplification : une partie du prêt est souvent déjà remboursée au moment du défaut.",
     lim5: "Nous ne modélisons pas le résultat de la révision humaine.",
     noteData: (N, avg) => "Prêts personnels de 36 mois de Lending Club, aux États-Unis. Le modèle est entraîné sur les prêts de 2010 à 2012 et testé sur ceux de 2013 (" + N + " prêts, " + avg + " de défauts). Les centiles et les seuils de PD viennent des données d'entraînement : ils ne sont pas ajustés sur l'année testée.",
     percentile: (i) => "centile " + i,
-    summary: (g, r, auto, gr, avg) => "Approbation automatique jusqu'au centile <strong class=\"g\">" + g + "</strong>, révision approfondie dès le centile <strong class=\"r\">" + r + "</strong> : <strong>" + auto + "</strong> des demandes sont approuvées automatiquement, et la zone verte a un taux de défaut de <strong>" + gr + "</strong> (moyenne " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Approbation automatique jusqu'au centile <strong class=\"g\">" + g + "</strong>, révision approfondie dès le centile <strong class=\"r\">" + r + "</strong> : <strong>" + auto + "</strong> des demandes sont approuvées automatiquement, avec un taux de défaut de <strong>" + gr + "</strong> dans ce groupe (moyenne " + avg + ").",
     ruleNone: "Aucune demande", ruleAll: "Toutes les demandes",
     ruleBelow: (x) => "PD prédite sous " + x,
     ruleAtLeast: (x) => "PD prédite de " + x + " ou plus",
@@ -638,12 +638,12 @@ const I18N = {
     greenLess: (rel, avg) => rel + " de moins que la moyenne de " + avg + ".",
     greenMore: (rel, avg) => rel + " de plus que la moyenne de " + avg + ".",
     greenEqual: (avg) => "Égal à la moyenne de " + avg + ".",
-    greenEmpty: "Aucune demande en zone verte.",
+    greenEmpty: "Aucune demande n'est approuvée automatiquement.",
     caughtSub: (a, b) => a + " défauts envoyés en révision approfondie sur " + b + ".",
     goodSub: (a, b) => a + " bons clients envoyés en révision approfondie, sur " + b + ".",
-    zoneLabels: ["VERT", "JAUNE", "ROUGE"],
-    zoneNames: ["zone verte", "zone jaune", "zone rouge"],
-    stripNames: ["Vert", "Jaune", "Rouge"],
+    zoneLabels: ["AUTO", "ANALYSE", "RÉV. +"],
+    zoneNames: ["approbation automatique", "révision par un analyste", "révision approfondie"],
+    stripNames: ["Approuvées", "À analyser", "À réviser"],
     tooltip: (i, zone, n, d, rate, pd) => "<b>Centile " + i + "</b> · " + zone + "<br><span class=\"num\">" + n + " prêts · " + d + " défauts</span><br>Taux de défaut <span class=\"num\">" + rate + "</span><br>PD prédite dès <span class=\"num\">" + pd + "</span>",
     missing: "Données manquantes. Lancez « python app/build_simulator.py » puis ouvrez app/index.html.",
   },
@@ -659,50 +659,50 @@ const I18N = {
     chartHint: "Drag the green and red lines on the chart, or use the sliders.",
     mainDesc: "One hundred bars, one per risk percentile, showing the actual default rate in 2013. Bars are green, yellow or red by zone. A dashed line shows the average default rate.",
     axisLess: "← Less risky", axisMid: "Predicted risk percentile", axisMore: "Riskier →",
-    gLabel: "End of green", gHint: "Applications below this percentile are approved automatically.",
+    gLabel: "End of automatic approval", gHint: "Applications below this percentile are approved automatically.",
     rLabel: "Start of in-depth review", rHint: "Applications from this percentile up are sent for in-depth review.",
     reset: "Back to 40 / 90",
     zonesTitle: "The three zones", zonesHint: "Share of 2013 applications in each zone.",
-    zGreen: "Green light", zGreenSub: "Approved automatically",
-    zYellow: "Yellow light", zYellowSub: "Reviewed by an analyst",
+    zGreen: "Automatic approval", zGreenSub: "Approved automatically",
+    zYellow: "Analyst review", zYellowSub: "Reviewed by an analyst",
     zRed: "In-depth review", zRedSub: "A person makes the decision",
     factN: "Applications", factRate: "Default rate", factRule: "Rule",
     ofApps: "of applications",
     kpisAria: "Key indicators",
     kAuto: "Automation", kAutoSub: "of applications approved automatically",
     kAnalysts: "Analyst workload", kAnalystsSub: "Applications for regular or in-depth review.",
-    kGreen: "Default rate in green", compareGreen: "Green", compareAvg: "Average",
+    kGreen: "Default rate among automatically approved applications", compareGreen: "Automatic approval", compareAvg: "Average",
     kCaught: "Defaults sent for in-depth review", kGood: "Good clients sent for in-depth review",
     moneyTitle: "How much money is at stake?",
     moneyHint: "Loan amounts for 2013. The estimated loss is the amount of defaulted loans times the LGD.",
     lgdLabel: "Loss given default (LGD)",
     lgdHelp: "Share of the loan amount lost when the client does not repay. Between 0 and 100.",
     lgdError: (v) => "Enter a number between 0 and 100. The calculation keeps the last valid value (" + v + ").",
-    mLoss: "Estimated loss in green", mAvoided: "Potential losses in red (to review)",
+    mLoss: "Estimated loss among automatically approved applications", mAvoided: "Potential losses in in-depth review (to examine)",
     mGoodReviewed: "Loans to good clients sent for in-depth review",
     mGoodReviewedSub: "Clients who repaid their loans.",
     lossSub: (md, l) => md + " of defaulted loans × " + l + " LGD",
     avoidedSub: (md, l) => md + " of defaulted loans for review × " + l + " LGD",
     tradeTitle: "Automate more, but at what cost?",
-    tradeDesc: "Trade-off curve: for each possible end of green, the share of automated decisions and the default rate in green. The green dot shows the current choice.",
-    tradeHow: "The further right the dot, the more we automate. The higher it goes, the more defaults the green zone contains. <strong>Click the curve</strong> to move the end of green.",
-    tradeText: (g, x, y) => "Each point shows a possible end of the green zone. Your current choice (<strong>" + g + "</strong>) represents <strong>" + x + "</strong> of applications approved automatically, with a <strong>" + y + "</strong> default rate in green.",
-    tradeNoGreen: () => "The green zone is empty for now: click the curve to pick a point.",
-    tradeAllRed: "The green zone is empty for now: click the curve to pick a point.",
-    emptyCurve: "No applications in green.",
-    curveLabel: (g, x, y) => "Green up to " + g + ": " + x + " · " + y,
-    axisX: "Applications approved automatically (green)", axisY: "Default rate in green",
+    tradeDesc: "Trade-off curve: for each automatic-approval threshold, it shows the share of applications approved automatically and their default rate. The green dot shows the current choice.",
+    tradeHow: "The further right the dot, the more we automate. The higher it goes, the higher the default rate among automatically approved applications. <strong>Click the curve</strong> to move the automatic-approval threshold.",
+    tradeText: (g, x, y) => "Each point shows a possible automatic-approval threshold. Your current choice (<strong>" + g + "</strong>) represents <strong>" + x + "</strong> of applications approved automatically, with a default rate of <strong>" + y + "</strong> in that group.",
+    tradeNoGreen: () => "No applications are automatically approved at this threshold: click the curve to pick a point.",
+    tradeAllRed: "No applications are automatically approved at this threshold: click the curve to pick a point.",
+    emptyCurve: "No applications are automatically approved.",
+    curveLabel: (g, x, y) => "Automatic approval up to " + g + ": " + x + " · " + y,
+    axisX: "Applications approved automatically", axisY: "Default rate among automatically approved applications",
     avg: (x) => "Average " + x,
     notesTitle: "Good to know", nData: "Data", nModel: "Model", nLimits: "Limitations",
     nModelText: "A logistic regression predicts each loan's probability of default (PD). It uses neither Lending Club's grade nor the interest rate, which already contain Lending Club's view of the risk.",
     lim1: "We only see loans funded by Lending Club; unfunded applications are not represented.",
-    lim2: "We assume analysts handle the yellow zone as they do today.",
+    lim2: "We assume analysts handle applications sent for regular review as they do today.",
     lim3: "This is U.S. data, used here as an example.",
     lim4: "LGD is applied to the initial loan amount. This is a simplification: part of the loan is often already repaid when the default happens.",
     lim5: "We do not model the outcome of human review.",
     noteData: (N, avg) => "36-month personal loans from Lending Club, in the United States. The model is trained on 2010–2012 loans and tested on 2013 loans (" + N + " loans, " + avg + " defaults). Percentiles and PD thresholds come from the training data: they are not tuned on the test year.",
     percentile: (i) => "percentile " + i,
-    summary: (g, r, auto, gr, avg) => "Automatic approval up to percentile <strong class=\"g\">" + g + "</strong>, in-depth review from percentile <strong class=\"r\">" + r + "</strong>: <strong>" + auto + "</strong> of applications are approved automatically, and the green zone has a default rate of <strong>" + gr + "</strong> (average " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Automatic approval up to percentile <strong class=\"g\">" + g + "</strong>, in-depth review from percentile <strong class=\"r\">" + r + "</strong>: <strong>" + auto + "</strong> of applications are approved automatically, with a default rate of <strong>" + gr + "</strong> in that group (average " + avg + ").",
     ruleNone: "No applications", ruleAll: "All applications",
     ruleBelow: (x) => "Predicted PD below " + x,
     ruleAtLeast: (x) => "Predicted PD of " + x + " or more",
@@ -712,12 +712,12 @@ const I18N = {
     greenLess: (rel, avg) => rel + " lower than the average of " + avg + ".",
     greenMore: (rel, avg) => rel + " higher than the average of " + avg + ".",
     greenEqual: (avg) => "Equal to the average of " + avg + ".",
-    greenEmpty: "No applications in green.",
+    greenEmpty: "No applications are automatically approved.",
     caughtSub: (a, b) => a + " defaults sent for in-depth review, out of " + b + ".",
     goodSub: (a, b) => a + " good clients sent for in-depth review, out of " + b + ".",
-    zoneLabels: ["GREEN", "YELLOW", "RED"],
-    zoneNames: ["green zone", "yellow zone", "red zone"],
-    stripNames: ["Green", "Yellow", "Red"],
+    zoneLabels: ["AUTO", "REVIEW", "IN-DEPTH"],
+    zoneNames: ["automatic approval", "analyst review", "in-depth review"],
+    stripNames: ["Approved", "For review", "In-depth review"],
     tooltip: (i, zone, n, d, rate, pd) => "<b>Percentile " + i + "</b> · " + zone + "<br><span class=\"num\">" + n + " loans · " + d + " defaults</span><br>Default rate <span class=\"num\">" + rate + "</span><br>Predicted PD from <span class=\"num\">" + pd + "</span>",
     missing: "Data missing. Run \"python app/build_simulator.py\", then open app/index.html.",
   },
@@ -733,50 +733,50 @@ const I18N = {
     chartHint: "在图上拖动绿线和红线，或者使用下方的滑块。",
     mainDesc: "100 根柱子，每根代表一个风险百分位，显示 2013 年的实际违约率。柱子按区域分为绿、黄、红三色。虚线表示平均违约率。",
     axisLess: "← 风险较低", axisMid: "预测风险百分位", axisMore: "风险较高 →",
-    gLabel: "绿灯终点", gHint: "低于这个百分位的申请自动批准。",
+    gLabel: "自动批准的终点", gHint: "低于这个百分位的申请自动批准。",
     rLabel: "深度复核起点", rHint: "从这个百分位开始的申请将进入深度复核。",
     reset: "恢复 40 / 90",
     zonesTitle: "三个区域", zonesHint: "2013 年各区域的申请占比。",
-    zGreen: "绿灯", zGreenSub: "自动批准",
-    zYellow: "黄灯", zYellowSub: "分析师人工审核",
+    zGreen: "自动批准", zGreenSub: "自动作出批准决定",
+    zYellow: "分析师审核", zYellowSub: "由分析师检查申请",
     zRed: "深度复核", zRedSub: "由人工做出最终决定",
     factN: "申请数", factRate: "违约率", factRule: "规则",
     ofApps: "的申请",
     kpisAria: "关键指标",
     kAuto: "自动化", kAutoSub: "的申请获自动批准",
     kAnalysts: "分析师工作量", kAnalystsSub: "常规或深度复核的申请占比。",
-    kGreen: "绿灯区违约率", compareGreen: "绿灯区", compareAvg: "平均",
+    kGreen: "自动批准客户的违约率", compareGreen: "自动批准", compareAvg: "平均",
     kCaught: "送交深度复核的违约", kGood: "送交深度复核的优质客户",
     moneyTitle: "涉及多少金额？",
     moneyHint: "2013 年的贷款金额。预计损失 = 违约贷款金额 × 违约损失率（LGD）。",
     lgdLabel: "违约损失率（LGD）",
     lgdHelp: "客户不还款时，贷款金额中损失的比例。介于 0 和 100 之间。",
     lgdError: (v) => "请输入 0 到 100 之间的数字。计算暂时使用上一个有效值（" + v + "）。",
-    mLoss: "绿灯区预计损失", mAvoided: "红灯区潜在损失（待审核）",
+    mLoss: "自动批准客户的预计损失", mAvoided: "送交深度复核的潜在损失（待检查）",
     mGoodReviewed: "送交深度复核的优质客户贷款金额",
     mGoodReviewedSub: "这些客户已按时偿还贷款。",
     lossSub: (md, l) => md + " 违约贷款 × " + l + " LGD",
     avoidedSub: (md, l) => md + " 待审核的违约贷款 × " + l + " LGD",
     tradeTitle: "自动化更多，代价是什么？",
-    tradeDesc: "权衡曲线：对每个可能的绿灯终点，显示自动决策比例和绿灯区违约率。绿点表示当前选择。",
-    tradeHow: "点越往右，自动化程度越高；点越往上，绿灯区包含的违约越多。<strong>点击曲线</strong>可以移动绿灯终点。",
-    tradeText: (g, x, y) => "曲线上的每个点对应一个可能的绿灯终点。当前选择（<strong>" + g + "</strong>）有 <strong>" + x + "</strong> 的申请获自动批准，绿灯区违约率为 <strong>" + y + "</strong>。",
-    tradeNoGreen: () => "当前绿灯区为空：点击曲线选择一个点。",
-    tradeAllRed: "当前绿灯区为空：点击曲线选择一个点。",
-    emptyCurve: "绿灯区没有申请。",
-    curveLabel: (g, x, y) => "绿灯到 " + g + "：" + x + " · " + y,
-    axisX: "自动批准的申请比例（绿灯）", axisY: "绿灯区违约率",
+    tradeDesc: "权衡曲线：对每个自动批准阈值，显示自动批准的申请占比及其违约率。绿点表示当前选择。",
+    tradeHow: "点越往右，自动化程度越高；点越往上，自动批准客户的违约率越高。<strong>点击曲线</strong>可以移动自动批准阈值。",
+    tradeText: (g, x, y) => "每个点表示一个可能的自动批准阈值。当前选择（<strong>" + g + "</strong>）有 <strong>" + x + "</strong> 的申请获自动批准，该组违约率为 <strong>" + y + "</strong>。",
+    tradeNoGreen: () => "此阈值下没有自动批准的申请：点击曲线选择一个点。",
+    tradeAllRed: "此阈值下没有自动批准的申请：点击曲线选择一个点。",
+    emptyCurve: "没有自动批准的申请。",
+    curveLabel: (g, x, y) => "自动批准至 " + g + "：" + x + " · " + y,
+    axisX: "自动批准的申请占比", axisY: "自动批准客户的违约率",
     avg: (x) => "平均 " + x,
     notesTitle: "说明", nData: "数据", nModel: "模型", nLimits: "局限性",
     nModelText: "用逻辑回归预测每笔贷款的违约概率（PD）。模型没有使用 Lending Club 的等级（grade）和利率，因为这两项已经包含了 Lending Club 自己对风险的判断。",
     lim1: "这里只包含 Lending Club 提供资金的贷款；未获资金的申请没有纳入模型。",
-    lim2: "假设分析师对黄灯区的处理方式与现在相同。",
+    lim2: "假设分析师按目前的方式处理送交常规审核的申请。",
     lim3: "这是美国的数据，这里仅作为示例。",
     lim4: "LGD 作用于贷款的初始金额。这是一种简化：实际违约时，贷款往往已经还了一部分。",
     lim5: "模型没有预测人工复核的结果。",
     noteData: (N, avg) => "Lending Club（美国）的 36 个月个人贷款。模型用 2010–2012 年的贷款训练，用 2013 年的贷款测试（" + N + " 笔贷款，违约率 " + avg + "）。百分位和 PD 阈值来自训练数据，没有根据测试年份调整。",
     percentile: (i) => "第 " + i + " 百分位",
-    summary: (g, r, auto, gr, avg) => "自动批准至第 <strong class=\"g\">" + g + "</strong> 百分位，深度复核从第 <strong class=\"r\">" + r + "</strong> 百分位开始：<strong>" + auto + "</strong> 的申请获自动批准，绿灯区违约率为 <strong>" + gr + "</strong>（平均 " + avg + "）。",
+    summary: (g, r, auto, gr, avg) => "自动批准至第 <strong class=\"g\">" + g + "</strong> 百分位，深度复核从第 <strong class=\"r\">" + r + "</strong> 百分位开始：<strong>" + auto + "</strong> 的申请获自动批准，该组违约率为 <strong>" + gr + "</strong>（平均 " + avg + "）。",
     ruleNone: "无申请", ruleAll: "全部申请",
     ruleBelow: (x) => "预测 PD 低于 " + x,
     ruleAtLeast: (x) => "预测 PD 不低于 " + x,
@@ -786,12 +786,12 @@ const I18N = {
     greenLess: (rel, avg) => "比平均值 " + avg + " 低 " + rel + "。",
     greenMore: (rel, avg) => "比平均值 " + avg + " 高 " + rel + "。",
     greenEqual: (avg) => "与平均值 " + avg + " 持平。",
-    greenEmpty: "绿灯区没有申请。",
+    greenEmpty: "没有自动批准的申请。",
     caughtSub: (a, b) => "共 " + b + " 笔违约，其中 " + a + " 笔送交深度复核。",
     goodSub: (a, b) => "共 " + b + " 位按时还款的客户，其中 " + a + " 位送交深度复核。",
-    zoneLabels: ["绿灯", "黄灯", "红灯"],
-    zoneNames: ["绿灯区", "黄灯区", "红灯区"],
-    stripNames: ["绿灯", "黄灯", "红灯"],
+    zoneLabels: ["自动批", "分析师", "深度审"],
+    zoneNames: ["自动批准", "分析师审核", "深度复核"],
+    stripNames: ["已批准", "待分析", "待复核"],
     tooltip: (i, zone, n, d, rate, pd) => "<b>第 " + i + " 百分位</b> · " + zone + "<br><span class=\"num\">" + n + " 笔贷款 · " + d + " 笔违约</span><br>违约率 <span class=\"num\">" + rate + "</span><br>预测 PD 起点 <span class=\"num\">" + pd + "</span>",
     missing: "缺少数据。请先运行 python app/build_simulator.py，再打开 app/index.html。",
   },
@@ -807,50 +807,50 @@ const I18N = {
     chartHint: "Arrastre la línea verde y la línea roja en el gráfico, o use los controles deslizantes.",
     mainDesc: "Cien barras, una por percentil de riesgo, que muestran la tasa de incumplimiento real en 2013. Las barras son verdes, amarillas o rojas según la zona. Una línea discontinua muestra la tasa de incumplimiento promedio.",
     axisLess: "← Menos riesgo", axisMid: "Percentil de riesgo predicho", axisMore: "Más riesgo →",
-    gLabel: "Fin de la luz verde", gHint: "Las solicitudes por debajo de este percentil se aprueban automáticamente.",
+    gLabel: "Fin de la aprobación automática", gHint: "Las solicitudes por debajo de este percentil se aprueban automáticamente.",
     rLabel: "Inicio de la revisión profunda", rHint: "Las solicitudes a partir de este percentil se envían a revisión profunda.",
     reset: "Volver a 40 / 90",
     zonesTitle: "Las tres zonas", zonesHint: "Proporción de las solicitudes de 2013 en cada zona.",
-    zGreen: "Luz verde", zGreenSub: "Aprobado automáticamente",
-    zYellow: "Luz amarilla", zYellowSub: "Revisado por un analista",
+    zGreen: "Aprobación automática", zGreenSub: "Aprobación automatizada",
+    zYellow: "Revisión por un analista", zYellowSub: "El analista examina la solicitud",
     zRed: "Revisión profunda", zRedSub: "Una persona toma la decisión final",
     factN: "Solicitudes", factRate: "Tasa de incumplimiento", factRule: "Regla",
     ofApps: "de las solicitudes",
     kpisAria: "Indicadores clave",
     kAuto: "Automatización", kAutoSub: "de solicitudes aprobadas automáticamente",
     kAnalysts: "Carga de los analistas", kAnalystsSub: "Solicitudes en revisión habitual o profunda.",
-    kGreen: "Tasa de incumplimiento en verde", compareGreen: "Verde", compareAvg: "Promedio",
+    kGreen: "Tasa de incumplimiento de las solicitudes aprobadas automáticamente", compareGreen: "Aprobación automática", compareAvg: "Promedio",
     kCaught: "Incumplimientos enviados a revisión profunda", kGood: "Buenos clientes enviados a revisión profunda",
     moneyTitle: "¿Cuánto dinero está en juego?",
     moneyHint: "Montos de los préstamos de 2013. La pérdida estimada es el monto de los préstamos en incumplimiento multiplicado por la LGD.",
     lgdLabel: "Pérdida en caso de incumplimiento (LGD)",
     lgdHelp: "Parte del monto del préstamo que se pierde cuando el cliente no paga. Entre 0 y 100.",
     lgdError: (v) => "Ingrese un número entre 0 y 100. El cálculo conserva el último valor válido (" + v + ").",
-    mLoss: "Pérdida estimada en verde", mAvoided: "Pérdidas potenciales en rojo (por revisar)",
+    mLoss: "Pérdida estimada de las solicitudes aprobadas automáticamente", mAvoided: "Pérdidas potenciales en revisión profunda (por examinar)",
     mGoodReviewed: "Préstamos de buenos clientes enviados a revisión profunda",
     mGoodReviewedSub: "Clientes que pagaron sus préstamos.",
     lossSub: (md, l) => md + " en préstamos en incumplimiento × " + l + " de LGD",
     avoidedSub: (md, l) => md + " en préstamos en incumplimiento por revisar × " + l + " de LGD",
     tradeTitle: "Automatizar más, pero ¿a qué costo?",
-    tradeDesc: "Curva de compromiso: para cada fin posible de la luz verde, la proporción de decisiones automáticas y la tasa de incumplimiento en verde. El punto verde muestra la elección actual.",
-    tradeHow: "Cuanto más a la derecha está el punto, más se automatiza. Cuanto más sube, más incumplimientos contiene la zona verde. <strong>Haga clic en la curva</strong> para mover el fin de la luz verde.",
-    tradeText: (g, x, y) => "Cada punto muestra un posible fin de la zona verde. La selección actual (<strong>" + g + "</strong>) representa <strong>" + x + "</strong> de solicitudes aprobadas automáticamente, con una tasa de incumplimiento de <strong>" + y + "</strong> en verde.",
-    tradeNoGreen: () => "Por ahora la zona verde está vacía: haga clic en la curva para elegir un punto.",
-    tradeAllRed: "Por ahora la zona verde está vacía: haga clic en la curva para elegir un punto.",
-    emptyCurve: "No hay solicitudes en verde.",
-    curveLabel: (g, x, y) => "Verde hasta " + g + ": " + x + " · " + y,
-    axisX: "Solicitudes aprobadas automáticamente (verde)", axisY: "Tasa de incumplimiento en verde",
+    tradeDesc: "Curva de compromiso: para cada umbral de aprobación automática, muestra la proporción de solicitudes aprobadas automáticamente y su tasa de incumplimiento. El punto verde muestra la elección actual.",
+    tradeHow: "Cuanto más a la derecha está el punto, más se automatiza. Cuanto más sube, mayor es la tasa de incumplimiento de las solicitudes aprobadas automáticamente. <strong>Haga clic en la curva</strong> para mover el umbral de aprobación automática.",
+    tradeText: (g, x, y) => "Cada punto muestra un posible umbral de aprobación automática. La selección actual (<strong>" + g + "</strong>) representa <strong>" + x + "</strong> de solicitudes aprobadas automáticamente, con una tasa de incumplimiento de <strong>" + y + "</strong> en ese grupo.",
+    tradeNoGreen: () => "No se aprueba ninguna solicitud automáticamente con este umbral: haga clic en la curva para elegir un punto.",
+    tradeAllRed: "No se aprueba ninguna solicitud automáticamente con este umbral: haga clic en la curva para elegir un punto.",
+    emptyCurve: "No hay solicitudes aprobadas automáticamente.",
+    curveLabel: (g, x, y) => "Aprobación automática hasta " + g + ": " + x + " · " + y,
+    axisX: "Solicitudes aprobadas automáticamente", axisY: "Tasa de incumplimiento de las solicitudes aprobadas automáticamente",
     avg: (x) => "Promedio " + x,
     notesTitle: "Para saber", nData: "Datos", nModel: "Modelo", nLimits: "Limitaciones",
     nModelText: "Una regresión logística predice la probabilidad de incumplimiento (PD) de cada préstamo. No usa la calificación (grade) de Lending Club ni la tasa de interés, que ya contienen la opinión de Lending Club sobre el riesgo.",
     lim1: "Solo vemos los préstamos financiados por Lending Club; las solicitudes sin financiación no están representadas.",
-    lim2: "Suponemos que los analistas tratan la zona amarilla como hoy.",
+    lim2: "Suponemos que los analistas tratan las solicitudes de revisión habitual como hoy.",
     lim3: "Son datos de Estados Unidos, usados aquí como ejemplo.",
     lim4: "La LGD se aplica al monto inicial del préstamo. Es una simplificación: a menudo una parte del préstamo ya se pagó cuando ocurre el incumplimiento.",
     lim5: "No modelamos el resultado de la revisión humana.",
     noteData: (N, avg) => "Préstamos personales a 36 meses de Lending Club, en Estados Unidos. El modelo se entrena con los préstamos de 2010 a 2012 y se prueba con los de 2013 (" + N + " préstamos, " + avg + " de incumplimiento). Los percentiles y los umbrales de PD vienen de los datos de entrenamiento: no se ajustan al año de prueba.",
     percentile: (i) => "percentil " + i,
-    summary: (g, r, auto, gr, avg) => "Aprobación automática hasta el percentil <strong class=\"g\">" + g + "</strong>, revisión profunda desde el percentil <strong class=\"r\">" + r + "</strong>: el <strong>" + auto + "</strong> de las solicitudes se aprueba automáticamente, y la zona verde tiene una tasa de incumplimiento de <strong>" + gr + "</strong> (promedio " + avg + ").",
+    summary: (g, r, auto, gr, avg) => "Aprobación automática hasta el percentil <strong class=\"g\">" + g + "</strong>, revisión profunda desde el percentil <strong class=\"r\">" + r + "</strong>: el <strong>" + auto + "</strong> de las solicitudes se aprueba automáticamente, con una tasa de incumplimiento de <strong>" + gr + "</strong> en ese grupo (promedio " + avg + ").",
     ruleNone: "Ninguna solicitud", ruleAll: "Todas las solicitudes",
     ruleBelow: (x) => "PD predicha menor que " + x,
     ruleAtLeast: (x) => "PD predicha de " + x + " o más",
@@ -860,12 +860,12 @@ const I18N = {
     greenLess: (rel, avg) => rel + " menos que el promedio de " + avg + ".",
     greenMore: (rel, avg) => rel + " más que el promedio de " + avg + ".",
     greenEqual: (avg) => "Igual al promedio de " + avg + ".",
-    greenEmpty: "Ninguna solicitud en verde.",
+    greenEmpty: "No hay solicitudes aprobadas automáticamente.",
     caughtSub: (a, b) => a + " incumplimientos enviados a revisión profunda, de " + b + ".",
     goodSub: (a, b) => a + " buenos clientes enviados a revisión profunda, de " + b + ".",
-    zoneLabels: ["VERDE", "AMARILLO", "ROJO"],
-    zoneNames: ["zona verde", "zona amarilla", "zona roja"],
-    stripNames: ["Verde", "Amarillo", "Rojo"],
+    zoneLabels: ["APROB.", "ANÁLISIS", "REVISIÓN"],
+    zoneNames: ["aprobación automática", "revisión por un analista", "revisión profunda"],
+    stripNames: ["Aprobadas", "Por revisar", "Revisión profunda"],
     tooltip: (i, zone, n, d, rate, pd) => "<b>Percentil " + i + "</b> · " + zone + "<br><span class=\"num\">" + n + " préstamos · " + d + " incumplimientos</span><br>Tasa de incumplimiento <span class=\"num\">" + rate + "</span><br>PD predicha desde <span class=\"num\">" + pd + "</span>",
     missing: "Faltan datos. Ejecute \"python app/build_simulator.py\" y luego abra app/index.html.",
   },
@@ -881,50 +881,50 @@ const I18N = {
     chartHint: "グラフ上の緑の線と赤の線をドラッグするか、下のスライダーを使ってください。",
     mainDesc: "100本の棒はそれぞれリスク百分位を表し、2013年の実際のデフォルト率を示します。棒はゾーンごとに緑・黄・赤で色分けされています。破線は平均デフォルト率です。",
     axisLess: "← リスク低", axisMid: "予測リスク百分位", axisMore: "リスク高 →",
-    gLabel: "青信号の終わり", gHint: "この百分位より下の申込は自動で承認されます。",
+    gLabel: "自動承認の終わり", gHint: "この百分位より下の申込は自動で承認されます。",
     rLabel: "詳細審査の始まり", rHint: "この百分位以上の申込は詳細審査に回されます。",
     reset: "40 / 90 に戻す",
     zonesTitle: "3つのゾーン", zonesHint: "2013年の申込に占める各ゾーンの割合。",
-    zGreen: "青信号", zGreenSub: "自動承認",
-    zYellow: "黄信号", zYellowSub: "アナリストが審査",
+    zGreen: "自動承認", zGreenSub: "自動で承認を決定",
+    zYellow: "アナリストによる審査", zYellowSub: "アナリストが申込を確認",
     zRed: "詳細審査", zRedSub: "最終判断は担当者が行います",
     factN: "申込件数", factRate: "デフォルト率", factRule: "ルール",
     ofApps: "の申込",
     kpisAria: "主要指標",
     kAuto: "自動化", kAutoSub: "自動承認される申込の割合",
     kAnalysts: "アナリストの負荷", kAnalystsSub: "通常審査または詳細審査に回る申込の割合。",
-    kGreen: "青信号ゾーンのデフォルト率", compareGreen: "青信号", compareAvg: "平均",
+    kGreen: "自動承認された申込のデフォルト率", compareGreen: "自動承認", compareAvg: "平均",
     kCaught: "詳細審査に回ったデフォルト", kGood: "詳細審査に回った優良顧客",
     moneyTitle: "どれだけの金額がかかっているか？",
     moneyHint: "2013年の融資額。予想損失 = デフォルトした融資額 × LGD。",
     lgdLabel: "デフォルト時損失率（LGD）",
     lgdHelp: "顧客が返済しない場合に失われる融資額の割合。0から100の間。",
     lgdError: (v) => "0から100の数値を入力してください。計算には最後の有効な値（" + v + "）を使います。",
-    mLoss: "青信号ゾーンの予想損失", mAvoided: "赤信号ゾーンの潜在損失（要確認）",
+    mLoss: "自動承認された申込の予想損失", mAvoided: "詳細審査に回る潜在損失（要確認）",
     mGoodReviewed: "詳細審査に回った優良顧客の融資額",
     mGoodReviewedSub: "融資を返済した顧客です。",
     lossSub: (md, l) => "デフォルト融資 " + md + " × LGD " + l,
     avoidedSub: (md, l) => "要確認のデフォルト融資 " + md + " × LGD " + l,
     tradeTitle: "自動化を増やすと、代償は？",
-    tradeDesc: "トレードオフ曲線：青信号の終わりの各候補について、自動判断の割合と青信号ゾーンのデフォルト率を示します。緑の点は現在の選択です。",
-    tradeHow: "点が右に行くほど自動化が進みます。上に行くほど青信号ゾーンのデフォルトが増えます。<strong>曲線をクリック</strong>すると青信号の終わりを動かせます。",
-    tradeText: (g, x, y) => "各点は青信号ゾーンの終わりの候補です。現在の選択（<strong>" + g + "</strong>）では申込の <strong>" + x + "</strong> が自動承認され、青信号ゾーンのデフォルト率は <strong>" + y + "</strong> です。",
-    tradeNoGreen: () => "現在、青信号ゾーンは空です。曲線をクリックして点を選んでください。",
-    tradeAllRed: "現在、青信号ゾーンは空です。曲線をクリックして点を選んでください。",
-    emptyCurve: "青信号ゾーンに申込はありません。",
-    curveLabel: (g, x, y) => "青信号 " + g + " まで：" + x + " · " + y,
-    axisX: "自動承認の申込割合（青信号）", axisY: "青信号ゾーンのデフォルト率",
+    tradeDesc: "トレードオフ曲線：自動承認の各閾値について、自動判断の割合と自動承認された申込のデフォルト率を示します。緑の点は現在の選択です。",
+    tradeHow: "点が右に行くほど自動化が進みます。上に行くほど自動承認された申込のデフォルト率が高くなります。<strong>曲線をクリック</strong>すると自動承認の閾値を動かせます。",
+    tradeText: (g, x, y) => "各点は自動承認の閾値の候補です。現在の選択（<strong>" + g + "</strong>）では申込の <strong>" + x + "</strong> が自動承認され、そのグループのデフォルト率は <strong>" + y + "</strong> です。",
+    tradeNoGreen: () => "この閾値では自動承認される申込がありません。曲線をクリックして点を選んでください。",
+    tradeAllRed: "この閾値では自動承認される申込がありません。曲線をクリックして点を選んでください。",
+    emptyCurve: "自動承認される申込はありません。",
+    curveLabel: (g, x, y) => g + " まで自動承認：" + x + " · " + y,
+    axisX: "自動承認される申込の割合", axisY: "自動承認された申込のデフォルト率",
     avg: (x) => "平均 " + x,
     notesTitle: "補足", nData: "データ", nModel: "モデル", nLimits: "制約",
     nModelText: "ロジスティック回帰で各融資のデフォルト確率（PD）を予測します。Lending Club のグレードと金利は使っていません。これらにはすでに Lending Club 自身のリスク判断が含まれているためです。",
     lim1: "Lending Club が融資した案件のみを扱い、資金が出なかった申込は表現していません。",
-    lim2: "アナリストは黄信号ゾーンを現在と同じように扱うと仮定しています。",
+    lim2: "アナリストは通常審査に回る申込を現在と同じように扱うと仮定しています。",
     lim3: "米国のデータで、ここでは例として使っています。",
     lim4: "LGD は融資の当初額に適用しています。これは簡略化で、実際にはデフォルト時点で一部がすでに返済されていることが多いです。",
     lim5: "人による審査の結果はモデル化していません。",
     noteData: (N, avg) => "Lending Club（米国）の36か月個人ローン。モデルは2010〜2012年の融資で学習し、2013年の融資でテストしています（" + N + "件、デフォルト率 " + avg + "）。百分位と PD の閾値は学習データから決めており、テスト年に合わせた調整はしていません。",
     percentile: (i) => "第 " + i + " 百分位",
-    summary: (g, r, auto, gr, avg) => "第 <strong class=\"g\">" + g + "</strong> 百分位まで自動承認し、第 <strong class=\"r\">" + r + "</strong> 百分位から詳細審査に回します。申込の <strong>" + auto + "</strong> を自動承認し、青信号ゾーンのデフォルト率は <strong>" + gr + "</strong>（平均 " + avg + "）です。",
+    summary: (g, r, auto, gr, avg) => "第 <strong class=\"g\">" + g + "</strong> 百分位まで自動承認し、第 <strong class=\"r\">" + r + "</strong> 百分位から詳細審査に回します。申込の <strong>" + auto + "</strong> を自動承認し、そのグループのデフォルト率は <strong>" + gr + "</strong>（平均 " + avg + "）です。",
     ruleNone: "該当なし", ruleAll: "すべての申込",
     ruleBelow: (x) => "予測PD " + x + " 未満",
     ruleAtLeast: (x) => "予測PD " + x + " 以上",
@@ -934,12 +934,12 @@ const I18N = {
     greenLess: (rel, avg) => "平均 " + avg + " より " + rel + " 低い。",
     greenMore: (rel, avg) => "平均 " + avg + " より " + rel + " 高い。",
     greenEqual: (avg) => "平均 " + avg + " と同じ。",
-    greenEmpty: "青信号ゾーンに申込はありません。",
+    greenEmpty: "自動承認される申込はありません。",
     caughtSub: (a, b) => b + " 件のデフォルトのうち " + a + " 件を詳細審査に回しました。",
     goodSub: (a, b) => "返済した顧客 " + b + " 人のうち " + a + " 人を詳細審査に回しました。",
-    zoneLabels: ["青信号", "黄信号", "赤信号"],
-    zoneNames: ["青信号ゾーン", "黄信号ゾーン", "赤信号ゾーン"],
-    stripNames: ["青", "黄", "赤"],
+    zoneLabels: ["自動承認", "分析", "詳細審査"],
+    zoneNames: ["自動承認", "アナリストによる審査", "詳細審査"],
+    stripNames: ["承認", "審査", "詳細審査"],
     tooltip: (i, zone, n, d, rate, pd) => "<b>第 " + i + " 百分位</b> · " + zone + "<br><span class=\"num\">" + n + " 件の融資 · " + d + " 件のデフォルト</span><br>デフォルト率 <span class=\"num\">" + rate + "</span><br>予測PD の下限 <span class=\"num\">" + pd + "</span>",
     missing: "データがありません。python app/build_simulator.py を実行してから app/index.html を開いてください。",
   },
@@ -948,6 +948,209 @@ const I18N = {
 (function () {
   // ---------- Langue ----------
   const LANGS = Object.keys(I18N);
+  const CLIENT_TEXT = {
+    fr: {
+      title: "1. Un client", hint: "Entrez les renseignements d’un prêt pour voir la PD estimée et les facteurs qui la font varier.",
+      presetAria: "Profils prédéfinis", profilePrudent: "Profil prudent", profileMedium: "Profil moyen", profileRisk: "Profil à risque",
+      decisionLabel: "Décision indicative", incomplete: "À compléter", humanNote: "La décision finale est prise par une personne.",
+      driversTitle: "Pourquoi ?", driversHint: "Contribution au risque par rapport à un client moyen. Les barres rouges augmentent le risque; les vertes le réduisent.",
+      note: "La PD est la probabilité de défaut sur les 36 mois du prêt, pas sur 12 mois. Le modèle classe les clients; avec une AUC d’environ 0,62, il ne peut pas prédire le comportement d’une personne. Illustration seulement : ce n’est pas une vraie décision de crédit. Données de prêts américains Lending Club, modèle entraîné sur 2010 à 2012.",
+      bridgeTitle: "2. Le portefeuille", bridgeLabel: "Perte attendue de ce client = PD × LGD × EAD :",
+      range: (low, high, median) => "Plage observée : " + low + " à " + high + " · médiane : " + median,
+      invalidNumeric: "Entrez une valeur numérique pour continuer.",
+      clamped: (items) => "Valeur(s) limitée(s) à la plage d’entraînement : " + items + ".",
+      percentile: (value) => "Plus risqué que " + value + " % des clients d’entraînement.",
+      noDrivers: "Aucun facteur ne s’écarte du client moyen.",
+      zones: { green: "Approbation automatique", yellow: "Révision par un analyste", red: "Révision approfondie recommandée" },
+      labels: {
+        loan_amnt: "Montant du prêt", emp_length: "Années d’emploi", annual_inc: "Revenu annuel",
+        dti: "Ratio dette / revenu", open_acc: "Comptes de crédit ouverts", pub_rec: "Dossiers publics",
+        revol_bal: "Solde de crédit renouvelable", revol_util: "Utilisation du crédit renouvelable",
+        total_acc: "Nombre total de comptes", mort_acc: "Prêts hypothécaires",
+        pub_rec_bankruptcies: "Faillites publiques", credit_hist_years: "Âge du dossier de crédit (années)",
+        home_ownership: "Logement", verification_status: "Vérification du revenu", purpose: "Motif du prêt",
+      },
+      categories: {
+        home_ownership: { MORTGAGE: "Hypothèque", OTHER: "Autre", OWN: "Propriétaire", RENT: "Locataire" },
+        verification_status: { "Not Verified": "Non vérifié", "Source Verified": "Source vérifiée", Verified: "Vérifié" },
+        purpose: {
+          car: "Achat d’une voiture", credit_card: "Carte de crédit", debt_consolidation: "Consolidation de dettes",
+          educational: "Études", home_improvement: "Rénovation", house: "Achat d’une maison",
+          major_purchase: "Achat important", medical: "Soins médicaux", moving: "Déménagement", other: "Autre",
+          renewable_energy: "Énergie renouvelable", small_business: "Petite entreprise", vacation: "Vacances", wedding: "Mariage",
+        },
+      },
+      drivers: {
+        emp_length: "Années d’emploi", annual_inc: "Revenu annuel", dti: "Ratio dette / revenu",
+        open_acc: "Comptes de crédit ouverts", pub_rec: "Dossiers publics", revol_bal: "Solde de crédit renouvelable",
+        revol_util: "Utilisation du crédit renouvelable", total_acc: "Nombre total de comptes",
+        mort_acc: "Prêts hypothécaires", pub_rec_bankruptcies: "Faillites publiques",
+        credit_hist_years: "Âge du dossier de crédit", loan_to_income: "Prêt / revenu annuel",
+        home_ownership: "Logement", verification_status: "Vérification du revenu", purpose: "Motif du prêt",
+      },
+    },
+    en: {
+      title: "1. One client", hint: "Enter loan details to see the estimated PD and the factors that affect it.",
+      presetAria: "Example profiles", profilePrudent: "Low-risk profile", profileMedium: "Average profile", profileRisk: "Higher-risk profile",
+      decisionLabel: "Indicative outcome", incomplete: "Complete the fields", humanNote: "A person makes the final decision.",
+      driversTitle: "Why?", driversHint: "Risk contribution compared with an average client. Red bars increase risk; green bars reduce it.",
+      note: "PD is the probability of charge-off over the 36-month life of the loan, not a 12-month PD. The model ranks clients; with an AUC around 0.62, it cannot predict one person’s behaviour. Illustration only, not a real credit decision. U.S. Lending Club loans, trained on 2010–2012.",
+      bridgeTitle: "2. The portfolio", bridgeLabel: "This client’s expected loss = PD × LGD × EAD:",
+      range: (low, high, median) => "Training range: " + low + " to " + high + " · median: " + median,
+      invalidNumeric: "Enter a number to continue.",
+      clamped: (items) => "Value(s) limited to the training range: " + items + ".",
+      percentile: (value) => "Riskier than " + value + "% of training clients.",
+      noDrivers: "No factors differ from the average client.",
+      zones: { green: "Automatic approval", yellow: "Analyst review", red: "In-depth review recommended" },
+      labels: {
+        loan_amnt: "Loan amount", emp_length: "Employment length (years)", annual_inc: "Annual income",
+        dti: "Debt-to-income ratio", open_acc: "Open credit accounts", pub_rec: "Public records",
+        revol_bal: "Revolving credit balance", revol_util: "Revolving credit utilization",
+        total_acc: "Total credit accounts", mort_acc: "Mortgage accounts",
+        pub_rec_bankruptcies: "Public bankruptcies", credit_hist_years: "Credit history (years)",
+        home_ownership: "Housing", verification_status: "Income verification", purpose: "Loan purpose",
+      },
+      categories: {
+        home_ownership: { MORTGAGE: "Mortgage", OTHER: "Other", OWN: "Own", RENT: "Rent" },
+        verification_status: { "Not Verified": "Not verified", "Source Verified": "Source verified", Verified: "Verified" },
+        purpose: {
+          car: "Car", credit_card: "Credit card", debt_consolidation: "Debt consolidation", educational: "Education",
+          home_improvement: "Home improvement", house: "House", major_purchase: "Major purchase", medical: "Medical",
+          moving: "Moving", other: "Other", renewable_energy: "Renewable energy", small_business: "Small business",
+          vacation: "Vacation", wedding: "Wedding",
+        },
+      },
+      drivers: {
+        emp_length: "Employment length", annual_inc: "Annual income", dti: "Debt-to-income ratio",
+        open_acc: "Open credit accounts", pub_rec: "Public records", revol_bal: "Revolving credit balance",
+        revol_util: "Revolving credit utilization", total_acc: "Total credit accounts",
+        mort_acc: "Mortgage accounts", pub_rec_bankruptcies: "Public bankruptcies",
+        credit_hist_years: "Credit history", loan_to_income: "Loan / annual income",
+        home_ownership: "Housing", verification_status: "Income verification", purpose: "Loan purpose",
+      },
+    },
+    zh: {
+      title: "1. 单个客户", hint: "填写贷款信息，查看估算的 PD 以及影响风险的因素。",
+      presetAria: "示例客户", profilePrudent: "谨慎型客户", profileMedium: "中等风险客户", profileRisk: "较高风险客户",
+      decisionLabel: "参考结果", incomplete: "请填写完整", humanNote: "最终决定由人工做出。",
+      driversTitle: "原因是什么？", driversHint: "相对于平均客户的风险贡献。红色条表示风险上升，绿色条表示风险下降。",
+      note: "PD 是贷款 36 个月期限内发生违约的概率，不是 12 个月 PD。模型用于客户风险排序；AUC 约为 0.62，不能预测某个个人的行为。仅供说明，不构成真实信贷决策。美国 Lending Club 贷款数据，使用 2010–2012 年数据训练。",
+      bridgeTitle: "2. 贷款组合", bridgeLabel: "该客户的预期损失 = PD × LGD × EAD：",
+      range: (low, high, median) => "训练数据范围：" + low + " 至 " + high + " · 中位数：" + median,
+      invalidNumeric: "请输入数字后继续。",
+      clamped: (items) => "以下数值已限制在训练范围内：" + items + "。",
+      percentile: (value) => "风险高于 " + value + "% 的训练客户。",
+      noDrivers: "该客户的因素与平均客户没有差异。",
+      zones: { green: "自动批准", yellow: "分析师审核", red: "建议深度复核" },
+      labels: {
+        loan_amnt: "贷款金额", emp_length: "工作年限", annual_inc: "年收入",
+        dti: "债务收入比", open_acc: "未结清信贷账户数", pub_rec: "公开信用记录",
+        revol_bal: "循环信贷余额", revol_util: "循环信贷使用率",
+        total_acc: "信贷账户总数", mort_acc: "抵押贷款账户数",
+        pub_rec_bankruptcies: "公开破产记录", credit_hist_years: "信用记录年限",
+        home_ownership: "住房情况", verification_status: "收入核实状态", purpose: "贷款用途",
+      },
+      categories: {
+        home_ownership: { MORTGAGE: "有抵押贷款", OTHER: "其他", OWN: "自有住房", RENT: "租房" },
+        verification_status: { "Not Verified": "未核实", "Source Verified": "来源已核实", Verified: "已核实" },
+        purpose: {
+          car: "购车", credit_card: "信用卡", debt_consolidation: "债务整合", educational: "教育",
+          home_improvement: "房屋装修", house: "购房", major_purchase: "大额消费", medical: "医疗",
+          moving: "搬家", other: "其他", renewable_energy: "可再生能源", small_business: "小型企业",
+          vacation: "度假", wedding: "婚礼",
+        },
+      },
+      drivers: {
+        emp_length: "工作年限", annual_inc: "年收入", dti: "债务收入比",
+        open_acc: "未结清信贷账户数", pub_rec: "公开信用记录", revol_bal: "循环信贷余额",
+        revol_util: "循环信贷使用率", total_acc: "信贷账户总数",
+        mort_acc: "抵押贷款账户数", pub_rec_bankruptcies: "公开破产记录",
+        credit_hist_years: "信用记录年限", loan_to_income: "贷款 / 年收入",
+        home_ownership: "住房情况", verification_status: "收入核实状态", purpose: "贷款用途",
+      },
+    },
+    es: {
+      title: "1. Un cliente", hint: "Ingrese los datos del préstamo para ver la PD estimada y los factores que influyen en ella.",
+      presetAria: "Perfiles de ejemplo", profilePrudent: "Perfil prudente", profileMedium: "Perfil medio", profileRisk: "Perfil de mayor riesgo",
+      decisionLabel: "Resultado indicativo", incomplete: "Complete los campos", humanNote: "Una persona toma la decisión final.",
+      driversTitle: "¿Por qué?", driversHint: "Contribución al riesgo frente a un cliente promedio. Las barras rojas aumentan el riesgo; las verdes lo reducen.",
+      note: "La PD es la probabilidad de incumplimiento durante los 36 meses del préstamo, no una PD a 12 meses. El modelo ordena a los clientes por riesgo; con un AUC cercano a 0,62, no puede predecir el comportamiento de una persona. Solo como ilustración; no es una decisión crediticia real. Préstamos de Lending Club en EE. UU., modelo entrenado con datos de 2010–2012.",
+      bridgeTitle: "2. La cartera", bridgeLabel: "Pérdida esperada de este cliente = PD × LGD × EAD:",
+      range: (low, high, median) => "Rango de entrenamiento: " + low + " a " + high + " · mediana: " + median,
+      invalidNumeric: "Ingrese un número para continuar.",
+      clamped: (items) => "Valor(es) limitados al rango de entrenamiento: " + items + ".",
+      percentile: (value) => "Riesgo mayor que el " + value + "% de los clientes de entrenamiento.",
+      noDrivers: "Ningún factor difiere del cliente promedio.",
+      zones: { green: "Aprobación automática", yellow: "Revisión por un analista", red: "Se recomienda revisión profunda" },
+      labels: {
+        loan_amnt: "Monto del préstamo", emp_length: "Antigüedad laboral (años)", annual_inc: "Ingreso anual",
+        dti: "Relación deuda / ingreso", open_acc: "Cuentas de crédito abiertas", pub_rec: "Registros públicos",
+        revol_bal: "Saldo de crédito revolvente", revol_util: "Uso del crédito revolvente",
+        total_acc: "Cuentas de crédito totales", mort_acc: "Cuentas hipotecarias",
+        pub_rec_bankruptcies: "Quiebras públicas", credit_hist_years: "Historial crediticio (años)",
+        home_ownership: "Vivienda", verification_status: "Verificación de ingresos", purpose: "Motivo del préstamo",
+      },
+      categories: {
+        home_ownership: { MORTGAGE: "Hipoteca", OTHER: "Otro", OWN: "Propia", RENT: "Alquiler" },
+        verification_status: { "Not Verified": "No verificado", "Source Verified": "Fuente verificada", Verified: "Verificado" },
+        purpose: {
+          car: "Auto", credit_card: "Tarjeta de crédito", debt_consolidation: "Consolidación de deudas",
+          educational: "Educación", home_improvement: "Mejoras del hogar", house: "Casa",
+          major_purchase: "Compra importante", medical: "Gastos médicos", moving: "Mudanza", other: "Otro",
+          renewable_energy: "Energía renovable", small_business: "Pequeña empresa", vacation: "Vacaciones", wedding: "Boda",
+        },
+      },
+      drivers: {
+        emp_length: "Antigüedad laboral", annual_inc: "Ingreso anual", dti: "Relación deuda / ingreso",
+        open_acc: "Cuentas de crédito abiertas", pub_rec: "Registros públicos", revol_bal: "Saldo de crédito revolvente",
+        revol_util: "Uso del crédito revolvente", total_acc: "Cuentas de crédito totales",
+        mort_acc: "Cuentas hipotecarias", pub_rec_bankruptcies: "Quiebras públicas",
+        credit_hist_years: "Historial crediticio", loan_to_income: "Préstamo / ingreso anual",
+        home_ownership: "Vivienda", verification_status: "Verificación de ingresos", purpose: "Motivo del préstamo",
+      },
+    },
+    ja: {
+      title: "1. 1人の顧客", hint: "融資情報を入力すると、推定PDとリスクに影響する要因を確認できます。",
+      presetAria: "サンプル顧客", profilePrudent: "慎重な顧客", profileMedium: "平均的な顧客", profileRisk: "高リスクの顧客",
+      decisionLabel: "参考結果", incomplete: "入力してください", humanNote: "最終判断は担当者が行います。",
+      driversTitle: "理由", driversHint: "平均的な顧客と比べたリスクへの寄与。赤いバーはリスクを高め、緑のバーはリスクを下げます。",
+      note: "PDは融資期間36か月のデフォルト確率であり、12か月PDではありません。モデルは顧客をリスク順に並べます。AUCは約0.62で、個人の行動を予測することはできません。説明用であり、実際の与信判断ではありません。米国Lending Clubの融資データを使用し、2010～2012年のデータで学習しています。",
+      bridgeTitle: "2. ポートフォリオ", bridgeLabel: "この顧客の予想損失 = PD × LGD × EAD：",
+      range: (low, high, median) => "学習データの範囲：" + low + "～" + high + " · 中央値：" + median,
+      invalidNumeric: "数値を入力してください。",
+      clamped: (items) => "次の値を学習データの範囲内に調整しました：" + items + "。",
+      percentile: (value) => "学習顧客の " + value + "% よりリスクが高い顧客です。",
+      noDrivers: "平均的な顧客と異なる要因はありません。",
+      zones: { green: "自動承認", yellow: "アナリスト審査", red: "詳細審査を推奨" },
+      labels: {
+        loan_amnt: "融資額", emp_length: "勤続年数", annual_inc: "年収",
+        dti: "負債 / 所得比率", open_acc: "利用中の信用口座数", pub_rec: "公的記録",
+        revol_bal: "リボルビング残高", revol_util: "リボルビング利用率",
+        total_acc: "信用口座の合計", mort_acc: "住宅ローン口座数",
+        pub_rec_bankruptcies: "公的な破産記録", credit_hist_years: "信用履歴（年）",
+        home_ownership: "居住形態", verification_status: "収入確認状況", purpose: "融資目的",
+      },
+      categories: {
+        home_ownership: { MORTGAGE: "住宅ローン", OTHER: "その他", OWN: "持ち家", RENT: "賃貸" },
+        verification_status: { "Not Verified": "未確認", "Source Verified": "情報源を確認済み", Verified: "確認済み" },
+        purpose: {
+          car: "自動車", credit_card: "クレジットカード", debt_consolidation: "債務整理", educational: "教育",
+          home_improvement: "住宅改修", house: "住宅購入", major_purchase: "高額購入", medical: "医療",
+          moving: "引っ越し", other: "その他", renewable_energy: "再生可能エネルギー",
+          small_business: "小規模事業", vacation: "旅行", wedding: "結婚",
+        },
+      },
+      drivers: {
+        emp_length: "勤続年数", annual_inc: "年収", dti: "負債 / 所得比率",
+        open_acc: "利用中の信用口座数", pub_rec: "公的記録", revol_bal: "リボルビング残高",
+        revol_util: "リボルビング利用率", total_acc: "信用口座の合計",
+        mort_acc: "住宅ローン口座数", pub_rec_bankruptcies: "公的な破産記録",
+        credit_hist_years: "信用履歴", loan_to_income: "融資額 / 年収",
+        home_ownership: "居住形態", verification_status: "収入確認状況", purpose: "融資目的",
+      },
+    },
+  };
+  let CT = CLIENT_TEXT.fr;
   let T = I18N.fr, fmt;
 
   function makeFormats(locale) {
@@ -967,6 +1170,8 @@ const I18N = {
     document.title = T.title.replace(/&nbsp;/g, " ");
     document.querySelectorAll("[data-i18n]").forEach((node) => { node.innerHTML = T[node.dataset.i18n]; });
     document.querySelectorAll("[data-i18n-aria]").forEach((node) => node.setAttribute("aria-label", T[node.dataset.i18nAria]));
+    document.querySelectorAll("[data-client-text]").forEach((node) => { node.textContent = CT[node.dataset.clientText]; });
+    document.querySelectorAll("[data-client-aria]").forEach((node) => node.setAttribute("aria-label", CT[node.dataset.clientAria]));
     document.querySelectorAll("#lang button").forEach((b) => b.setAttribute("aria-pressed", String(I18N[b.dataset.lang] === T)));
   }
 
@@ -976,7 +1181,9 @@ const I18N = {
   }
 
   if (!Array.isArray(DATA) || DATA.length !== 100) {
-    T = I18N[langFromHash()];
+    const lang = langFromHash();
+    T = I18N[lang];
+    CT = CLIENT_TEXT[lang] || CLIENT_TEXT.fr;
     applyStaticText();
     document.getElementById("summary").textContent = T.missing;
     return;
@@ -1045,70 +1252,20 @@ const I18N = {
   }
 
   // ---------- Client individuel ----------
-  const CLIENT_LABELS = {
-    loan_amnt: "Montant du prêt",
-    emp_length: "Années d’emploi",
-    annual_inc: "Revenu annuel",
-    dti: "Ratio dette / revenu",
-    open_acc: "Comptes de crédit ouverts",
-    pub_rec: "Dossiers publics",
-    revol_bal: "Solde de crédit renouvelable",
-    revol_util: "Utilisation du crédit renouvelable",
-    total_acc: "Nombre total de comptes",
-    mort_acc: "Prêts hypothécaires",
-    pub_rec_bankruptcies: "Faillites publiques",
-    credit_hist_years: "Âge du dossier de crédit (années)",
-    home_ownership: "Logement",
-    verification_status: "Vérification du revenu",
-    purpose: "Motif du prêt",
-  };
   const CLIENT_STEPS = {
     loan_amnt: "any", emp_length: "1", annual_inc: "any", dti: "any",
     open_acc: "1", pub_rec: "1", revol_bal: "any", revol_util: "any",
     total_acc: "1", mort_acc: "1", pub_rec_bankruptcies: "1",
     credit_hist_years: "any",
   };
-  const CATEGORY_LABELS = {
-    home_ownership: {
-      MORTGAGE: "Hypothèque", OTHER: "Autre", OWN: "Propriétaire", RENT: "Locataire",
-    },
-    verification_status: {
-      "Not Verified": "Non vérifié", "Source Verified": "Source vérifiée", Verified: "Vérifié",
-    },
-    purpose: {
-      car: "Achat d’une voiture", credit_card: "Carte de crédit",
-      debt_consolidation: "Consolidation de dettes", educational: "Études",
-      home_improvement: "Rénovation", house: "Achat d’une maison",
-      major_purchase: "Achat important", medical: "Soins médicaux", moving: "Déménagement",
-      other: "Autre", renewable_energy: "Énergie renouvelable",
-      small_business: "Petite entreprise", vacation: "Vacances", wedding: "Mariage",
-    },
-  };
-  const DRIVER_LABELS = {
-    emp_length: "Années d’emploi",
-    annual_inc: "Revenu annuel",
-    dti: "Ratio dette / revenu",
-    open_acc: "Comptes de crédit ouverts",
-    pub_rec: "Dossiers publics",
-    revol_bal: "Solde de crédit renouvelable",
-    revol_util: "Utilisation du crédit renouvelable",
-    total_acc: "Nombre total de comptes",
-    mort_acc: "Prêts hypothécaires",
-    pub_rec_bankruptcies: "Faillites publiques",
-    credit_hist_years: "Âge du dossier de crédit",
-    loan_to_income: "Prêt / revenu annuel",
-    home_ownership: "Logement",
-    verification_status: "Vérification du revenu",
-    purpose: "Motif du prêt",
-  };
-  const clientNumber = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 2 });
-  const clientPercent = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 1 });
-  const clientUsd = new Intl.NumberFormat("fr-CA", {
-    style: "currency", currency: "USD", maximumFractionDigits: 2,
-  });
+  let clientNumber = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 2 });
+  let clientPercent = new Intl.NumberFormat("fr-CA", { maximumFractionDigits: 1 });
 
   function clientValue(value) {
     return clientNumber.format(value);
+  }
+  function clientMoney(value) {
+    return T.usd(clientNumber.format(value));
   }
   function categoryMode(name) {
     const levels = MODEL.categories[name];
@@ -1133,8 +1290,10 @@ const I18N = {
       const wrapper = document.createElement("div");
       wrapper.className = "client-field";
       const label = document.createElement("label");
+      label.dataset.variableLabel = name;
       const input = document.createElement("input");
       const hint = document.createElement("small");
+      hint.dataset.variableRange = name;
       input.id = "client-" + name;
       input.type = "number";
       input.inputMode = "decimal";
@@ -1144,9 +1303,6 @@ const I18N = {
       input.value = range.median;
       input.dataset.variable = name;
       label.htmlFor = input.id;
-      label.textContent = CLIENT_LABELS[name] || name;
-      hint.textContent = "Plage observée : " + clientValue(range.p1) + " à "
-        + clientValue(range.p99) + " · médiane : " + clientValue(range.median);
       wrapper.append(label, input, hint);
       fields.appendChild(wrapper);
       input.addEventListener("input", () => renderClient(false));
@@ -1156,21 +1312,38 @@ const I18N = {
       const wrapper = document.createElement("div");
       wrapper.className = "client-field";
       const label = document.createElement("label");
+      label.dataset.variableLabel = name;
       const select = document.createElement("select");
       select.id = "client-" + name;
       select.dataset.variable = name;
       label.htmlFor = select.id;
-      label.textContent = CLIENT_LABELS[name] || name;
       for (const level of levels) {
         const option = document.createElement("option");
         option.value = level;
-        option.textContent = (CATEGORY_LABELS[name] && CATEGORY_LABELS[name][level]) || level;
+        option.textContent = (CT.categories[name] && CT.categories[name][level]) || level;
         select.appendChild(option);
       }
       select.value = categoryMode(name);
       wrapper.append(label, select);
       fields.appendChild(wrapper);
       select.addEventListener("change", () => renderClient(false));
+    }
+    updateClientInputText();
+  }
+
+  function updateClientInputText() {
+    for (const label of document.querySelectorAll("[data-variable-label]")) {
+      const name = label.dataset.variableLabel;
+      label.textContent = CT.labels[name] || name;
+    }
+    for (const hint of document.querySelectorAll("[data-variable-range]")) {
+      const range = MODEL.ranges[hint.dataset.variableRange];
+      hint.textContent = CT.range(clientValue(range.p1), clientValue(range.p99), clientValue(range.median));
+    }
+    for (const select of document.querySelectorAll("#client-fields select")) {
+      for (const option of select.options) {
+        option.textContent = (CT.categories[select.dataset.variable] || {})[option.value] || option.value;
+      }
     }
   }
 
@@ -1190,9 +1363,9 @@ const I18N = {
   }
 
   function driverLabel(name, values) {
-    const base = DRIVER_LABELS[name] || name;
+    const base = CT.drivers[name] || name;
     if (!MODEL.categories[name]) return base;
-    const level = (CATEGORY_LABELS[name] && CATEGORY_LABELS[name][values[name]]) || values[name];
+    const level = (CT.categories[name] && CT.categories[name][values[name]]) || values[name];
     return base + " · " + level;
   }
 
@@ -1206,7 +1379,7 @@ const I18N = {
     const selected = drivers.filter((item) => item.amount > 0).slice(0, 3)
       .concat(drivers.filter((item) => item.amount < 0).slice(-2).reverse());
     if (!selected.length) {
-      list.textContent = "Aucun facteur ne s’écarte du client moyen.";
+      list.textContent = CT.noDrivers;
       return;
     }
     const max = Math.max(...selected.map((item) => Math.abs(item.amount)));
@@ -1249,9 +1422,9 @@ const I18N = {
       input[name] = Number(field.value);
     }
     if (invalid) {
-      $("client-message").textContent = "Entrez une valeur numérique pour continuer.";
+      $("client-message").textContent = CT.invalidNumeric;
       $("client-message").classList.add("error");
-      $("client-light").textContent = "À compléter";
+      $("client-light").textContent = CT.incomplete;
       $("client-light").dataset.zone = "";
       $("client-human-note").hidden = true;
       setText("client-pd", "—");
@@ -1269,29 +1442,23 @@ const I18N = {
     const message = $("client-message");
     message.classList.toggle("error", clamped.length > 0);
     message.textContent = clamped.length
-      ? "Valeur(s) limitée(s) à la plage d’entraînement : " + clamped.map(([name, value]) =>
-        (CLIENT_LABELS[name] || name) + " (" + clientValue(value.to) + ")").join(", ") + "."
+      ? CT.clamped(clamped.map(([name, value]) =>
+        (CT.labels[name] || name) + " (" + clientValue(value.to) + ")").join(", "))
       : "";
 
     const greenCut = MODEL.pd_cuts[state.g], redCut = MODEL.pd_cuts[state.r];
     const zone = result.pd < greenCut ? "green" : result.pd >= redCut ? "red" : "yellow";
-    const zoneName = {
-      green: "Approbation automatique",
-      yellow: "Révision par un analyste",
-      red: "Révision approfondie recommandée",
-    }[zone];
-    $("client-light").textContent = zoneName;
+    $("client-light").textContent = CT.zones[zone];
     $("client-light").dataset.zone = zone;
     $("client-human-note").hidden = zone !== "red";
     setText("client-pd", clientPercent.format(result.pd * 100) + " %");
     const percentile = percentilePosition(result.pd);
-    setText("client-percentile", "Plus risqué que " + clientPercent.format(percentile)
-      + " % des clients d’entraînement.");
+    setText("client-percentile", CT.percentile(clientPercent.format(percentile)));
     const lgdText = clientPercent.format(state.lgd * 100) + " %";
-    const eadText = clientUsd.format(result.input.loan_amnt);
+    const eadText = clientMoney(result.input.loan_amnt);
     setText("client-expected-loss", clientPercent.format(result.pd * 100) + " % × "
       + lgdText + " × " + eadText + " = "
-      + clientUsd.format(result.pd * state.lgd * result.input.loan_amnt));
+      + clientMoney(result.pd * state.lgd * result.input.loan_amnt));
     renderDrivers(result);
   }
 
@@ -1639,9 +1806,13 @@ const I18N = {
   // ---------- Changement de langue ----------
   function setLang(lang) {
     T = I18N[lang] || I18N.fr;
+    CT = CLIENT_TEXT[lang] || CLIENT_TEXT.fr;
     fmt = makeFormats(T.locale);
+    clientNumber = new Intl.NumberFormat(T.locale, { maximumFractionDigits: 2 });
+    clientPercent = new Intl.NumberFormat(T.locale, { maximumFractionDigits: 1 });
     hideTooltip();
     applyStaticText();
+    updateClientInputText();
     checkLgd();
     setText("note-data", T.noteData(fmt.int(N), fmt.pct(AVG)));
     buildMain();
