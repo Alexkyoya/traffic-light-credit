@@ -901,8 +901,13 @@ body::before, body::after { display: none; }
 }
 @media (max-width: 720px) {
   .page { padding-block: 22px 36px; gap: 18px; }
-  .hero { min-height: 0; padding: 26px 20px; border-radius: 14px; }
-  .hero h1 { font-size: clamp(36px, 10vw, 48px); }
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 16px; min-height: 0; padding: 22px 18px; border-radius: 14px; }
+  .hero > * { min-width: 0; }
+  .lang { grid-row: 1; justify-self: stretch; flex-wrap: wrap; justify-content: space-between; border-radius: 14px; }
+  .lang button { flex: 1 0 auto; padding: 7px 8px; white-space: nowrap; }
+  .signal { grid-row: 2; grid-auto-flow: column; width: auto; justify-self: start; padding: 7px 10px; gap: 8px; }
+  .lamp { width: 20px; height: 20px; }
+  .hero h1 { font-size: clamp(30px, 8.5vw, 42px); line-height: 1.08; letter-spacing: -0.03em; overflow-wrap: break-word; }
   .hero .lede { font-size: 16px; }
   .panel { padding: 22px 17px; border-radius: 13px; }
   .kpi { min-height: 0; }
